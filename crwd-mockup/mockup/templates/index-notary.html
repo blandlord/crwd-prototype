@@ -1,0 +1,7 @@
+{% extends "index.html" %}
+{% block dynamic %}
+  {% if session.logged_in %}
+  {% else %}
+    <p>Not logged in. No access.</p>
+  {% endif %}
+{% endblock %}

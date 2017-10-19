@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block body %}
+  <div class="row">
+    <div class="col-sm-6">
+{% block dynamic %}
+  <h2>Register your address</h2>
+  <p>A notary service will verify your information.</p>
+    <form action="{{ url_for('add_entry') }}" method=post class="form">
+      <dl>
+        <dt>Your ethereum address:
+        <dd><input type="text" size="30" name="address" placeholder="0x000123abc">
+        <dt>Your social security number:
+        <dd><input type="text" size="30" name="ssn" placeholder="NL-123456789">
+        <dd><button class="btn btn-info" type="submit">Submit</button>
+      </dl>
+    </form>
+{% endblock %}
+    </div>
+
+    <div class="col-sm-6">
+
+  <ul class=entries>
+  {% for entry in entries %}
+    <li>
+      <form action="{{ url_for('verify_id') }}" method="POST">
+        <span class="label label-{{ entry.label }}">{{ entry.status }}</span> {{ entry.address }}
+        {% if session.logged_in %}
+          <button type="submit" name="address" value="{{ entry.address }}">process</button>
+          <input type="hidden" name="status" value="{{ entry.next }}" />
+        {%endif %}
+      </form>
+    </li>
+  {% else %}
+    <li><em>The registry is empty.</em></li>
+  {% endfor %}
+  </ul>
+
+    </div>
+  </div>
+{% endblock %}
