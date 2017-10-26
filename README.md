@@ -20,6 +20,17 @@ Install the truffle cli
 npm install -g truffle
 ````
 
+Install packages
+````
+npm install
+````
+
+
+Copy the truffle config example file truffle.js.example to truffle.js
+````
+cp truffle.js.example truffle.js
+````
+
 To compile and deploy the contracts locally:
 ````
 truffle migrate
@@ -30,3 +41,7 @@ To run tests
 truffle test
 ````
 
+To start webpack development server (PORT 3000)
+````
+npm run start
+````

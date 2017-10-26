@@ -68,3 +68,6 @@ crwd-mockup/mockup.egg-info/
 
 # contracts build directory
 build/
+
+# truffle config
+truffle.js
