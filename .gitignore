@@ -60,3 +60,11 @@ typings/
 # dotenv environment variables file
 .env
 
+# egg info folder
+crwd-mockup/mockup.egg-info/
+
+# IDEA IDE config
+.idea/
+
+# contracts build directory
+build/
