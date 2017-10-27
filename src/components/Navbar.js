@@ -1,21 +1,22 @@
 import React, {Component} from 'react'
-import {NavLink} from "react-router-dom";
 
-import * as actions from '../actions/navbarActions';
+import * as actions from '../actions/web3Actions';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
 
 
 class Navbar extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount() {
+    this.props.actions.initWeb3();
   }
 
   render() {
+    let {web3Store} = this.props;
+    let web3 = web3Store.get("web3");
+    let networkName = web3Store.get("networkName");
+
     return (
       <nav className="navbar navbar-default">
         <div className="container-fluid">
@@ -34,7 +35,16 @@ class Navbar extends Component {
               <li><a href="#">About</a></li>
             </ul>
             <ul className="nav navbar-nav navbar-right">
-              <li>
+              <li className="dropdown">
+                <a href="#" className="dropdown-toggle" data-toggle="dropdown">
+                  <b>Network:</b> {networkName}
+                </a>
+              </li>
+
+              <li className="dropdown">
+                <a href="#" className="dropdown-toggle" data-toggle="dropdown">
+                  <b>Account:</b>  {web3 ? web3.eth.defaultAccount : null}
+                </a>
               </li>
             </ul>
           </div>
@@ -48,7 +58,9 @@ class Navbar extends Component {
 
 
 const mapStateToProps = (state) => {
-  return {};
+  return {
+    web3Store: state.web3Store
+  };
 };
 
 const mapDispatchToProps = (dispatch) => {

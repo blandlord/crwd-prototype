@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 
 
-import * as actions from '../actions/homeActions';
+import * as registryActions from '../actions/registryActions';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
@@ -9,9 +9,6 @@ import {connect} from 'react-redux'
 import '../css/Home.css'
 
 class Home extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   componentDidMount() {
 
@@ -35,7 +32,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    actions: bindActionCreators(actions, dispatch),
+    registryActions: bindActionCreators(registryActions, dispatch),
   };
 };
 
