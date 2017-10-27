@@ -2,37 +2,45 @@ const Registry = artifacts.require("./Registry.sol");
 
 contract('Registry', function (accounts) {
 
-  describe('addUserAddress', function () {
+  describe('addUserAddress/getUserAddresses', function () {
 
     let userAddress_1 = "0x0000000000000000000000000000000000000001";
+    let ssn_1 = "NL-1";
     let userAddress_2 = "0x0000000000000000000000000000000000000002";
+    let ssn_2 = "NL-2";
 
     it("anyone can add user addresses which can be retrieved", async function () {
       const instance = await  Registry.deployed();
 
-      await instance.addUserAddress(userAddress_1, {from: accounts[0]});
-      await instance.addUserAddress(userAddress_2, {from: accounts[1]});
+      await instance.addUserAddress(userAddress_1, ssn_1, {from: accounts[0]});
+      await instance.addUserAddress(userAddress_2, ssn_2, {from: accounts[1]});
 
       let savedAddress_1 = await instance.userAddresses(0);
       assert.equal(savedAddress_1, userAddress_1);
 
-      let userData_1 = await instance.userDataStore(userAddress_1);
+      let userData_1 = await instance.usersData(userAddress_1);
       assert.equal(userData_1[0].toNumber(), 0, "State should be NEW");
-      assert.equal(userData_1[1], true);
+      assert.equal(userData_1[1], ssn_1);
+      assert.equal(userData_1[2], true);
 
       let savedAddress_2 = await instance.userAddresses(1);
       assert.equal(savedAddress_2, userAddress_2);
 
-      let userData_2 = await instance.userDataStore(userAddress_2);
+      let userData_2 = await instance.usersData(userAddress_2);
       assert.equal(userData_2[0].toNumber(), 0, "State should be NEW");
-      assert.equal(userData_2[1], true);
+      assert.equal(userData_2[1], ssn_2);
+      assert.equal(userData_2[2], true);
+
+      let userAddresses = await instance.getUserAddresses();
+      assert.equal(userAddresses[0], userAddress_1);
+      assert.equal(userAddresses[1], userAddress_2);
     });
 
     it("adding an already existing user address throws an error", async function () {
       const instance = await  Registry.deployed();
 
       try {
-        await instance.addUserAddress(userAddress_1, {from: accounts[0]});
+        await instance.addUserAddress(userAddress_1, "XYZ", {from: accounts[0]});
 
         // we shouldn't get to this point
         assert(false, "Transaction should have failed");
@@ -45,11 +53,28 @@ contract('Registry', function (accounts) {
     });
 
 
-    it("adding a null address throws an error", async function () {
+    it("adding an empty address throws an error", async function () {
       const instance = await  Registry.deployed();
 
       try {
-        await instance.addUserAddress(null, {from: accounts[0]});
+        await instance.addUserAddress("", "XYZ", {from: accounts[0]});
+
+        // we shouldn't get to this point
+        assert(false, "Transaction should have failed");
+      }
+      catch (err) {
+        if (err.toString().indexOf("invalid opcode") < 0) {
+          assert(false, err.toString());
+        }
+      }
+    });
+
+
+    it("adding a empty ssn throws an error", async function () {
+      const instance = await  Registry.deployed();
+
+      try {
+        await instance.addUserAddress("0x1238937325", "", {from: accounts[0]});
 
         // we shouldn't get to this point
         assert(false, "Transaction should have failed");
@@ -78,9 +103,10 @@ contract('Registry', function (accounts) {
 
       await instance.setState(userAddress_1, STATE.VERIFIED, {from: accounts[0]});
 
-      let userData_1 = await instance.userDataStore(userAddress_1);
+      let userData_1 = await instance.usersData(userAddress_1);
       assert.equal(userData_1[0].toNumber(), STATE.VERIFIED, "State should be VERIFIED");
-      assert.equal(userData_1[1], true);
+      assert.equal(userData_1[1], "NL-1");
+      assert.equal(userData_1[2], true);
     });
 
     it("now owner cannot set state", async function () {

@@ -54,6 +54,10 @@ let getWeb3 = () => new Promise(function (resolve, reject) {
             networkName = "Unknown";
         }
 
+        if (networkName === "Unknown" && parseInt(networkId, 10) > 0) {
+          networkName = "Private"
+        }
+
         resolve({web3, networkName});
       });
     });

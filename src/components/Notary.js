@@ -6,12 +6,10 @@ import * as notificationActions from '../actions/notificationActions';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
 
-import NewAddressForm from './NewAddressForm';
-import UserData from './UserData';
+import NotaryUserData from './NotaryUserData';
 
-class Home extends Component {
+class Notary extends Component {
   componentDidMount() {
-
   }
 
   render() {
@@ -25,22 +23,21 @@ class Home extends Component {
       <div className="container">
         <div className="home">
           <div className="row">
-            <div className="col-sm-6">
-              <h1>CRWD</h1>
-              <h2>Register your address</h2>
-              <p>A notary service will verify your information.</p>
-              <NewAddressForm/>
-            </div>
-
-            <div className="col-sm-6">
+            <div className="col-sm-12">
+              <h1>CRWD Notary</h1>
               <h3>Users Data</h3>
+              {registryStore.get('settingState') ?
+                "Setting Sate..."
+                :
+                null
+              }
               {registryStore.get('loadingUsersData') ?
                 "Loading Users Data..."
                 :
                 <ul className="entries">
                   {registryStore.get('usersData').length === 0 ? <em>The registry is empty.</em> : null}
                   {registryStore.get('usersData').map((userData) => (
-                    <UserData userData={userData} key={userData.userAddress}/>
+                    <NotaryUserData userData={userData} key={userData.userAddress}/>
                   ))}
                 </ul>
               }
@@ -70,4 +67,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Home);
+)(Notary);

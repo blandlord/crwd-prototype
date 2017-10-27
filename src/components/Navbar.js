@@ -1,15 +1,26 @@
 import React, {Component} from 'react'
+import {NavLink} from "react-router-dom";
 
-import * as actions from '../actions/web3Actions';
+import * as web3Actions from '../actions/web3Actions';
+import * as notificationActions from '../actions/notificationActions';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
+
+import Notifications from 'react-notification-system-redux';
 
 
 class Navbar extends Component {
 
   componentDidMount() {
-    this.props.actions.initWeb3();
+    this.props.web3Actions.initWeb3();
+
+    this.props.notificationActions.success({
+      notification: {
+        message: 'Welcome to CRWD',
+        position: 'br'
+      }
+    });
   }
 
   render() {
@@ -19,6 +30,9 @@ class Navbar extends Component {
 
     return (
       <nav className="navbar navbar-default">
+        <Notifications
+          notifications={this.props.notifications}
+        />
         <div className="container-fluid">
           <div className="navbar-header">
             <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -32,7 +46,12 @@ class Navbar extends Component {
           </div>
           <div id="navbar" className="navbar-collapse collapse">
             <ul className="nav navbar-nav">
-              <li><a href="#">About</a></li>
+              <li>
+                <NavLink exact to="/">Investor</NavLink>
+              </li>
+              <li>
+                <NavLink exact to="/notary">Notary</NavLink>
+              </li>
             </ul>
             <ul className="nav navbar-nav navbar-right">
               <li className="dropdown">
@@ -43,7 +62,7 @@ class Navbar extends Component {
 
               <li className="dropdown">
                 <a href="#" className="dropdown-toggle" data-toggle="dropdown">
-                  <b>Account:</b>  {web3 ? web3.eth.defaultAccount : null}
+                  <b>Account:</b> {web3 ? web3.eth.defaultAccount : null}
                 </a>
               </li>
             </ul>
@@ -59,13 +78,15 @@ class Navbar extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    web3Store: state.web3Store
+    web3Store: state.web3Store,
+    notifications: state.notifications
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    actions: bindActionCreators(actions, dispatch),
+    web3Actions: bindActionCreators(web3Actions, dispatch),
+    notificationActions: bindActionCreators(notificationActions, dispatch),
   };
 };
 

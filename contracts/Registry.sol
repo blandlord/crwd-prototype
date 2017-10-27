@@ -16,7 +16,7 @@ contract Registry is Ownable {
      *  Storage
      */
 
-    mapping (address => UserData) public userDataStore;
+    mapping (address => UserData) public usersData;
 
     address[] public userAddresses;
 
@@ -24,6 +24,7 @@ contract Registry is Ownable {
 
     struct UserData {
     State state;
+    string ssn;
     bool isUserData;
     }
 
@@ -36,15 +37,18 @@ contract Registry is Ownable {
 
     /// @dev Allows to add an address to the registry
     /// @param _userAddress user address to be added
-    function addUserAddress(address _userAddress) public {
+    function addUserAddress(address _userAddress, string _ssn) public {
         // check user address not null
         require(_userAddress != address(0));
+        // check ssn not null
+        require(bytes(_ssn).length != 0);
         // avoid overwrite
         require(!isUserData(_userAddress));
 
         // create new entry
-        userDataStore[_userAddress].state = State.NEW;
-        userDataStore[_userAddress].isUserData = true;
+        usersData[_userAddress].state = State.NEW;
+        usersData[_userAddress].ssn = _ssn;
+        usersData[_userAddress].isUserData = true;
         userAddresses.push(_userAddress);
 
         // Log event
@@ -54,7 +58,7 @@ contract Registry is Ownable {
     /// @dev Checks if a user address exists
     /// @param _userAddress user address to be checked
     function isUserData(address _userAddress) public constant returns (bool) {
-        return userDataStore[_userAddress].isUserData;
+        return usersData[_userAddress].isUserData;
     }
 
     /// @dev Set state on user address
@@ -66,10 +70,15 @@ contract Registry is Ownable {
         // make sure user address exists
         require(isUserData(_userAddress));
 
-        userDataStore[_userAddress].state = State(_state);
+        usersData[_userAddress].state = State(_state);
 
         // Log event
         StateUpdated(_userAddress, State(_state));
+    }
+
+    /// @dev fetch user addresses
+    function getUserAddresses() public constant returns (address[])  {
+        return userAddresses;
     }
 
 }
