@@ -55,6 +55,16 @@ async function loadCurrentUserData(web3) {
   return currentUserData;
 }
 
+async function loadOwnerAddress(web3) {
+  const registryContract = contract(RegistryContract);
+  registryContract.setProvider(web3.currentProvider);
+
+  const instance = await registryContract.deployed();
+
+  const ownerAddress = await instance.owner();
+  return ownerAddress;
+}
+
 async function setState(web3, userAddress, state) {
   const registryContract = contract(RegistryContract);
   registryContract.setProvider(web3.currentProvider);
@@ -69,6 +79,7 @@ let registryService = {
   addUserAddress: addUserAddress,
   loadUsersData: loadUsersData,
   loadCurrentUserData: loadCurrentUserData,
+  loadOwnerAddress: loadOwnerAddress,
   setState: setState,
 };
 

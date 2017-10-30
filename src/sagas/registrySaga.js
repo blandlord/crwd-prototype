@@ -45,6 +45,17 @@ function* loadUsersData(data) {
   }
 }
 
+function* loadOwnerAddress(data) {
+  yield put(registryActions.fetchLoadOwnerAddress.request());
+  try {
+    const web3 = yield select(state => state.web3Store.get("web3"));
+    const ownerAddress = yield call(registryService.loadOwnerAddress, web3);
+    yield put(registryActions.fetchLoadOwnerAddress.success({ownerAddress}));
+  } catch (error) {
+    yield put(registryActions.fetchLoadOwnerAddress.failure({error}));
+  }
+}
+
 function* setState(data) {
   yield put(registryActions.postSetState.request());
   try {
@@ -94,6 +105,7 @@ function* watchPostSetStateSuccess() {
 
 function* watchSetupWeb3Success() {
   yield takeEvery(web3Actions.SETUP_WEB3.SUCCESS, loadUsersData);
+  yield takeEvery(web3Actions.SETUP_WEB3.SUCCESS, loadOwnerAddress);
 }
 
 export default function* registrySaga() {

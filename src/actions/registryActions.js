@@ -35,3 +35,14 @@ export const postSetState = {
   success: (data) => action(POST_SET_STATE.SUCCESS, data),
   failure: (error) => action(POST_SET_STATE.FAILURE, error),
 };
+
+
+export const LOAD_OWNER_ADDRESS = 'LOAD_OWNER_ADDRESS';
+export const loadOwnerAddress = data => action(LOAD_OWNER_ADDRESS, data);
+
+export const FETCH_LOAD_OWNER_ADDRESS = createRequestTypes('FETCH_LOAD_OWNER_ADDRESS');
+export const fetchLoadOwnerAddress = {
+  request: () => action(FETCH_LOAD_OWNER_ADDRESS.REQUEST),
+  success: (data) => action(FETCH_LOAD_OWNER_ADDRESS.SUCCESS, data),
+  failure: (error) => action(FETCH_LOAD_OWNER_ADDRESS.FAILURE, error),
+};

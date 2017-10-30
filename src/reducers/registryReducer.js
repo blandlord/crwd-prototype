@@ -50,6 +50,9 @@ export default function registryReducer(state = new ImmutableMap(initialData), a
     return state
       .set('loadingUsersData', false);
   };
+  
+  
+  
 
   const postSetStateRequest = (state) => {
     return state
@@ -66,6 +69,26 @@ export default function registryReducer(state = new ImmutableMap(initialData), a
       .set('settingState', false);
   };
 
+
+  
+  const fetchLoadOwnerAddressRequest = (state) => {
+    return state
+      .set('loadingOwnerAddress', true);
+  };
+
+  const fetchLoadOwnerAddressSuccess = (state) => {
+    return state
+      .set('loadingOwnerAddress', false)
+      .set('ownerAddress', action.ownerAddress);
+  };
+
+  const fetchLoadOwnerAddressFailure = (state) => {
+    return state
+      .set('loadingOwnerAddress', false);
+  };
+  
+  
+  
   const actions = {
     'SET_NEW_USER_DATA': () => setNewUserData(state),
     'POST_SAVE_NEW_USER_DATA_REQUEST': () => postSaveNewUserDataRequest(state),
@@ -77,6 +100,9 @@ export default function registryReducer(state = new ImmutableMap(initialData), a
     'POST_SET_STATE_REQUEST': () => postSetStateRequest(state),
     'POST_SET_STATE_SUCCESS': () => postSetStateSuccess(state),
     'POST_SET_STATE_FAILURE': () => postSetStateFailure(state),
+    'FETCH_LOAD_OWNER_ADDRESS_REQUEST': () => fetchLoadOwnerAddressRequest(state),
+    'FETCH_LOAD_OWNER_ADDRESS_SUCCESS': () => fetchLoadOwnerAddressSuccess(state),
+    'FETCH_LOAD_OWNER_ADDRESS_FAILURE': () => fetchLoadOwnerAddressFailure(state),
     'DEFAULT': () => state
   };
 

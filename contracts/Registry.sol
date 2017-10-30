@@ -77,16 +77,16 @@ contract Registry is Ownable {
     /// @dev Checks if a state transition is valid
     /// @param _fromState old state
     /// @param _toState new state
-    function isValidStateTransition(State _fromState, State _toState) public constant returns (bool) {
-        if (_fromState == State.NEW && (_toState == State.VERIFIED || _toState == State.DENIED)){
+    function isValidStateTransition(State _fromState, State _toState) internal constant returns (bool) {
+        if (_fromState == State.NEW && (_toState == State.VERIFIED || _toState == State.DENIED)) {
             return true;
         }
 
-        if (_fromState == State.VERIFIED && (_toState == State.EXPIRED || _toState == State.DENIED)){
+        if (_fromState == State.VERIFIED && (_toState == State.EXPIRED || _toState == State.DENIED)) {
             return true;
         }
 
-        if (_fromState == State.EXPIRED && (_toState == State.VERIFIED) ){
+        if (_fromState == State.EXPIRED && (_toState == State.VERIFIED)) {
             return true;
         }
 
