@@ -13,36 +13,44 @@ class Notary extends Component {
   }
 
   render() {
-    if (!this.props.web3Store.get("web3")) {
+    let {registryStore,web3Store} = this.props;
+
+    if (!web3Store.get("web3")) {
       return null;
     }
 
-    let {registryStore} = this.props;
 
     return (
       <div className="container">
         <div className="home">
-          <div className="row">
-            <div className="col-sm-12">
-              <h1>CRWD Notary</h1>
-              <h3>Users Data</h3>
-              {registryStore.get('settingState') ?
-                "Setting Sate..."
-                :
-                null
-              }
-              {registryStore.get('loadingUsersData') ?
-                "Loading Users Data..."
-                :
-                <ul className="entries">
-                  {registryStore.get('usersData').length === 0 ? <em>The registry is empty.</em> : null}
-                  {registryStore.get('usersData').map((userData) => (
-                    <NotaryUserData userData={userData} key={userData.userAddress}/>
-                  ))}
-                </ul>
-              }
-            </div>
-          </div>
+          {registryStore.get('loadingOwnerAddress') ?
+            "Loading permissions ..."
+            :
+            registryStore.get('ownerAddress') !== web3Store.get("web3").eth.defaultAccount ?
+              "Not Authorized ..."
+              :
+              <div className="row">
+                <div className="col-sm-12">
+                  <h1>CRWD Notary</h1>
+                  <h3>Users Data</h3>
+                  {registryStore.get('settingState') ?
+                    "Setting State..."
+                    :
+                    null
+                  }
+                  {registryStore.get('loadingUsersData') ?
+                    "Loading Users Data..."
+                    :
+                    <ul className="entries">
+                      {registryStore.get('usersData').length === 0 ? <em>The registry is empty.</em> : null}
+                      {registryStore.get('usersData').map((userData) => (
+                        <NotaryUserData userData={userData} key={userData.userAddress}/>
+                      ))}
+                    </ul>
+                  }
+                </div>
+              </div>
+          }
         </div>
       </div>
     );
