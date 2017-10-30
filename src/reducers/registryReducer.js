@@ -3,10 +3,12 @@ import {Map as ImmutableMap} from 'immutable';
 
 let initialData = {
   newUserData: {
-    userAddress: '',
     ssn: '',
   },
-  usersData: []
+  usersData: [],
+  currentUserData:{
+    
+  }
 };
 
 export default function registryReducer(state = new ImmutableMap(initialData), action) {
@@ -40,7 +42,8 @@ export default function registryReducer(state = new ImmutableMap(initialData), a
   const fetchLoadUsersDataSuccess = (state) => {
     return state
       .set('loadingUsersData', false)
-      .set('usersData', action.usersData);
+      .set('usersData', action.usersData)
+      .set('currentUserData', action.currentUserData);
   };
 
   const fetchLoadUsersDataFailure = (state) => {

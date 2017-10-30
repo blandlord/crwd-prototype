@@ -20,7 +20,7 @@ contract Registry is Ownable {
 
     address[] public userAddresses;
 
-    enum State {NEW, VERIFIED, EXPIRED}
+    enum State {NEW, VERIFIED, EXPIRED, DENIED}
 
     struct UserData {
     State state;
@@ -36,23 +36,21 @@ contract Registry is Ownable {
     }
 
     /// @dev Allows to add an address to the registry
-    /// @param _userAddress user address to be added
-    function addUserAddress(address _userAddress, string _ssn) public {
-        // check user address not null
-        require(_userAddress != address(0));
+    /// @param _ssn user social security number
+    function addUserAddress(string _ssn) public {
         // check ssn not null
         require(bytes(_ssn).length != 0);
         // avoid overwrite
-        require(!isUserData(_userAddress));
+        require(!isUserData(msg.sender));
 
         // create new entry
-        usersData[_userAddress].state = State.NEW;
-        usersData[_userAddress].ssn = _ssn;
-        usersData[_userAddress].isUserData = true;
-        userAddresses.push(_userAddress);
+        usersData[msg.sender].state = State.NEW;
+        usersData[msg.sender].ssn = _ssn;
+        usersData[msg.sender].isUserData = true;
+        userAddresses.push(msg.sender);
 
         // Log event
-        AddressAdded(_userAddress);
+        AddressAdded(msg.sender);
     }
 
     /// @dev Checks if a user address exists
@@ -65,10 +63,10 @@ contract Registry is Ownable {
     /// @param _userAddress user address
     /// @param _state new state
     function setState(address _userAddress, uint _state) public onlyOwner {
-        // check new state is valid
-        require(_state <= uint(State.EXPIRED));
         // make sure user address exists
         require(isUserData(_userAddress));
+        // make sure valid state transition
+        require(isValidStateTransition(usersData[_userAddress].state, State(_state)));
 
         usersData[_userAddress].state = State(_state);
 
@@ -76,9 +74,27 @@ contract Registry is Ownable {
         StateUpdated(_userAddress, State(_state));
     }
 
+    /// @dev Checks if a state transition is valid
+    /// @param _fromState old state
+    /// @param _toState new state
+    function isValidStateTransition(State _fromState, State _toState) public constant returns (bool) {
+        if (_fromState == State.NEW && (_toState == State.VERIFIED || _toState == State.DENIED)){
+            return true;
+        }
+
+        if (_fromState == State.VERIFIED && (_toState == State.EXPIRED || _toState == State.DENIED)){
+            return true;
+        }
+
+        if (_fromState == State.EXPIRED && (_toState == State.VERIFIED) ){
+            return true;
+        }
+
+        return false;
+    }
+
     /// @dev fetch user addresses
     function getUserAddresses() public constant returns (address[])  {
         return userAddresses;
     }
-
 }

@@ -3,7 +3,8 @@ const _ = require('lodash');
 const stateTexts = {
   0: "NEW",
   1: "VERIFIED",
-  2: "EXPIRED"
+  2: "EXPIRED",
+  3: "DENIED",
 };
 
 const stateInts = _.invert(stateTexts);
@@ -20,6 +21,9 @@ function getEntryLabel(userDataState) {
     case 2:
       label = "danger";
       break;
+    case 3:
+      label = "danger";
+      break;
     default:
       label = "warning";
   }
@@ -32,7 +36,6 @@ function getEntryStateText(userDataStateInt) {
 
 function getEntryStateInt(userDataStateText) {
   return stateInts[userDataStateText];
-
 }
 
 let userDataHelpers = {

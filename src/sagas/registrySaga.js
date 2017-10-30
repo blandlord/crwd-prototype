@@ -38,7 +38,8 @@ function* loadUsersData(data) {
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
     const usersData = yield call(registryService.loadUsersData, web3);
-    yield put(registryActions.fetchLoadUsersData.success({usersData}));
+    const currentUserData = yield call(registryService.loadCurrentUserData, web3);
+    yield put(registryActions.fetchLoadUsersData.success({usersData, currentUserData}));
   } catch (error) {
     yield put(registryActions.fetchLoadUsersData.failure({error}));
   }

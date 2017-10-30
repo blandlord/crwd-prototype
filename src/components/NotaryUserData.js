@@ -34,21 +34,47 @@ class NotaryUserData extends Component {
         Address : {userData.userAddress} / SSN : {userData.ssn}
 
         {userDataStateText === "NEW" ?
-          <a href className="btn btn-primary btn-xs notary-verify-button"
-             onClick={(e) => this.onVerifyClick(e, userData.userAddress, "VERIFIED")}
-             disabled={registryStore.get('settingState')}>
-            Verify
-          </a>
+          <span>
+            <a href className="btn btn-primary btn-xs notary-verify-button"
+               onClick={(e) => this.onVerifyClick(e, userData.userAddress, "VERIFIED")}
+               disabled={registryStore.get('settingState')}>
+              Verify
+            </a>
+            <a href className="btn btn-danger btn-xs notary-verify-button"
+               onClick={(e) => this.onVerifyClick(e, userData.userAddress, "DENIED")}
+               disabled={registryStore.get('settingState')}>
+              Deny
+            </a>
+          </span>
           :
           null
         }
 
         {userDataStateText === "VERIFIED" ?
-          <a href className="btn btn-danger btn-xs notary-verify-button"
-             onClick={(e) => this.onVerifyClick(e, userData.userAddress, "EXPIRED")}
-             disabled={registryStore.get('settingState')}>
-            Expire
-          </a>
+          <span>
+            <a href className="btn btn-danger btn-xs notary-verify-button"
+               onClick={(e) => this.onVerifyClick(e, userData.userAddress, "EXPIRED")}
+               disabled={registryStore.get('settingState')}>
+              Expire
+            </a>
+            <a href className="btn btn-danger btn-xs notary-verify-button"
+               onClick={(e) => this.onVerifyClick(e, userData.userAddress, "DENIED")}
+               disabled={registryStore.get('settingState')}>
+              Deny
+            </a>
+          </span>
+          :
+          null
+        }
+
+        {userDataStateText === "EXPIRED" ?
+          <span>
+            <a href className="btn btn-primary btn-xs notary-verify-button"
+               onClick={(e) => this.onVerifyClick(e, userData.userAddress, "VERIFIED")}
+               disabled={registryStore.get('settingState')}>
+              Verify
+            </a>
+          </span>
           :
           null
         }

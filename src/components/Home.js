@@ -9,9 +9,9 @@ import {connect} from 'react-redux'
 import NewAddressForm from './NewAddressForm';
 import UserData from './UserData';
 
+
 class Home extends Component {
   componentDidMount() {
-
   }
 
   render() {
@@ -24,28 +24,41 @@ class Home extends Component {
     return (
       <div className="container">
         <div className="home">
-          <div className="row">
-            <div className="col-sm-6">
-              <h1>CRWD</h1>
-              <h2>Register your address</h2>
-              <p>A notary service will verify your information.</p>
-              <NewAddressForm/>
-            </div>
+          {registryStore.get('loadingUsersData') ?
+            "Loading Users Data..."
+            :
+            <div className="row">
+              <div className="col-sm-6">
+                <h1>CRWD</h1>
 
-            <div className="col-sm-6">
-              <h3>Users Data</h3>
-              {registryStore.get('loadingUsersData') ?
-                "Loading Users Data..."
-                :
+                {registryStore.get('currentUserData').isUserData ?
+                  <div>
+                    <h2>My Application Status</h2>
+
+                    <UserData userData={registryStore.get('currentUserData')}/>
+
+                  </div>
+                  :
+                  <div>
+                    <h2>Register your address</h2>
+                    <p>A notary service will verify your information.</p>
+                    <NewAddressForm/>
+                  </div>
+                }
+              </div>
+
+              <div className="col-sm-6">
+                <h3>Users Data</h3>
+
                 <ul className="entries">
                   {registryStore.get('usersData').length === 0 ? <em>The registry is empty.</em> : null}
                   {registryStore.get('usersData').map((userData) => (
                     <UserData userData={userData} key={userData.userAddress}/>
                   ))}
                 </ul>
-              }
+              </div>
             </div>
-          </div>
+          }
         </div>
       </div>
     );

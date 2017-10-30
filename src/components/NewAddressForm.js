@@ -11,8 +11,7 @@ class NewAddressForm extends Component {
 
   formValid() {
     let newUserData = this.props.registryStore.get("newUserData");
-    return newUserData.userAddress && newUserData.userAddress.trim() &&
-      newUserData.ssn && newUserData.ssn.trim();
+    return newUserData.ssn && newUserData.ssn.trim();
   }
 
   updateInputValue(e, field) {
@@ -27,7 +26,7 @@ class NewAddressForm extends Component {
   }
 
   render() {
-    let {registryStore} = this.props;
+    let {registryStore,web3Store} = this.props;
 
     return (
       <form className="new-address-form" onSubmit={(e) => this.onSubmit(e)}>
@@ -35,8 +34,8 @@ class NewAddressForm extends Component {
           <div className="form-group col-md-8">
             <label>Your ethereum address:</label>
             <input type="text" name="user-address" placeholder="0x000123abc" className="form-control"
-                   value={registryStore.get("newUserData").userAddress}
-                   onChange={(e) => this.updateInputValue(e, 'userAddress')}/>
+                   value={web3Store.get("web3").eth.defaultAccount}
+                   disabled/>
           </div>
         </div>
 
