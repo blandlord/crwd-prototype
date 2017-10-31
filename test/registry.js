@@ -171,6 +171,9 @@ contract('Registry', function (accounts) {
           assert.equal(userData_1[0].toNumber(), STATE.VERIFIED, "State should be VERIFIED");
           assert.equal(userData_1[1], "NL-1");
           assert.equal(userData_1[2], true);
+
+          const verified = await instance.isVerifiedAndValid(accounts[1]);
+          assert.equal(verified, true);
         });
 
         it("can set valid transition VERIFIED -> EXPIRED", async function () {
@@ -182,6 +185,9 @@ contract('Registry', function (accounts) {
           assert.equal(userData_1[0].toNumber(), STATE.EXPIRED, "State should be EXPIRED");
           assert.equal(userData_1[1], "NL-1");
           assert.equal(userData_1[2], true);
+
+          const verified = await instance.isVerifiedAndValid(accounts[1]);
+          assert.equal(verified, false);
         });
 
         it("can set valid transition EXPIRED -> VERIFIED", async function () {

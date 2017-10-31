@@ -97,4 +97,10 @@ contract Registry is Ownable {
     function getUserAddresses() public constant returns (address[])  {
         return userAddresses;
     }
+    
+    /// @dev Checks if a user address is verified and valid
+    /// @param _userAddress user address to be checked
+    function isVerifiedAndValid(address _userAddress) public constant returns (bool) {
+        return  usersData[_userAddress].state == State.VERIFIED;
+    }
 }
