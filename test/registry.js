@@ -1,5 +1,7 @@
 const Registry = artifacts.require("./Registry.sol");
 
+let STATE = require('./utils/state');
+
 contract('Registry', function (accounts) {
 
   describe('addUserAddress/getUserAddresses', function () {
@@ -69,13 +71,6 @@ contract('Registry', function (accounts) {
   });
 
   describe('setState', function () {
-
-    const STATE = { // values corresponding to solidity enum values
-      NEW: 0,
-      VERIFIED: 1,
-      EXPIRED: 2,
-      DENIED: 3,
-    };
 
     let userAddress;
 
@@ -226,7 +221,6 @@ contract('Registry', function (accounts) {
 
       });
     });
-
 
   });
 
