@@ -5,12 +5,16 @@ let STATE = require('./utils/state');
 
 contract('CRWDToken', function (accounts) {
 
+  let registryInstance, tokenInstance;
+
+  before(async function beforeTest() {
+    registryInstance = await Registry.deployed();
+    tokenInstance = await CRWDToken.new();
+  });
+
   describe('setRegistry', function () {
 
     it("owner can set registry address", async function () {
-      const registryInstance = await Registry.deployed();
-      const tokenInstance = await CRWDToken.deployed();
-
       await tokenInstance.setRegistry(registryInstance.address, {from: accounts[0]});
 
       let registryAddress = await tokenInstance.registry();
@@ -18,9 +22,6 @@ contract('CRWDToken', function (accounts) {
     });
 
     it("non owner cannot set registry address", async function () {
-      const registryInstance = await Registry.deployed();
-      const tokenInstance = await CRWDToken.deployed();
-
       try {
         await tokenInstance.setRegistry(registryInstance.address, {from: accounts[1]});
 
@@ -37,12 +38,8 @@ contract('CRWDToken', function (accounts) {
   });
 
   describe('transfer', function () {
-    let registryInstance, tokenInstance;
 
     before(async function beforeTest() {
-      registryInstance = await Registry.deployed();
-      tokenInstance = await CRWDToken.deployed();
-
       // add addresses to registry
       await registryInstance.addUserAddress("SSN-1", {from: accounts[1]});
       await registryInstance.addUserAddress("SSN-2", {from: accounts[2]});
