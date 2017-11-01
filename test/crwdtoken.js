@@ -9,7 +9,16 @@ contract('CRWDToken', function (accounts) {
 
   before(async function beforeTest() {
     registryInstance = await Registry.deployed();
-    tokenInstance = await CRWDToken.new();
+    tokenInstance = await CRWDToken.new("My Token", "MYT");
+  });
+
+  describe('proper instantiation', function () {
+    it("saves name/symbol",async function () {
+      let name = await tokenInstance.name();
+      assert.equal(name, "My Token");
+      let symbol = await tokenInstance.symbol();
+      assert.equal(symbol, "MYT");
+    });
   });
 
   describe('setRegistry', function () {

@@ -17,6 +17,10 @@ contract CRWDToken is StandardToken, Ownable {
    */
   Registry public registry;
 
+  string public  name;
+
+  string public  symbol;
+
   /*
    * Constants
    */
@@ -26,9 +30,11 @@ contract CRWDToken is StandardToken, Ownable {
    * Public functions
    */
   /// @dev Contract constructor
-  function CRWDToken() {
+  function CRWDToken(string _name, string _symbol) {
     totalSupply = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
+    name = _name;
+    symbol = _symbol;
   }
 
   /**
