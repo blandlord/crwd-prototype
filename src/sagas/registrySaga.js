@@ -1,4 +1,5 @@
 import {call, put, all, takeEvery, select} from 'redux-saga/effects';
+import { delay } from 'redux-saga'
 
 import * as registryActions from '../actions/registryActions';
 import * as web3Actions from '../actions/web3Actions';
@@ -12,6 +13,10 @@ function* saveNewUserData(data) {
     const web3 = yield select(state => state.web3Store.get("web3"));
     const newUserData = yield select(state => state.registryStore.get("newUserData"));
     const results = yield call(registryService.addUserAddress, web3, newUserData);
+
+    // delay to allow changes to be committed to local node
+    yield delay(1000);
+
     yield put(registryActions.postSaveNewUserData.success({results}));
 
     console.log("saveNewUserData TX", results.tx);
