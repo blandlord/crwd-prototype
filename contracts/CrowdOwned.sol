@@ -4,13 +4,10 @@ pragma solidity ^0.4.15;
 import './StandardToken.sol';
 import './Ownable.sol';
 import './Registry.sol';
+import './CrowdOwnedManager.sol';
 
 
-contract CRWDToken is StandardToken, Ownable {
-
-  /*
-   * Events
-   */
+contract CrowdOwned is StandardToken, Ownable {
 
   /*
    * Storage
@@ -29,13 +26,25 @@ contract CRWDToken is StandardToken, Ownable {
   /*
    * Public functions
    */
-  /// @dev Contract constructor
-  function CRWDToken(string _name, string _symbol) {
+
+  /**
+  * @dev Contract constructor
+  * @param _name Contract Name
+  * @param _symbol Contract Symbol
+  */
+  function CrowdOwned(string _name, string _symbol, address _owner, Registry _registry) {
     totalSupply = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
     name = _name;
     symbol = _symbol;
+
+    // override Ownable constructor to allow indirect deployment
+    owner = _owner;
+
+    // set registry
+    registry = _registry;
   }
+
 
   /**
   * @dev set registry contract address

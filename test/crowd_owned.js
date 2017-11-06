@@ -1,19 +1,19 @@
 const Registry = artifacts.require("./Registry.sol");
-const CRWDToken = artifacts.require("./CRWDToken.sol");
+const CrowdOwned = artifacts.require("./CrowdOwned.sol");
 
 let STATE = require('./utils/state');
 
-contract('CRWDToken', function (accounts) {
+contract('CrowdOwned', function (accounts) {
 
   let registryInstance, tokenInstance;
 
   before(async function beforeTest() {
     registryInstance = await Registry.deployed();
-    tokenInstance = await CRWDToken.new("My Token", "MYT");
+    tokenInstance = await CrowdOwned.new("My Token", "MYT", accounts[0], registryInstance.address);
   });
 
   describe('proper instantiation', function () {
-    it("saves name/symbol",async function () {
+    it("saves name/symbol", async function () {
       let name = await tokenInstance.name();
       assert.equal(name, "My Token");
       let symbol = await tokenInstance.symbol();
