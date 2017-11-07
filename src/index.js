@@ -7,6 +7,7 @@ import {Router, Route} from 'react-router-dom'
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Notary from './components/Notary';
+import CrowdOwnedDetails from './components/CrowdOwnedDetails';
 import history from './history'
 
 const store = configureStore();
@@ -19,6 +20,7 @@ ReactDOM.render(
         <Navbar/>
         <Route exact path="/" component={Home}/>
         <Route exact path="/notary" component={Notary}/>
+        <Route exact path="/crowd-owned/:address" component={CrowdOwnedDetails}/>
       </div>
     </Router>
   </Provider>

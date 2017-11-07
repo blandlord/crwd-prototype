@@ -54,13 +54,29 @@ function* loadCrowdOwnedContracts(data) {
 }
 
 
+function* loadCrowdOwnedContract(data) {
+  yield put(crowdOwnedActions.fetchLoadCrowdOwnedContract.request());
+  try {
+    const web3 = yield select(state => state.web3Store.get("web3"));
+    let crowdOwnedContract = yield call(crowdOwnedService.loadCrowdOwnedContract, web3, data.address);
+
+    yield put(crowdOwnedActions.fetchLoadCrowdOwnedContract.success({crowdOwnedContract}));
+  } catch (error) {
+    yield put(crowdOwnedActions.fetchLoadCrowdOwnedContract.failure({error}));
+  }
+}
+
+
 function* watchSaveNewCrowdOwnedContract() {
   yield takeEvery(crowdOwnedActions.SAVE_NEW_CROWD_OWNED_CONTRACT, saveNewCrowdOwnedContract);
 }
 
-
 function* watchPostSaveNewCrowdOwnedContractSuccess() {
   yield takeEvery(crowdOwnedActions.POST_SAVE_NEW_CROWD_OWNED_CONTRACT.SUCCESS, loadCrowdOwnedContracts);
+}
+
+function* watchLoadCrowdOwnedContract() {
+  yield takeEvery(crowdOwnedActions.LOAD_CROWD_OWNED_CONTRACT, loadCrowdOwnedContract);
 }
 
 function* watchSetupWeb3Success() {
@@ -72,6 +88,7 @@ export default function* crowdOwnedSaga() {
   yield all([
     watchSaveNewCrowdOwnedContract(),
     watchPostSaveNewCrowdOwnedContractSuccess(),
+    watchLoadCrowdOwnedContract(),
     watchSetupWeb3Success(),
   ]);
 }

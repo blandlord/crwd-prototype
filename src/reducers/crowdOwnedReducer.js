@@ -7,6 +7,7 @@ let initialData = {
     symbol: '',
   },
   crowdOwnedContracts: [],
+  crowdOwnedContract: null
 };
 
 export default function crowdOwnedReducer(state = new ImmutableMap(initialData), action) {
@@ -32,7 +33,7 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
       .set('savingNewCrowdOwnedContract', false);
   };
 
-  
+
   const fetchLoadCrowdOwnedContractsRequest = (state) => {
     return state
       .set('loadingCrowdOwnedContracts', true);
@@ -48,8 +49,30 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
     return state
       .set('loadingCrowdOwnedContracts', false);
   };
-  
-  
+
+
+  const loadCrowdOwnedContract = (state) => {
+    return state
+      .set('crowdOwnedContract', null);
+  };
+
+  const fetchLoadCrowdOwnedContractRequest = (state) => {
+    return state
+      .set('loadingCrowdOwnedContract', true);
+  };
+
+  const fetchLoadCrowdOwnedContractSuccess = (state) => {
+    return state
+      .set('loadingCrowdOwnedContract', false)
+      .set('crowdOwnedContract', action.crowdOwnedContract);
+  };
+
+  const fetchLoadCrowdOwnedContractFailure = (state) => {
+    return state
+      .set('loadingCrowdOwnedContract', false);
+  };
+
+
   const actions = {
     'SET_NEW_CROWD_OWNED_CONTRACT': () => setNewCrowdOwnedContract(state),
     'POST_SAVE_NEW_CROWD_OWNED_CONTRACT_REQUEST': () => postSaveNewCrowdOwnedContractRequest(state),
@@ -58,6 +81,10 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
     'FETCH_LOAD_CROWD_OWNED_CONTRACTS_REQUEST': () => fetchLoadCrowdOwnedContractsRequest(state),
     'FETCH_LOAD_CROWD_OWNED_CONTRACTS_SUCCESS': () => fetchLoadCrowdOwnedContractsSuccess(state),
     'FETCH_LOAD_CROWD_OWNED_CONTRACTS_FAILURE': () => fetchLoadCrowdOwnedContractsFailure(state),
+    'LOAD_CROWD_OWNED_CONTRACT': () => loadCrowdOwnedContract(state),
+    'FETCH_LOAD_CROWD_OWNED_CONTRACT_REQUEST': () => fetchLoadCrowdOwnedContractRequest(state),
+    'FETCH_LOAD_CROWD_OWNED_CONTRACT_SUCCESS': () => fetchLoadCrowdOwnedContractSuccess(state),
+    'FETCH_LOAD_CROWD_OWNED_CONTRACT_FAILURE': () => fetchLoadCrowdOwnedContractFailure(state),
     'DEFAULT': () => state
   };
 

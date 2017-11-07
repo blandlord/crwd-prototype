@@ -2,15 +2,17 @@ import React, {Component} from 'react'
 
 import {connect} from 'react-redux'
 
-class CrowdOwnedContract extends Component {
+import {NavLink} from "react-router-dom";
 
+
+class CrowdOwnedContract extends Component {
 
   render() {
     let crowdOwnedContract = this.props.crowdOwnedContract;
 
     return (
       <li>
-        {crowdOwnedContract.name}
+        <NavLink exact to={"/crowd-owned/" + crowdOwnedContract.address}> {crowdOwnedContract.name}</NavLink>
       </li>
     );
   }

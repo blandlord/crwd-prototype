@@ -42,9 +42,28 @@ async function loadOwnershipData(web3, crowdOwnedContracts) {
   return crowdOwnedContracts;
 }
 
+async function loadCrowdOwnedContract(web3, address) {
+  const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", address);
+
+  let name = await crowdOwnedInstance.name();
+  let symbol = await crowdOwnedInstance.symbol();
+  let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
+
+  const crowdOwnedContract = {
+    name,
+    symbol,
+    balance: balance.toNumber(),
+    address
+  };
+
+  return crowdOwnedContract;
+}
+
+
 let crowdOwnedService = {
   deployCrowdOwned: deployCrowdOwned,
   loadCrowdOwnedContracts: loadCrowdOwnedContracts,
+  loadCrowdOwnedContract: loadCrowdOwnedContract,
   loadOwnershipData: loadOwnershipData,
 };
 

@@ -25,3 +25,14 @@ export const fetchLoadCrowdOwnedContracts = {
   failure: (error) => action(FETCH_LOAD_CROWD_OWNED_CONTRACTS.FAILURE, error),
 };
 
+
+export const LOAD_CROWD_OWNED_CONTRACT = 'LOAD_CROWD_OWNED_CONTRACT';
+export const loadCrowdOwnedContract = data => action(LOAD_CROWD_OWNED_CONTRACT, data);
+
+export const FETCH_LOAD_CROWD_OWNED_CONTRACT = createRequestTypes('FETCH_LOAD_CROWD_OWNED_CONTRACT');
+export const fetchLoadCrowdOwnedContract = {
+  request: () => action(FETCH_LOAD_CROWD_OWNED_CONTRACT.REQUEST),
+  success: (data) => action(FETCH_LOAD_CROWD_OWNED_CONTRACT.SUCCESS, data),
+  failure: (error) => action(FETCH_LOAD_CROWD_OWNED_CONTRACT.FAILURE, error),
+};
+
