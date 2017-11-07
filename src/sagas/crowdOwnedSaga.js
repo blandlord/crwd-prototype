@@ -1,5 +1,5 @@
 import {call, put, all, takeEvery, select} from 'redux-saga/effects';
-import { delay } from 'redux-saga'
+import {delay} from 'redux-saga'
 
 import * as crowdOwnedActions from '../actions/crowdOwnedActions';
 import * as web3Actions from '../actions/web3Actions';
@@ -44,7 +44,9 @@ function* loadCrowdOwnedContracts(data) {
   yield put(crowdOwnedActions.fetchLoadCrowdOwnedContracts.request());
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
-    const crowdOwnedContracts = yield call(crowdOwnedService.loadCrowdOwnedContracts, web3);
+    let crowdOwnedContracts = yield call(crowdOwnedService.loadCrowdOwnedContracts, web3);
+    crowdOwnedContracts = yield call(crowdOwnedService.loadOwnershipData, web3, crowdOwnedContracts);
+
     yield put(crowdOwnedActions.fetchLoadCrowdOwnedContracts.success({crowdOwnedContracts}));
   } catch (error) {
     yield put(crowdOwnedActions.fetchLoadCrowdOwnedContracts.failure({error}));

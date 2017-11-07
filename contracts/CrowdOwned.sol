@@ -34,7 +34,7 @@ contract CrowdOwned is StandardToken, Ownable {
   */
   function CrowdOwned(string _name, string _symbol, address _owner, Registry _registry) {
     totalSupply = INITIAL_SUPPLY;
-    balances[msg.sender] = INITIAL_SUPPLY;
+    balances[_owner] = INITIAL_SUPPLY;
     name = _name;
     symbol = _symbol;
 

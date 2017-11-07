@@ -34,7 +34,7 @@ class NotaryUserData extends Component {
         Address : {userData.userAddress} / SSN : {userData.ssn}
 
         {userDataStateText === "NEW" ?
-          <span>
+          <div>
             <a href className="btn btn-primary btn-xs notary-verify-button"
                onClick={(e) => this.onVerifyClick(e, userData.userAddress, "VERIFIED")}
                disabled={registryStore.get('settingState')}>
@@ -45,13 +45,13 @@ class NotaryUserData extends Component {
                disabled={registryStore.get('settingState')}>
               Deny
             </a>
-          </span>
+          </div>
           :
           null
         }
 
         {userDataStateText === "VERIFIED" ?
-          <span>
+          <div>
             <a href className="btn btn-danger btn-xs notary-verify-button"
                onClick={(e) => this.onVerifyClick(e, userData.userAddress, "EXPIRED")}
                disabled={registryStore.get('settingState')}>
@@ -62,19 +62,19 @@ class NotaryUserData extends Component {
                disabled={registryStore.get('settingState')}>
               Deny
             </a>
-          </span>
+          </div>
           :
           null
         }
 
         {userDataStateText === "EXPIRED" ?
-          <span>
+          <div>
             <a href className="btn btn-primary btn-xs notary-verify-button"
                onClick={(e) => this.onVerifyClick(e, userData.userAddress, "VERIFIED")}
                disabled={registryStore.get('settingState')}>
               Verify
             </a>
-          </span>
+          </div>
           :
           null
         }

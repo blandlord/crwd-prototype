@@ -38,6 +38,8 @@ contract('CrowdOwnedManager', function (accounts) {
       assert.equal(owner, accounts[0]);
       let registryAddress = await tokenInstance.registry();
       assert.equal(registryAddress, registryInstance.address);
+      let balanceOfOwner = await tokenInstance.balanceOf(accounts[0]);
+      assert.equal(balanceOfOwner.toNumber(), 100000);
 
       let contractsAddresses = await crowdOwnedManagerInstance.getContractsAddresses();
       assert.equal(contractsAddresses[0], loggedTokenAddress);

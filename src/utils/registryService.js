@@ -1,21 +1,15 @@
-import RegistryContract from '../../build/contracts/Registry.json'
+import contractService from '../utils/contractService';
 
-const contract = require('truffle-contract');
 
 async function addUserAddress(web3, newUserData) {
-  const registryContract = contract(RegistryContract);
-  registryContract.setProvider(web3.currentProvider);
-  const instance = await registryContract.deployed();
+  const instance = await contractService.getDeployedInstance(web3, "Registry");
 
   let results = await instance.addUserAddress(newUserData.userAddress, newUserData.ssn, {gas: 400000});
   return results;
 }
 
 async function loadUsersData(web3) {
-  const registryContract = contract(RegistryContract);
-  registryContract.setProvider(web3.currentProvider);
-
-  const instance = await registryContract.deployed();
+  const instance = await contractService.getDeployedInstance(web3, "Registry");
 
   let userAddresses = await instance.getUserAddresses();
 
@@ -38,10 +32,7 @@ async function loadUsersData(web3) {
 }
 
 async function loadCurrentUserData(web3) {
-  const registryContract = contract(RegistryContract);
-  registryContract.setProvider(web3.currentProvider);
-
-  const instance = await registryContract.deployed();
+  const instance = await contractService.getDeployedInstance(web3, "Registry");
 
   const values = await instance.usersData(web3.eth.defaultAccount);
 
@@ -56,19 +47,14 @@ async function loadCurrentUserData(web3) {
 }
 
 async function loadOwnerAddress(web3) {
-  const registryContract = contract(RegistryContract);
-  registryContract.setProvider(web3.currentProvider);
-
-  const instance = await registryContract.deployed();
+  const instance = await contractService.getDeployedInstance(web3, "Registry");
 
   const ownerAddress = await instance.owner();
   return ownerAddress;
 }
 
 async function setState(web3, userAddress, state) {
-  const registryContract = contract(RegistryContract);
-  registryContract.setProvider(web3.currentProvider);
-  const instance = await registryContract.deployed();
+  const instance = await contractService.getDeployedInstance(web3, "Registry");
 
   let results = await instance.setState(userAddress, state, {gas: 400000});
 

@@ -18,7 +18,7 @@ class Home extends Component {
   }
 
   sortCrowdOwnedContracts(crowdOwnedContracts) {
-    return _.sortBy(crowdOwnedContracts, 'name');
+    return _.sortBy(_.sortBy(crowdOwnedContracts, 'name'),'balance');
   }
 
   render() {
@@ -59,7 +59,7 @@ class Home extends Component {
               <div className="col-sm-6">
                 <h3>CrowdOwned Contracts</h3>
 
-                {registryStore.get('loadingCrowdOwnedContracts') ?
+                {crowdOwnedStore.get('loadingCrowdOwnedContracts') ?
                   "Loading CrowdOwned Contracts..."
                   :
                   <ul className="crowd-owned-contracts">
