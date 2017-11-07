@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 
+const _ = require('lodash');
+
 import * as registryActions from '../actions/registryActions';
 import * as notificationActions from '../actions/notificationActions';
 
@@ -8,10 +10,15 @@ import {connect} from 'react-redux'
 
 import NewAddressForm from './NewAddressForm';
 import UserData from './UserData';
+import CrowdOwnedContract from './CrowdOwnedContract';
 
 
 class Home extends Component {
   componentDidMount() {
+  }
+
+  sortCrowdOwnedContracts(crowdOwnedContracts) {
+    return _.sortBy(crowdOwnedContracts, 'name');
   }
 
   render() {
@@ -19,7 +26,9 @@ class Home extends Component {
       return null;
     }
 
-    let {registryStore} = this.props;
+    let {registryStore, crowdOwnedStore} = this.props;
+
+    let crowdOwnedContracts = crowdOwnedStore.get('crowdOwnedContracts');
 
     return (
       <div className="container">
@@ -48,14 +57,18 @@ class Home extends Component {
               </div>
 
               <div className="col-sm-6">
-                <h3>Users Data</h3>
+                <h3>CrowdOwned Contracts</h3>
 
-                <ul className="entries">
-                  {registryStore.get('usersData').length === 0 ? <em>The registry is empty.</em> : null}
-                  {registryStore.get('usersData').map((userData) => (
-                    <UserData userData={userData} key={userData.userAddress}/>
-                  ))}
-                </ul>
+                {registryStore.get('loadingCrowdOwnedContracts') ?
+                  "Loading CrowdOwned Contracts..."
+                  :
+                  <ul className="crowd-owned-contracts">
+                    {crowdOwnedContracts.length === 0 ? <em>The CrowdOwned Contracts list is empty.</em> : null}
+                    {this.sortCrowdOwnedContracts(crowdOwnedContracts).map((crowdOwnedContract) => (
+                      <CrowdOwnedContract crowdOwnedContract={crowdOwnedContract} key={crowdOwnedContract.address}/>
+                    ))}
+                  </ul>
+                }
               </div>
             </div>
           }
@@ -70,6 +83,7 @@ const mapStateToProps = (state) => {
   return {
     web3Store: state.web3Store,
     registryStore: state.registryStore,
+    crowdOwnedStore: state.crowdOwnedStore,
   };
 };
 

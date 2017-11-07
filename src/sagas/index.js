@@ -1,12 +1,16 @@
+import {fork} from 'redux-saga/effects'
+
 import errorsSaga from './errorsSaga';
 import web3Saga from './web3Saga';
 import registrySaga from './registrySaga';
-import {fork} from 'redux-saga/effects'
+import crowdOwnedSaga from './crowdOwnedSaga';
+
 
 export const runSagas = (sagaMiddleware) => {
   function* rootSaga() {
     yield fork(web3Saga);
     yield fork(registrySaga);
+    yield fork(crowdOwnedSaga);
     yield fork(errorsSaga);
   }
 

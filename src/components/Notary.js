@@ -7,6 +7,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
 
 import NotaryUserData from './NotaryUserData';
+import NewCrowdOwnedContractFrom from './NewCrowdOwnedContractFrom';
 
 class Notary extends Component {
   componentDidMount() {
@@ -30,7 +31,7 @@ class Notary extends Component {
               "Not Authorized ..."
               :
               <div className="row">
-                <div className="col-sm-12">
+                <div className="col-sm-7">
                   <h1>CRWD Notary</h1>
                   <h3>Users Data</h3>
                   {registryStore.get('settingState') ?
@@ -48,6 +49,10 @@ class Notary extends Component {
                       ))}
                     </ul>
                   }
+                </div>
+                <div className="col-sm-5">
+                  <h3>Deploy CrowdOwned Contract</h3>
+                  <NewCrowdOwnedContractFrom/>
                 </div>
               </div>
           }
