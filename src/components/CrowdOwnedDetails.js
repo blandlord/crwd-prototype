@@ -8,11 +8,23 @@ import * as notificationActions from '../actions/notificationActions';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
 
+import TokensTransferForm from './TokensTransferForm';
+
 
 class CrowdOwnedDetails extends Component {
   componentDidMount() {
+    if (this.props.web3Store.get("web3")) {
+      this.loadCrowdOwnedContract();
+    }
+    else {
+      // wait a second for web3 to load
+      setTimeout(this.loadCrowdOwnedContract.bind(this), 1000);
+    }
+  }
+
+  loadCrowdOwnedContract() {
     let address = this.props.match.params.address;
-    this.props.crowdOwnedActions.loadCrowdOwnedContract({address});
+    this.props.crowdOwnedActions.loadCrowdOwnedContract({contractAddress: address});
   }
 
   render() {
@@ -31,14 +43,19 @@ class CrowdOwnedDetails extends Component {
             "Loading Crowd Owned Contract ..."
             :
             crowdOwnedStore.get('crowdOwnedContract') ?
-              <div className="row">
-                <div className="col-sm-6">
-                  <h1>Crowd Owned Contract</h1>
-                  <div>Name: {crowdOwnedContract.name}</div>
-                  <div>Symbol: {crowdOwnedContract.symbol}</div>
-                  <div>Address: {crowdOwnedContract.address}</div>
-                  <div>Your Balance: {crowdOwnedContract.balance}</div>
+              <div>
+                <div className="row">
+                  <div className="col-sm-6">
+                    <h1>Crowd Owned Contract</h1>
+                    <div>Name: {crowdOwnedContract.name}</div>
+                    <div>Symbol: {crowdOwnedContract.symbol}</div>
+                    <div>Address: {crowdOwnedContract.address}</div>
+                    <div>Your Balance: {crowdOwnedContract.balance}</div>
+                  </div>
                 </div>
+
+                <h3>Transfer Tokens</h3>
+                <TokensTransferForm contractAddress={this.props.match.params.address}/>
               </div>
               :
               null

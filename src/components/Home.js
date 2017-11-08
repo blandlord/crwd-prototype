@@ -18,7 +18,7 @@ class Home extends Component {
   }
 
   sortCrowdOwnedContracts(crowdOwnedContracts) {
-    return _.sortBy(_.sortBy(crowdOwnedContracts, 'name'),'balance');
+    return _.orderBy(crowdOwnedContracts, ['balance', 'name'], ['desc', 'asc']);
   }
 
   render() {

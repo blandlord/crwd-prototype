@@ -8,7 +8,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
 
 
-class NewCrowdOwnedContractFrom extends Component {
+class NewCrowdOwnedContractForm extends Component {
 
   formValid() {
     let newCrowdOwnedContract = this.props.crowdOwnedStore.get("newCrowdOwnedContract");
@@ -77,4 +77,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(NewCrowdOwnedContractFrom);
+)(NewCrowdOwnedContractForm);

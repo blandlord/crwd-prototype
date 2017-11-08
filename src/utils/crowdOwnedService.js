@@ -59,12 +59,31 @@ async function loadCrowdOwnedContract(web3, address) {
   return crowdOwnedContract;
 }
 
+async function transferTokens(web3, newTokensTransfer) {
+  const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", newTokensTransfer.contractAddress);
+  const registryInstance = await contractService.getDeployedInstance(web3, "Registry");
+
+  let isValidDestination = await registryInstance.isVerifiedAndValid(newTokensTransfer.to);
+
+  if (!isValidDestination) {
+    throw new Error("Destination address must be verified in the Registry");
+  }
+
+  let currentBalance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
+  if (newTokensTransfer.amount > currentBalance.toNumber()) {
+    throw new Error("Cannot transfer more than the current balance");
+  }
+
+  let results = await crowdOwnedInstance.transfer(newTokensTransfer.to, newTokensTransfer.amount, {gas: 80000});
+  return results;
+}
 
 let crowdOwnedService = {
   deployCrowdOwned: deployCrowdOwned,
   loadCrowdOwnedContracts: loadCrowdOwnedContracts,
   loadCrowdOwnedContract: loadCrowdOwnedContract,
   loadOwnershipData: loadOwnershipData,
+  transferTokens: transferTokens,
 };
 
 export default crowdOwnedService;

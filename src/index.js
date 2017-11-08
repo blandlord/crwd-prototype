@@ -12,7 +12,6 @@ import history from './history'
 
 const store = configureStore();
 
-
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>

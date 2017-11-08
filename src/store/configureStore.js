@@ -14,9 +14,9 @@ const configureStore = () => {
     rootReducer,
     applyMiddleware(sagaMiddleware),
     applyMiddleware(routingMiddleware),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   );
   runSagas(sagaMiddleware);
+
   return store;
 };
 

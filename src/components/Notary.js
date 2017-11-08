@@ -7,7 +7,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
 
 import NotaryUserData from './NotaryUserData';
-import NewCrowdOwnedContractFrom from './NewCrowdOwnedContractFrom';
+import NewCrowdOwnedContractForm from './NewCrowdOwnedContractForm';
 
 class Notary extends Component {
   componentDidMount() {
@@ -52,7 +52,7 @@ class Notary extends Component {
                 </div>
                 <div className="col-sm-5">
                   <h3>Deploy CrowdOwned Contract</h3>
-                  <NewCrowdOwnedContractFrom/>
+                  <NewCrowdOwnedContractForm/>
                 </div>
               </div>
           }

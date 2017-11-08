@@ -7,7 +7,11 @@ let initialData = {
     symbol: '',
   },
   crowdOwnedContracts: [],
-  crowdOwnedContract: null
+  crowdOwnedContract: null,
+  newTokensTransfer: {
+    to: '',
+    amount: 0
+  }
 };
 
 export default function crowdOwnedReducer(state = new ImmutableMap(initialData), action) {
@@ -73,6 +77,28 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
   };
 
 
+  const setNewTokensTransfer = (state) => {
+    return state
+      .set('newTokensTransfer', action.newTokensTransfer);
+  };
+
+  const postSaveNewTokensTransferRequest = (state) => {
+    return state
+      .set('savingNewTokensTransfer', true);
+  };
+
+  const postSaveNewTokensTransferSuccess = (state) => {
+    return state
+      .set('savingNewTokensTransfer', false)
+      .set('newTokensTransfer', initialData.newTokensTransfer);
+  };
+
+  const postSaveNewTokensTransferFailure = (state) => {
+    return state
+      .set('savingNewTokensTransfer', false);
+  };
+
+
   const actions = {
     'SET_NEW_CROWD_OWNED_CONTRACT': () => setNewCrowdOwnedContract(state),
     'POST_SAVE_NEW_CROWD_OWNED_CONTRACT_REQUEST': () => postSaveNewCrowdOwnedContractRequest(state),
@@ -85,6 +111,10 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
     'FETCH_LOAD_CROWD_OWNED_CONTRACT_REQUEST': () => fetchLoadCrowdOwnedContractRequest(state),
     'FETCH_LOAD_CROWD_OWNED_CONTRACT_SUCCESS': () => fetchLoadCrowdOwnedContractSuccess(state),
     'FETCH_LOAD_CROWD_OWNED_CONTRACT_FAILURE': () => fetchLoadCrowdOwnedContractFailure(state),
+    'SET_NEW_TOKENS_TRANSFER': () => setNewTokensTransfer(state),
+    'POST_SAVE_NEW_TOKENS_TRANSFER_REQUEST': () => postSaveNewTokensTransferRequest(state),
+    'POST_SAVE_NEW_TOKENS_TRANSFER_SUCCESS': () => postSaveNewTokensTransferSuccess(state),
+    'POST_SAVE_NEW_TOKENS_TRANSFER_FAILURE': () => postSaveNewTokensTransferFailure(state),
     'DEFAULT': () => state
   };
 

@@ -109,7 +109,7 @@ contract('Registry', function (accounts) {
           const instance = await  Registry.deployed();
 
           try {
-            await instance.setState(accounts[1].slice(0, -1) + "3", STATE.VERIFIED, {from: userAddress});
+            await instance.setState("0x" + require('crypto').randomBytes(20).toString('hex'), STATE.VERIFIED, {from: userAddress});
 
             // we shouldn't get to this point
             assert(false, "Transaction should have failed");

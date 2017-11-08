@@ -36,3 +36,17 @@ export const fetchLoadCrowdOwnedContract = {
   failure: (error) => action(FETCH_LOAD_CROWD_OWNED_CONTRACT.FAILURE, error),
 };
 
+
+
+export const SET_NEW_TOKENS_TRANSFER = 'SET_NEW_TOKENS_TRANSFER';
+export const setNewTokensTransfer = data => action(SET_NEW_TOKENS_TRANSFER, data);
+
+export const SAVE_NEW_TOKENS_TRANSFER = 'SAVE_NEW_TOKENS_TRANSFER';
+export const saveNewTokensTransfer = data => action(SAVE_NEW_TOKENS_TRANSFER, data);
+
+export const POST_SAVE_NEW_TOKENS_TRANSFER = createRequestTypes('POST_SAVE_NEW_TOKENS_TRANSFER');
+export const postSaveNewTokensTransfer = {
+  request: () => action(POST_SAVE_NEW_TOKENS_TRANSFER.REQUEST),
+  success: (data) => action(POST_SAVE_NEW_TOKENS_TRANSFER.SUCCESS, data),
+  failure: (error) => action(POST_SAVE_NEW_TOKENS_TRANSFER.FAILURE, error),
+};
