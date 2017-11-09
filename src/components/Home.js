@@ -57,17 +57,17 @@ class Home extends Component {
               </div>
 
               <div className="col-sm-6">
-                <h3>CrowdOwned Contracts</h3>
+                <h3>Crowd Owned objects</h3>
 
                 {crowdOwnedStore.get('loadingCrowdOwnedContracts') ?
                   "Loading CrowdOwned Contracts..."
                   :
-                  <ul className="crowd-owned-contracts">
+                  <div className="crowd-owned-contracts listing-block">
                     {crowdOwnedContracts.length === 0 ? <em>The CrowdOwned Contracts list is empty.</em> : null}
                     {this.sortCrowdOwnedContracts(crowdOwnedContracts).map((crowdOwnedContract) => (
                       <CrowdOwnedContract crowdOwnedContract={crowdOwnedContract} key={crowdOwnedContract.address}/>
                     ))}
-                  </ul>
+                  </div>
                 }
               </div>
             </div>
