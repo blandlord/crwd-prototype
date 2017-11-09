@@ -5,6 +5,7 @@ let initialData = {
   newCrowdOwnedContract: {
     name: '',
     symbol: '',
+    imageUrl: '',
   },
   crowdOwnedContracts: [],
   crowdOwnedContract: null,

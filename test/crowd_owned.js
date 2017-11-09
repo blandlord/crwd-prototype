@@ -9,15 +9,17 @@ contract('CrowdOwned', function (accounts) {
 
   before(async function beforeTest() {
     registryInstance = await Registry.deployed();
-    tokenInstance = await CrowdOwned.new("My Token", "MYT", accounts[0], registryInstance.address);
+    tokenInstance = await CrowdOwned.new("My Token", "MYT", "http://example.com/image", accounts[0], registryInstance.address, {gas: 3000000});
   });
 
   describe('proper instantiation', function () {
-    it("saves name/symbol", async function () {
+    it("saves name/symbol/imageUrl", async function () {
       let name = await tokenInstance.name();
       assert.equal(name, "My Token");
       let symbol = await tokenInstance.symbol();
       assert.equal(symbol, "MYT");
+      let imageUrl = await tokenInstance.imageUrl();
+      assert.equal(imageUrl, "http://example.com/image");
     });
   });
 
@@ -96,5 +98,22 @@ contract('CrowdOwned', function (accounts) {
     });
 
   });
+
+  describe('totalSupply/circulatingSupply', function () {
+
+    before(async function beforeTest() {
+      await tokenInstance.transfer(tokenInstance.address, 10000, {from: accounts[0]});
+    });
+
+    it("ok", async function () {
+      let totalSupply = await tokenInstance.totalSupply();
+      assert.equal(totalSupply.toNumber(), 100000);
+
+      let circulatingSupply = await tokenInstance.circulatingSupply();
+      assert.equal(circulatingSupply.toNumber(), 90000);
+    });
+
+  });
+
 
 });

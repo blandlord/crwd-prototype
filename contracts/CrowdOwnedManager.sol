@@ -10,7 +10,7 @@ contract CrowdOwnedManager is Ownable {
   /*
    *  Events
    */
-  event CrowdOwnedDeployed(address indexed contractAddress, string name, string symbol);
+  event CrowdOwnedDeployed(address indexed contractAddress, string name, string symbol, string imageUrl);
 
   /*
   *  Storage
@@ -50,9 +50,9 @@ contract CrowdOwnedManager is Ownable {
   /**
   * @dev deploy CrowdOwned contract
   */
-  function deployCrowdOwned(string _name, string _symbol) public onlyRegistryOwner {
+  function deployCrowdOwned(string _name, string _symbol, string _imageUrl) public onlyRegistryOwner {
     // deploy contract
-    CrowdOwned crowdOwned = new CrowdOwned(_name, _symbol, msg.sender, registry);
+    CrowdOwned crowdOwned = new CrowdOwned(_name, _symbol, _imageUrl, msg.sender, registry);
 
     var contractAddress = address(crowdOwned);
 
@@ -62,7 +62,7 @@ contract CrowdOwnedManager is Ownable {
     contractsAddresses.push(contractAddress);
 
     // Log event
-    CrowdOwnedDeployed(contractAddress, _name, _symbol);
+    CrowdOwnedDeployed(contractAddress, _name, _symbol, _imageUrl);
   }
 
   /**

@@ -51,6 +51,11 @@ class CrowdOwnedDetails extends Component {
                     <div>Symbol: {crowdOwnedContract.symbol}</div>
                     <div>Address: {crowdOwnedContract.address}</div>
                     <div>Your Balance: {crowdOwnedContract.balance}</div>
+                    {crowdOwnedContract.imageUrl ?
+                      <div>
+                        <img className="img-responsive" src={crowdOwnedContract.imageUrl} role="presentation"/>
+                      </div>
+                      : null}
                   </div>
                 </div>
 

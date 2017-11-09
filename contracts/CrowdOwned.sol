@@ -18,6 +18,8 @@ contract CrowdOwned is StandardToken, Ownable {
 
   string public  symbol;
 
+  string public  imageUrl;
+
   /*
    * Constants
    */
@@ -31,12 +33,14 @@ contract CrowdOwned is StandardToken, Ownable {
   * @dev Contract constructor
   * @param _name Contract Name
   * @param _symbol Contract Symbol
+  * @param _imageUrl CrowdOwned Object Image Url
   */
-  function CrowdOwned(string _name, string _symbol, address _owner, Registry _registry) {
+  function CrowdOwned(string _name, string _symbol, string _imageUrl, address _owner, Registry _registry) {
     totalSupply = INITIAL_SUPPLY;
     balances[_owner] = INITIAL_SUPPLY;
     name = _name;
     symbol = _symbol;
+    imageUrl = _imageUrl;
 
     // override Ownable constructor to allow indirect deployment
     owner = _owner;
@@ -60,7 +64,7 @@ contract CrowdOwned is StandardToken, Ownable {
   * @param _value The amount to be transferred.
   */
   function transfer(address _to, uint256 _value) public returns (bool) {
-    require(registry.isVerifiedAndValid(_to));
+    require(isValidTransfer(_to));
 
     return super.transfer(_to, _value);
   }
@@ -71,9 +75,25 @@ contract CrowdOwned is StandardToken, Ownable {
   * @param _value The amount to be transferred.
   */
   function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
-    require(registry.isVerifiedAndValid(_to));
+    require(isValidTransfer(_to));
 
     return super.transferFrom(_from, _to, _value);
   }
+
+  /**
+  * @dev check if transfer is valid
+  * @param _to The address to transfer to.
+  */
+  function isValidTransfer(address _to) public constant returns (bool){
+    return (_to == address(this) || registry.isVerifiedAndValid(_to));
+  }
+
+  /**
+  * @dev get tokens circulating supply
+  */
+  function circulatingSupply() public constant returns (uint) {
+    return totalSupply - balanceOf(address(this));
+  }
+
 
 }

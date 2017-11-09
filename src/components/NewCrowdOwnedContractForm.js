@@ -41,11 +41,20 @@ class NewCrowdOwnedContractForm extends Component {
         </div>
 
         <div className="row">
-          <div className="form-group col-md-6">
+          <div className="form-group col-md-4">
             <label>Symbol:</label>
             <input type="text" name="symbol" placeholder="TOK" className="form-control"
                    value={crowdOwnedStore.get("newCrowdOwnedContract").symbol}
                    onChange={(e) => this.updateInputValue(e, 'symbol')}/>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="form-group col-md-8">
+            <label>Image Url:</label>
+            <input type="text" name="imageUrl" placeholder="http://example.com/image.jpg" className="form-control"
+                   value={crowdOwnedStore.get("newCrowdOwnedContract").imageUrl}
+                   onChange={(e) => this.updateInputValue(e, 'imageUrl')}/>
           </div>
         </div>
 

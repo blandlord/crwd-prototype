@@ -23,7 +23,7 @@ contract('CrowdOwnedManager', function (accounts) {
 
   describe('deployCrowdOwned', function () {
     it("deploys CrowdOwned contract and saves data in CrowdOwnedManager", async function () {
-      let results = await crowdOwnedManagerInstance.deployCrowdOwned("Token A", "TOKA");
+      let results = await crowdOwnedManagerInstance.deployCrowdOwned("Token A", "TOKA", "http://example.com/image");
 
       let log = results.logs[0];
       let loggedTokenAddress = log.args.contractAddress;
@@ -34,6 +34,8 @@ contract('CrowdOwnedManager', function (accounts) {
       assert.equal(name, "Token A");
       let symbol = await tokenInstance.symbol();
       assert.equal(symbol, "TOKA");
+      let imageUrl = await tokenInstance.imageUrl();
+      assert.equal(imageUrl,  "http://example.com/image");
       let owner = await tokenInstance.owner();
       assert.equal(owner, accounts[0]);
       let registryAddress = await tokenInstance.registry();

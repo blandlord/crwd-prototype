@@ -3,7 +3,7 @@ import contractService from '../utils/contractService';
 async function deployCrowdOwned(web3, newCrowdOwnedContractData) {
   const crowdOwnedManagerInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedManager");
 
-  let results = await crowdOwnedManagerInstance.deployCrowdOwned(newCrowdOwnedContractData.name, newCrowdOwnedContractData.symbol, {gas: 2000000});
+  let results = await crowdOwnedManagerInstance.deployCrowdOwned(newCrowdOwnedContractData.name, newCrowdOwnedContractData.symbol, newCrowdOwnedContractData.imageUrl, {gas: 2000000});
   return results;
 }
 
@@ -47,11 +47,13 @@ async function loadCrowdOwnedContract(web3, address) {
 
   let name = await crowdOwnedInstance.name();
   let symbol = await crowdOwnedInstance.symbol();
+  let imageUrl = await crowdOwnedInstance.imageUrl();
   let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
 
   const crowdOwnedContract = {
     name,
     symbol,
+    imageUrl,
     balance: balance.toNumber(),
     address
   };
@@ -61,12 +63,10 @@ async function loadCrowdOwnedContract(web3, address) {
 
 async function transferTokens(web3, newTokensTransfer) {
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", newTokensTransfer.contractAddress);
-  const registryInstance = await contractService.getDeployedInstance(web3, "Registry");
 
-  let isValidDestination = await registryInstance.isVerifiedAndValid(newTokensTransfer.to);
-
-  if (!isValidDestination) {
-    throw new Error("Destination address must be verified in the Registry");
+  let isValidTransfer = await crowdOwnedInstance.isValidTransfer(newTokensTransfer.to);
+  if (!isValidTransfer) {
+    throw new Error("Destination address must be verified in the Registry or be the crowd owned contract address");
   }
 
   let currentBalance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
