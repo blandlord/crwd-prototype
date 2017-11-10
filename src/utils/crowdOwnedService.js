@@ -49,12 +49,14 @@ async function loadCrowdOwnedContract(web3, address) {
   let symbol = await crowdOwnedInstance.symbol();
   let imageUrl = await crowdOwnedInstance.imageUrl();
   let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
+  let contractBalance = await crowdOwnedInstance.balanceOf(crowdOwnedInstance.address);
 
   const crowdOwnedContract = {
     name,
     symbol,
     imageUrl,
     balance: balance.toNumber(),
+    contractBalance: contractBalance.toNumber(),
     address
   };
 
