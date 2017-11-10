@@ -2,6 +2,8 @@ const Registry = artifacts.require("./Registry.sol");
 
 let STATE = require('./utils/state');
 
+const expectRequireFailure = require('./support/expectRequireFailure');
+
 contract('Registry', function (accounts) {
 
   describe('addUserAddress/getUserAddresses', function () {
@@ -39,33 +41,13 @@ contract('Registry', function (accounts) {
     it("adding an already existing user address throws an error", async function () {
       const instance = await  Registry.deployed();
 
-      try {
-        await instance.addUserAddress("XYZ", {from: accounts[1]});
-
-        // we shouldn't get to this point
-        assert(false, "Transaction should have failed");
-      }
-      catch (err) {
-        if (err.toString().indexOf("invalid opcode") < 0) {
-          assert(false, err.toString());
-        }
-      }
+      await expectRequireFailure(() => instance.addUserAddress("XYZ", {from: accounts[1]}));
     });
 
     it("adding a empty ssn throws an error", async function () {
       const instance = await  Registry.deployed();
 
-      try {
-        await instance.addUserAddress("", {from: accounts[0]});
-
-        // we shouldn't get to this point
-        assert(false, "Transaction should have failed");
-      }
-      catch (err) {
-        if (err.toString().indexOf("invalid opcode") < 0) {
-          assert(false, err.toString());
-        }
-      }
+      await expectRequireFailure(() => instance.addUserAddress("", {from: accounts[0]}));
     });
 
   });
@@ -83,17 +65,7 @@ contract('Registry', function (accounts) {
       it("not owner cannot set state", async function () {
         const instance = await  Registry.deployed();
 
-        try {
-          await instance.setState(accounts[1], STATE.VERIFIED, {from: userAddress});
-
-          // we shouldn't get to this point
-          assert(false, "Transaction should have failed");
-        }
-        catch (err) {
-          if (err.toString().indexOf("invalid opcode") < 0) {
-            assert(false, err.toString());
-          }
-        }
+        await expectRequireFailure(() => instance.setState(accounts[1], STATE.VERIFIED, {from: userAddress}));
       });
 
     });
@@ -108,17 +80,7 @@ contract('Registry', function (accounts) {
         it("cannot set state on inexisting user address", async function () {
           const instance = await  Registry.deployed();
 
-          try {
-            await instance.setState("0x" + require('crypto').randomBytes(20).toString('hex'), STATE.VERIFIED, {from: userAddress});
-
-            // we shouldn't get to this point
-            assert(false, "Transaction should have failed");
-          }
-          catch (err) {
-            if (err.toString().indexOf("invalid opcode") < 0) {
-              assert(false, err.toString());
-            }
-          }
+          await expectRequireFailure(() => instance.setState("0x" + require('crypto').randomBytes(20).toString('hex'), STATE.VERIFIED, {from: userAddress}));
         });
       });
 
@@ -127,33 +89,13 @@ contract('Registry', function (accounts) {
         it("cannot set invalid state", async function () {
           const instance = await  Registry.deployed();
 
-          try {
-            await instance.setState(accounts[1], 55/*random inexisting value*/, {from: userAddress});
-
-            // we shouldn't get to this point
-            assert(false, "Transaction should have failed");
-          }
-          catch (err) {
-            if (err.toString().indexOf("invalid opcode") < 0) {
-              assert(false, err.toString());
-            }
-          }
+          await expectRequireFailure(() => instance.setState(accounts[1], 55/*random inexisting value*/, {from: userAddress}));
         });
 
         it("cannot set invalid transition NEW -> EXPIRED", async function () {
           const instance = await  Registry.deployed();
 
-          try {
-            await instance.setState(accounts[1], STATE.EXPIRED, {from: userAddress});
-
-            // we shouldn't get to this point
-            assert(false, "Transaction should have failed");
-          }
-          catch (err) {
-            if (err.toString().indexOf("invalid opcode") < 0) {
-              assert(false, err.toString());
-            }
-          }
+          await expectRequireFailure(() => instance.setState(accounts[1], STATE.EXPIRED, {from: userAddress}));
         });
 
         it("can set valid transition NEW -> VERIFIED", async function () {

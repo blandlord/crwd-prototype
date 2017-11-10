@@ -1,6 +1,8 @@
 const Registry = artifacts.require("./Registry.sol");
 const CrowdOwned = artifacts.require("./CrowdOwned.sol");
 
+const expectRequireFailure = require('./support/expectRequireFailure');
+
 let STATE = require('./utils/state');
 
 contract('CrowdOwned', function (accounts) {
@@ -33,17 +35,7 @@ contract('CrowdOwned', function (accounts) {
     });
 
     it("non owner cannot set registry address", async function () {
-      try {
-        await tokenInstance.setRegistry(registryInstance.address, {from: accounts[1]});
-
-        // we shouldn't get to this point
-        assert(false, "Transaction should have failed");
-      }
-      catch (err) {
-        if (err.toString().indexOf("invalid opcode") < 0) {
-          assert(false, err.toString());
-        }
-      }
+      await expectRequireFailure(() =>tokenInstance.setRegistry(registryInstance.address, {from: accounts[1]}));
     });
 
   });
@@ -70,31 +62,11 @@ contract('CrowdOwned', function (accounts) {
     });
 
     it("not transferable if destination is in registry list but not verified", async function () {
-      try {
-        await tokenInstance.transfer(accounts[2], 50, {from: accounts[0]});
-
-        // we shouldn't get to this point
-        assert(false, "Transaction should have failed");
-      }
-      catch (err) {
-        if (err.toString().indexOf("invalid opcode") < 0) {
-          assert(false, err.toString());
-        }
-      }
+      await expectRequireFailure(() => tokenInstance.transfer(accounts[2], 50, {from: accounts[0]}));
     });
 
     it("not transferable if destination is not in registry list", async function () {
-      try {
-        await tokenInstance.transfer(accounts[3], 50, {from: accounts[0]});
-
-        // we shouldn't get to this point
-        assert(false, "Transaction should have failed");
-      }
-      catch (err) {
-        if (err.toString().indexOf("invalid opcode") < 0) {
-          assert(false, err.toString());
-        }
-      }
+      await expectRequireFailure(() => tokenInstance.transfer(accounts[3], 50, {from: accounts[0]}));
     });
 
   });
