@@ -27,6 +27,10 @@ class CrowdOwnedDetails extends Component {
     this.props.crowdOwnedActions.loadCrowdOwnedContract({contractAddress: address});
   }
 
+  sortOwnersData(ownersData) {
+    return _.orderBy(ownersData, ['balance'], ['desc']);
+  }
+
   render() {
     if (!this.props.web3Store.get("web3")) {
       return null;
@@ -57,6 +61,16 @@ class CrowdOwnedDetails extends Component {
                         <img className="img-responsive" src={crowdOwnedContract.imageUrl} role="presentation"/>
                       </div>
                       : null}
+                    <div>
+                      Owners:
+                      <ul>
+                        {this.sortOwnersData(crowdOwnedContract.ownersData).map((ownerData) => (
+                          <li key={ownerData.address}>
+                            {ownerData.address} ({ownerData.balance} Token(s))
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
 

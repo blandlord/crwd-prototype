@@ -59,6 +59,9 @@ function* loadCrowdOwnedContract(data) {
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
     let crowdOwnedContract = yield call(crowdOwnedService.loadCrowdOwnedContract, web3, data.contractAddress);
+    let ownersData = yield call(crowdOwnedService.getOwnersData, web3, data.contractAddress);
+
+    crowdOwnedContract.ownersData = ownersData;
 
     yield put(crowdOwnedActions.fetchLoadCrowdOwnedContract.success({crowdOwnedContract}));
   } catch (error) {

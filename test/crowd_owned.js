@@ -15,13 +15,16 @@ contract('CrowdOwned', function (accounts) {
   });
 
   describe('proper instantiation', function () {
-    it("saves name/symbol/imageUrl", async function () {
+    it("ok", async function () {
       let name = await tokenInstance.name();
       assert.equal(name, "My Token");
       let symbol = await tokenInstance.symbol();
       assert.equal(symbol, "MYT");
       let imageUrl = await tokenInstance.imageUrl();
       assert.equal(imageUrl, "http://example.com/image");
+
+      let ownerAddresses = await tokenInstance.getOwnerAddresses();
+      assert.deepEqual(ownerAddresses, [accounts[0]]);
     });
   });
 
@@ -59,6 +62,12 @@ contract('CrowdOwned', function (accounts) {
 
       let account_1_balance = await tokenInstance.balanceOf(accounts[1]);
       assert.equal(account_1_balance.toNumber(), 50);
+
+      // second transfer to make sure owner only added to list once
+      await tokenInstance.transfer(accounts[1], 100, {from: accounts[0]});
+
+      let ownerAddresses = await tokenInstance.getOwnerAddresses();
+      assert.deepEqual(ownerAddresses, [accounts[0],accounts[1]]);
     });
 
     it("not transferable if destination is in registry list but not verified", async function () {

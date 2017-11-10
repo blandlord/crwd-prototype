@@ -20,6 +20,10 @@ contract CrowdOwned is StandardToken, Ownable {
 
   string public  imageUrl;
 
+  mapping (address => bool) ownerAddressInitialized;
+
+  address[] public ownerAddresses;
+
   /*
    * Constants
    */
@@ -36,8 +40,6 @@ contract CrowdOwned is StandardToken, Ownable {
   * @param _imageUrl CrowdOwned Object Image Url
   */
   function CrowdOwned(string _name, string _symbol, string _imageUrl, address _owner, Registry _registry) {
-    totalSupply = INITIAL_SUPPLY;
-    balances[_owner] = INITIAL_SUPPLY;
     name = _name;
     symbol = _symbol;
     imageUrl = _imageUrl;
@@ -47,8 +49,13 @@ contract CrowdOwned is StandardToken, Ownable {
 
     // set registry
     registry = _registry;
-  }
 
+    totalSupply = INITIAL_SUPPLY;
+    balances[_owner] = INITIAL_SUPPLY;
+
+    // add owner to list
+    tryAddOwnerAddress(_owner);
+  }
 
   /**
   * @dev set registry contract address
@@ -66,6 +73,9 @@ contract CrowdOwned is StandardToken, Ownable {
   function transfer(address _to, uint256 _value) public returns (bool) {
     require(isValidTransfer(_to));
 
+    // add owner address if necessary
+    tryAddOwnerAddress(_to);
+
     return super.transfer(_to, _value);
   }
 
@@ -76,6 +86,9 @@ contract CrowdOwned is StandardToken, Ownable {
   */
   function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
     require(isValidTransfer(_to));
+
+    // add owner address if necessary
+    tryAddOwnerAddress(_to);
 
     return super.transferFrom(_from, _to, _value);
   }
@@ -95,5 +108,22 @@ contract CrowdOwned is StandardToken, Ownable {
     return totalSupply - balanceOf(address(this));
   }
 
+  /**
+  * @dev Add owner address if necessary
+  * @param _address Owner Address to be added
+  */
+  function tryAddOwnerAddress(address _address) internal {
+    if (!ownerAddressInitialized[_address]) {
+      ownerAddresses.push(_address);
+      ownerAddressInitialized[_address] = true;
+    }
+  }
+
+  /**
+  * @dev get owner addresses
+  */
+  function getOwnerAddresses() public constant returns (address[]) {
+    return ownerAddresses;
+  }
 
 }

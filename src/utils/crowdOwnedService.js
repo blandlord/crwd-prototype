@@ -76,9 +76,23 @@ async function transferTokens(web3, newTokensTransfer) {
     throw new Error("Cannot transfer more than the current balance");
   }
 
-  let results = await crowdOwnedInstance.transfer(newTokensTransfer.to, newTokensTransfer.amount, {gas: 80000});
+  let results = await crowdOwnedInstance.transfer(newTokensTransfer.to, newTokensTransfer.amount, {gas: 120000});
   return results;
 }
+
+async function getOwnersData(web3, address) {
+  const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", address);
+
+  let ownerAddresses = await crowdOwnedInstance.getOwnerAddresses();
+
+  let ownersData = [];
+  for (let i = 0; i < ownerAddresses.length; i++) {
+    let balance = await crowdOwnedInstance.balanceOf( ownerAddresses[i]);
+    ownersData.push({balance: balance.toNumber(), address: ownerAddresses[i]});
+  }
+  return ownersData;
+}
+
 
 let crowdOwnedService = {
   deployCrowdOwned: deployCrowdOwned,
@@ -86,6 +100,7 @@ let crowdOwnedService = {
   loadCrowdOwnedContract: loadCrowdOwnedContract,
   loadOwnershipData: loadOwnershipData,
   transferTokens: transferTokens,
+  getOwnersData
 };
 
 export default crowdOwnedService;
