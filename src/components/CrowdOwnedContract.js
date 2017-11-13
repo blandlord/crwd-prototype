@@ -9,12 +9,10 @@ class CrowdOwnedContract extends Component {
 
   render() {
     let crowdOwnedContract = this.props.crowdOwnedContract;
-    
-    let url = "https://www.blandlord.com/media/0-vooraanzicht.jpg";
 
     return (
       <div className="media">
-        <img className="img-responsive" src={url} role="presentation"/>
+        <img className="img-responsive" src={crowdOwnedContract.imageUrl} role="presentation"/>
         <div className="media-body">
           <div className="price">
             <NavLink exact to={"/crowd-owned/" + crowdOwnedContract.address}>{crowdOwnedContract.name}</NavLink>

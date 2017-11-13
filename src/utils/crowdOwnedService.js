@@ -30,13 +30,15 @@ async function loadCrowdOwnedContracts(web3) {
   return crowdOwnedContracts;
 }
 
-async function loadOwnershipData(web3, crowdOwnedContracts) {
+async function populateContractsData(web3, crowdOwnedContracts) {
 
   for (let i = 0; i < crowdOwnedContracts.length; i++) {
     let crowdOwnedContractData = crowdOwnedContracts[i];
     const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", crowdOwnedContractData.address);
     let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
+    let imageUrl = await crowdOwnedInstance.imageUrl();
     crowdOwnedContractData.balance = balance.toNumber();
+    crowdOwnedContractData.imageUrl = imageUrl;
   }
 
   return crowdOwnedContracts;
@@ -98,7 +100,7 @@ let crowdOwnedService = {
   deployCrowdOwned: deployCrowdOwned,
   loadCrowdOwnedContracts: loadCrowdOwnedContracts,
   loadCrowdOwnedContract: loadCrowdOwnedContract,
-  loadOwnershipData: loadOwnershipData,
+  populateContractsData: populateContractsData,
   transferTokens: transferTokens,
   getOwnersData
 };
