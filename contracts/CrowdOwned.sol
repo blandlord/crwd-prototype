@@ -8,6 +8,12 @@ import './CrowdOwnedManager.sol';
 
 
 contract CrowdOwned is StandardToken, Ownable {
+  /*
+   *  Events
+   */
+  event ValuationSaved(uint indexed _blockheight, bytes32 _currency, uint _value);
+
+  event ValuationDeleted(uint indexed _blockheight);
 
   /*
    * Storage
@@ -23,6 +29,17 @@ contract CrowdOwned is StandardToken, Ownable {
   mapping (address => bool) ownerAddressInitialized;
 
   address[] public ownerAddresses;
+
+  mapping (uint => Valuation) public valuationsData;
+
+  uint[] public valuationBlockheights;
+
+  struct Valuation {
+  bytes32 currency;
+  uint value;
+  bool isValuation;
+  }
+
 
   /*
    * Constants
@@ -125,5 +142,67 @@ contract CrowdOwned is StandardToken, Ownable {
   function getOwnerAddresses() public constant returns (address[]) {
     return ownerAddresses;
   }
+
+
+  /**
+  * @dev Save valuation
+  * @param _blockheight valuation blockheight
+  * @param _currency valuation currency
+  * @param _value valuation value
+  */
+  function saveValuation(uint _blockheight, bytes32 _currency, uint _value) public onlyOwner {
+    // make sure blockheight after last valuation blockheight
+    require(_blockheight > getLastValuationBlockheight());
+
+    // create new valuation
+    valuationsData[_blockheight].currency = _currency;
+    valuationsData[_blockheight].value = _value;
+    valuationsData[_blockheight].isValuation = true;
+    valuationBlockheights.push(_blockheight);
+
+    // Log event
+    ValuationSaved(_blockheight, _currency, _value);
+  }
+
+  /**
+  * @dev Get last valuation blockheight
+  */
+  function getLastValuationBlockheight() public constant returns (uint){
+    if (valuationBlockheights.length == 0) {
+      // no data
+      return 0;
+    }
+
+    // find last blockheight whose valuation data was not deleted
+    for (uint i = valuationBlockheights.length - 1; i >= 0; i--)
+    {
+      uint blockheight = valuationBlockheights[i];
+      if (valuationsData[blockheight].isValuation) {
+        return blockheight;
+      }
+    }
+  }
+
+  /**
+  * @dev Delete valuation
+  * @param _blockheight valuation blockheight
+  */
+  function deleteValuation(uint _blockheight) public onlyOwner {
+    delete valuationsData[_blockheight];
+
+    // Log event
+    ValuationDeleted(_blockheight);
+  }
+
+  /**
+  * @dev Get Valuation
+  * @param _blockheight valuation blockheight
+  */
+  function getValuation(uint _blockheight) public constant returns (uint, bytes32, uint){
+    // calling with 0 returns the last valuation data
+    uint blockheight = (_blockheight > 0 ? _blockheight : getLastValuationBlockheight());
+    return (blockheight, valuationsData[blockheight].currency, valuationsData[blockheight].value);
+  }
+
 
 }

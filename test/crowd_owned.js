@@ -7,9 +7,10 @@ let STATE = require('./utils/state');
 
 contract('CrowdOwned', function (accounts) {
 
-  let registryInstance, tokenInstance;
+  let web3, registryInstance, tokenInstance;
 
   before(async function beforeTest() {
+    web3 = CrowdOwned.web3;
     registryInstance = await Registry.deployed();
     tokenInstance = await CrowdOwned.new("My Token", "MYT", "http://example.com/image", accounts[0], registryInstance.address, {gas: 3000000});
   });
@@ -38,7 +39,7 @@ contract('CrowdOwned', function (accounts) {
     });
 
     it("non owner cannot set registry address", async function () {
-      await expectRequireFailure(() =>tokenInstance.setRegistry(registryInstance.address, {from: accounts[1]}));
+      await expectRequireFailure(() => tokenInstance.setRegistry(registryInstance.address, {from: accounts[1]}));
     });
 
   });
@@ -67,7 +68,7 @@ contract('CrowdOwned', function (accounts) {
       await tokenInstance.transfer(accounts[1], 100, {from: accounts[0]});
 
       let ownerAddresses = await tokenInstance.getOwnerAddresses();
-      assert.deepEqual(ownerAddresses, [accounts[0],accounts[1]]);
+      assert.deepEqual(ownerAddresses, [accounts[0], accounts[1]]);
     });
 
     it("not transferable if destination is in registry list but not verified", async function () {
@@ -96,5 +97,54 @@ contract('CrowdOwned', function (accounts) {
 
   });
 
+  describe('saveValuation / getLastValuationBlockheight / deleteValuation', function () {
+
+    it("ok", async function () {
+      let lastValuationBlockheight = await tokenInstance.getLastValuationBlockheight();
+      assert.equal(lastValuationBlockheight.toNumber(), 0);
+
+      await tokenInstance.saveValuation(1111, "EUR", 5000);
+
+      lastValuationBlockheight = await tokenInstance.getLastValuationBlockheight();
+      assert.equal(lastValuationBlockheight.toNumber(), 1111);
+
+      let blockheight = await tokenInstance.valuationBlockheights(0);
+      assert.equal(blockheight.toNumber(), 1111);
+
+      let valuationData = await tokenInstance.valuationsData(blockheight);
+      assert.equal(web3.toAscii(valuationData[0]).replace(/\u0000/g, ""), "EUR");
+      assert.equal(valuationData[1].toNumber(), 5000);
+      assert.equal(valuationData[2], true);
+
+      await tokenInstance.saveValuation(2222, "EUR", 10000);
+      await tokenInstance.saveValuation(3333, "EUR", 15000);
+      await tokenInstance.saveValuation(4444, "EUR", 20000);
+
+      lastValuationBlockheight = await tokenInstance.getLastValuationBlockheight();
+      assert.equal(lastValuationBlockheight.toNumber(), 4444);
+
+      await tokenInstance.deleteValuation(4444);
+
+      lastValuationBlockheight = await tokenInstance.getLastValuationBlockheight();
+      assert.equal(lastValuationBlockheight.toNumber(), 3333);
+    });
+
+  });
+
+  describe('getValuation', function () {
+
+    it("ok", async function () {
+      let valuation = await tokenInstance.getValuation(0);
+      assert.equal(valuation[0], 3333);
+      assert.equal(web3.toAscii(valuation[1]).replace(/\u0000/g, ""), "EUR");
+      assert.equal(valuation[2].toNumber(), 15000);
+
+      valuation = await tokenInstance.getValuation(2222);
+      assert.equal(valuation[0], 2222);
+      assert.equal(web3.toAscii(valuation[1]).replace(/\u0000/g, ""), "EUR");
+      assert.equal(valuation[2].toNumber(), 10000);
+    });
+
+  });
 
 });
