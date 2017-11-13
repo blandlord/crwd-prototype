@@ -1,13 +1,15 @@
 const CrowdOwnedManager = artifacts.require("./CrowdOwnedManager.sol");
 const CrowdOwned = artifacts.require("./CrowdOwned.sol");
 const Registry = artifacts.require("./Registry.sol");
+const CRWDToken = artifacts.require("./CRWDToken.sol");
 
 contract('CrowdOwnedManager', function (accounts) {
 
-  let registryInstance, crowdOwnedManagerInstance;
+  let registryInstance, crwdTokenInstance,crowdOwnedManagerInstance;
 
   before(async function beforeTest() {
     registryInstance = await Registry.deployed();
+    crwdTokenInstance = await CRWDToken.deployed();
     crowdOwnedManagerInstance = await CrowdOwnedManager.deployed();
   });
 
@@ -17,6 +19,12 @@ contract('CrowdOwnedManager', function (accounts) {
       let registryAddress = await crowdOwnedManagerInstance.registry();
 
       assert.equal(registryAddress, registryInstance.address);
+    });
+
+    it('CRWDToken set ok', async function it() {
+      let crwdTokenAddress = await crowdOwnedManagerInstance.crwdToken();
+
+      assert.equal(crwdTokenAddress, crwdTokenInstance.address);
     });
 
   });

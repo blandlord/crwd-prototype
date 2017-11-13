@@ -56,6 +56,7 @@ class CrowdOwnedDetails extends Component {
                     <div>Address: {crowdOwnedContract.address}</div>
                     <div>Your Balance: {crowdOwnedContract.balance}</div>
                     <div>Contract Balance: {crowdOwnedContract.contractBalance}</div>
+                    <div>Contract CRWD Balance: {crowdOwnedContract.contractCRWDBalance}</div>
                     {crowdOwnedContract.imageUrl ?
                       <div>
                         <img className="img-responsive" src={crowdOwnedContract.imageUrl} role="presentation"/>

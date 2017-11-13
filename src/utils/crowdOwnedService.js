@@ -46,12 +46,14 @@ async function populateContractsData(web3, crowdOwnedContracts) {
 
 async function loadCrowdOwnedContract(web3, address) {
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", address);
+  const crwdTokenInstance = await  await contractService.getDeployedInstance(web3, "CRWDToken");
 
   let name = await crowdOwnedInstance.name();
   let symbol = await crowdOwnedInstance.symbol();
   let imageUrl = await crowdOwnedInstance.imageUrl();
   let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
   let contractBalance = await crowdOwnedInstance.balanceOf(crowdOwnedInstance.address);
+  let contractCRWDBalance = await crwdTokenInstance.balanceOf(crowdOwnedInstance.address);
 
   const crowdOwnedContract = {
     name,
@@ -59,6 +61,7 @@ async function loadCrowdOwnedContract(web3, address) {
     imageUrl,
     balance: balance.toNumber(),
     contractBalance: contractBalance.toNumber(),
+    contractCRWDBalance: contractCRWDBalance.toNumber(),
     address
   };
 
@@ -89,7 +92,7 @@ async function getOwnersData(web3, address) {
 
   let ownersData = [];
   for (let i = 0; i < ownerAddresses.length; i++) {
-    let balance = await crowdOwnedInstance.balanceOf( ownerAddresses[i]);
+    let balance = await crowdOwnedInstance.balanceOf(ownerAddresses[i]);
     ownersData.push({balance: balance.toNumber(), address: ownerAddresses[i]});
   }
   return ownersData;

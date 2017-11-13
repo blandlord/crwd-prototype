@@ -4,6 +4,7 @@ pragma solidity ^0.4.15;
 import "./Ownable.sol";
 import "./CrowdOwned.sol";
 import "./Registry.sol";
+import "./CRWDToken.sol";
 
 
 contract CrowdOwnedManager is Ownable {
@@ -16,6 +17,8 @@ contract CrowdOwnedManager is Ownable {
   *  Storage
   */
   Registry public registry;
+
+  CRWDToken public crwdToken;
 
   mapping (address => ContractData) public contractsData;
 
@@ -43,8 +46,9 @@ contract CrowdOwnedManager is Ownable {
   * Public functions
   */
   /// @dev Contract constructor
-  function CrowdOwnedManager(Registry _registry) {
+  function CrowdOwnedManager(Registry _registry, CRWDToken _crwdToken) {
     registry = _registry;
+    crwdToken = _crwdToken;
   }
 
   /**
