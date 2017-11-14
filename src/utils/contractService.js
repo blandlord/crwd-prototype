@@ -39,4 +39,9 @@ let contractService = {
   getInstanceAt: getInstanceAt,
 };
 
+if (process.env.NODE_ENV === "development") {
+  // assign to window vars for debugging
+  window.debugVars = {contractService: contractService};
+}
+
 export default contractService;

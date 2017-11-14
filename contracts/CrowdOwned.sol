@@ -198,10 +198,10 @@ contract CrowdOwned is StandardToken, Ownable {
   * @dev Get Valuation
   * @param _blockheight valuation blockheight
   */
-  function getValuation(uint _blockheight) public constant returns (uint, bytes32, uint){
+  function getValuation(uint _blockheight) public constant returns (uint, bytes32, uint, bool){
     // calling with 0 returns the last valuation data
     uint blockheight = (_blockheight > 0 ? _blockheight : getLastValuationBlockheight());
-    return (blockheight, valuationsData[blockheight].currency, valuationsData[blockheight].value);
+    return (blockheight, valuationsData[blockheight].currency, valuationsData[blockheight].value, valuationsData[blockheight].isValuation);
   }
 
 

@@ -138,11 +138,13 @@ contract('CrowdOwned', function (accounts) {
       assert.equal(valuation[0], 3333);
       assert.equal(web3.toAscii(valuation[1]).replace(/\u0000/g, ""), "EUR");
       assert.equal(valuation[2].toNumber(), 15000);
+      assert.equal(valuation[3], true);
 
       valuation = await tokenInstance.getValuation(2222);
       assert.equal(valuation[0], 2222);
       assert.equal(web3.toAscii(valuation[1]).replace(/\u0000/g, ""), "EUR");
       assert.equal(valuation[2].toNumber(), 10000);
+      assert.equal(valuation[3], true);
     });
 
   });

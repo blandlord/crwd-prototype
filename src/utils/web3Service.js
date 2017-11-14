@@ -31,7 +31,7 @@ let getWeb3 = () => new Promise(function (resolve, reject) {
 
 
       // poll for metamask account change => refresh page
-      setInterval(function() {
+      setInterval(function () {
         web3.eth.getAccounts((err, accounts) => {
           if (accounts[0] !== currentAccount) {
             window.location.reload();
@@ -70,14 +70,20 @@ let getWeb3 = () => new Promise(function (resolve, reject) {
           networkName = "Private"
         }
 
+        if (process.env.NODE_ENV === "development") {
+          // assign to window vars for debugging
+          window.debugVars.web3 = web3 ;
+        }
+
         resolve({web3, networkName});
       });
     });
   });
 });
 
+
 let web3Service = {
-  getWeb3: getWeb3
+  getWeb3: getWeb3,
 };
 
 

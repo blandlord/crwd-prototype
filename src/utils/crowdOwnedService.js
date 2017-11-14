@@ -1,5 +1,7 @@
 import contractService from '../utils/contractService';
 
+const promisify = require("promisify-es6");
+
 async function deployCrowdOwned(web3, newCrowdOwnedContractData) {
   const crowdOwnedManagerInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedManager");
 
@@ -54,6 +56,10 @@ async function loadCrowdOwnedContract(web3, address) {
   let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
   let contractBalance = await crowdOwnedInstance.balanceOf(crowdOwnedInstance.address);
   let contractCRWDBalance = await crwdTokenInstance.balanceOf(crowdOwnedInstance.address);
+  let lastValuation = await crowdOwnedInstance.getValuation(0);
+  let lastValuationBlock = await promisify(web3.eth.getBlock)(lastValuation[0].toNumber());
+  let lastValuationDate = new Date(lastValuationBlock.timestamp * 1000);
+
 
   const crowdOwnedContract = {
     name,
@@ -62,6 +68,13 @@ async function loadCrowdOwnedContract(web3, address) {
     balance: balance.toNumber(),
     contractBalance: contractBalance.toNumber(),
     contractCRWDBalance: contractCRWDBalance.toNumber(),
+    lastValuation: {
+      date: lastValuationDate,
+      blockheight: lastValuation[0],
+      currency: web3.toAscii(lastValuation[1]).replace(/\u0000/g, ""),
+      value: lastValuation[2],
+      isValuation: lastValuation[3]
+    },
     address
   };
 

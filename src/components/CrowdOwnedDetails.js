@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 
 const _ = require('lodash');
+import moment from 'moment';
 
 import * as crowdOwnedActions from '../actions/crowdOwnedActions';
 import * as notificationActions from '../actions/notificationActions';
@@ -57,6 +58,12 @@ class CrowdOwnedDetails extends Component {
                     <div>Your Balance: {crowdOwnedContract.balance}</div>
                     <div>Contract Balance: {crowdOwnedContract.contractBalance}</div>
                     <div>Contract CRWD Balance: {crowdOwnedContract.contractCRWDBalance}</div>
+                    <div>
+                      Latest valuation:
+                      {crowdOwnedContract.lastValuation.isValuation ?
+                        ` ${crowdOwnedContract.lastValuation.currency} ${crowdOwnedContract.lastValuation.value} (${moment(crowdOwnedContract.lastValuation.date).format("YYYY-MM-DD")})`
+                        : 'N/A'}
+                    </div>
                     {crowdOwnedContract.imageUrl ?
                       <div>
                         <img className="img-responsive" src={crowdOwnedContract.imageUrl} role="presentation"/>
@@ -79,8 +86,7 @@ class CrowdOwnedDetails extends Component {
                 <TokensTransferForm contractAddress={this.props.match.params.address}/>
               </div>
               :
-              null
-          }
+              null}
         </div>
       </div>
     );
