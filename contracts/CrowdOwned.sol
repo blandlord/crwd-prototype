@@ -205,4 +205,18 @@ contract CrowdOwned is StandardToken, Ownable {
   }
 
 
+  /**
+  * @dev Kills contract
+  */
+  function kill() public onlyOwner {
+    selfdestruct(owner);
+  }
+
+  /**
+  * @dev Fallback function to receive funds
+  */
+  function() payable {
+  }
+
+
 }

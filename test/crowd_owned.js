@@ -2,15 +2,19 @@ const Registry = artifacts.require("./Registry.sol");
 const CrowdOwned = artifacts.require("./CrowdOwned.sol");
 
 const expectRequireFailure = require('./support/expectRequireFailure');
+const proxiedWeb3Handler = require('./support/proxiedWeb3Handler.js');
+
 
 let STATE = require('./utils/state');
 
 contract('CrowdOwned', function (accounts) {
 
-  let web3, registryInstance, tokenInstance;
+  let web3, proxiedWeb3, registryInstance, tokenInstance;
 
   before(async function beforeTest() {
     web3 = CrowdOwned.web3;
+    proxiedWeb3 = new Proxy(web3, proxiedWeb3Handler);
+
     registryInstance = await Registry.deployed();
     tokenInstance = await CrowdOwned.new("My Token", "MYT", "http://example.com/image", accounts[0], registryInstance.address, {gas: 3000000});
   });
@@ -145,6 +149,33 @@ contract('CrowdOwned', function (accounts) {
       assert.equal(web3.toAscii(valuation[1]).replace(/\u0000/g, ""), "EUR");
       assert.equal(valuation[2].toNumber(), 10000);
       assert.equal(valuation[3], true);
+    });
+
+  });
+
+  describe('kill', function () {
+
+    before(async function beforeTest() {
+      await proxiedWeb3.eth.sendTransaction({
+        from: accounts[0],
+        to: tokenInstance.address,
+        value: web3.toWei(0.5, "ether")
+      })
+    });
+
+    it("if owner kills and sends funds to owner", async function () {
+      let contractBalance = await proxiedWeb3.eth.getBalance(tokenInstance.address);
+      assert.equal(contractBalance.toNumber(), web3.toWei(0.5, "ether"));
+
+      let ownerBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
+
+      let results = await tokenInstance.kill({from: accounts[0]});
+
+      let newContractBalance = await proxiedWeb3.eth.getBalance(tokenInstance.address);
+      assert.equal(newContractBalance.toNumber(), 0);
+
+      let newOwnerBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
+      assert.equal(newOwnerBalance.toNumber(), ownerBalance.toNumber() + parseInt(web3.toWei(0.5, "ether")) - results.receipt.gasUsed * 100000000000);
     });
 
   });
