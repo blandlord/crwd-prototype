@@ -154,13 +154,16 @@ contract('CrowdOwned', function (accounts) {
   });
 
   describe('kill', function () {
-
     before(async function beforeTest() {
       await proxiedWeb3.eth.sendTransaction({
         from: accounts[0],
         to: tokenInstance.address,
         value: web3.toWei(0.5, "ether")
       })
+    });
+
+    it("not owner cannot kill", async function () {
+      await expectRequireFailure(() => tokenInstance.kill({from: accounts[1]}));
     });
 
     it("if owner kills and sends funds to owner", async function () {
@@ -177,7 +180,6 @@ contract('CrowdOwned', function (accounts) {
       let newOwnerBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
       assert.equal(newOwnerBalance.toNumber(), ownerBalance.toNumber() + parseInt(web3.toWei(0.5, "ether")) - results.receipt.gasUsed * 100000000000);
     });
-
   });
 
 });
