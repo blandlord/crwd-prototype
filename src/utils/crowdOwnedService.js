@@ -55,6 +55,7 @@ async function loadCrowdOwnedContract(web3, address) {
   let imageUrl = await crowdOwnedInstance.imageUrl();
   let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
   let contractBalance = await crowdOwnedInstance.balanceOf(crowdOwnedInstance.address);
+  let contractEthBalance = await promisify(web3.eth.getBalance)(crowdOwnedInstance.address);
   let totalSupply = await crowdOwnedInstance.totalSupply();
   let circulatingSupply = await crowdOwnedInstance.circulatingSupply();
 
@@ -71,6 +72,7 @@ async function loadCrowdOwnedContract(web3, address) {
     imageUrl,
     balance: balance.toNumber(),
     contractBalance: contractBalance.toNumber(),
+    contractEthBalance: web3.fromWei(contractEthBalance.toNumber(), "ether"),
     contractCRWDBalance: contractCRWDBalance.toNumber(),
     totalSupply: totalSupply.toNumber(),
     circulatingSupply: circulatingSupply.toNumber(),

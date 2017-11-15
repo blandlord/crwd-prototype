@@ -75,7 +75,7 @@ class CrowdOwnedDetails extends Component {
                     </div>
                     <div>
                       <span className="label label-default">ETH</span>
-                      <span className="balance">-</span>
+                      <span className="balance">{crowdOwnedContract.contractEthBalance}</span>
                     </div>
                   </div>
                   <div className="col-sm-4 col-lg-3">
