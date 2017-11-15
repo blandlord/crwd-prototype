@@ -55,7 +55,11 @@ async function loadCrowdOwnedContract(web3, address) {
   let imageUrl = await crowdOwnedInstance.imageUrl();
   let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
   let contractBalance = await crowdOwnedInstance.balanceOf(crowdOwnedInstance.address);
+  let totalSupply = await crowdOwnedInstance.totalSupply();
+  let circulatingSupply = await crowdOwnedInstance.circulatingSupply();
+
   let contractCRWDBalance = await crwdTokenInstance.balanceOf(crowdOwnedInstance.address);
+
   let lastValuation = await crowdOwnedInstance.getValuation(0);
   let lastValuationBlock = await promisify(web3.eth.getBlock)(lastValuation[0].toNumber());
   let lastValuationDate = new Date(lastValuationBlock.timestamp * 1000);
@@ -68,6 +72,8 @@ async function loadCrowdOwnedContract(web3, address) {
     balance: balance.toNumber(),
     contractBalance: contractBalance.toNumber(),
     contractCRWDBalance: contractCRWDBalance.toNumber(),
+    totalSupply: totalSupply.toNumber(),
+    circulatingSupply: circulatingSupply.toNumber(),
     lastValuation: {
       date: lastValuationDate,
       blockheight: lastValuation[0],
