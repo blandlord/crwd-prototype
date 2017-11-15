@@ -38,7 +38,6 @@ class Home extends Component {
             :
             <div className="row">
               <div className="col-sm-6">
-                <h1>CRWD</h1>
 
                 {registryStore.get('currentUserData').isUserData ?
                   <div>
@@ -57,7 +56,7 @@ class Home extends Component {
               </div>
 
               <div className="col-sm-6">
-                <h3>Crowd Owned objects</h3>
+                <h3>Crowd Owned objects (13)</h3>
 
                 {crowdOwnedStore.get('loadingCrowdOwnedContracts') ?
                   "Loading CrowdOwned Contracts..."
