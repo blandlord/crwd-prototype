@@ -1,4 +1,9 @@
 import {action, createRequestTypes} from '../utils/actionUtils';
+import {push} from 'react-router-redux'
+
+
+export const goToHome = data => push('/');
+
 
 export const SET_NEW_CROWD_OWNED_CONTRACT = 'SET_NEW_CROWD_OWNED_CONTRACT';
 export const setNewCrowdOwnedContract = data => action(SET_NEW_CROWD_OWNED_CONTRACT, data);
@@ -49,4 +54,15 @@ export const postSaveNewTokensTransfer = {
   request: () => action(POST_SAVE_NEW_TOKENS_TRANSFER.REQUEST),
   success: (data) => action(POST_SAVE_NEW_TOKENS_TRANSFER.SUCCESS, data),
   failure: (error) => action(POST_SAVE_NEW_TOKENS_TRANSFER.FAILURE, error),
+};
+
+
+export const KILL_CROWD_OWNED_CONTRACT = 'KILL_CROWD_OWNED_CONTRACT';
+export const killCrowdOwnedContract = data => action(KILL_CROWD_OWNED_CONTRACT, data);
+
+export const POST_KILL_CROWD_OWNED_CONTRACT = createRequestTypes('POST_KILL_CROWD_OWNED_CONTRACT');
+export const postKillCrowdOwnedContract = {
+  request: () => action(POST_KILL_CROWD_OWNED_CONTRACT.REQUEST),
+  success: (data) => action(POST_KILL_CROWD_OWNED_CONTRACT.SUCCESS, data),
+  failure: (error) => action(POST_KILL_CROWD_OWNED_CONTRACT.FAILURE, error),
 };

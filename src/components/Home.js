@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 
 const _ = require('lodash');
 
+import userDataHelpers from '../utils/userDataHelpers';
+
 import * as registryActions from '../actions/registryActions';
 import * as notificationActions from '../actions/notificationActions';
 
@@ -17,6 +19,15 @@ class Home extends Component {
   componentDidMount() {
   }
 
+  filterCrowdOwnedContracts(crowdOwnedContracts) {
+    let state = this.props.registryStore.get('currentUserData').state;
+    let stateText = userDataHelpers.getEntryStateText(state);
+
+    return _.filter(crowdOwnedContracts, (crowdOwnedContract) => {
+      return stateText === "VERIFIED" || crowdOwnedContract.balance > 0;
+    });
+  }
+
   sortCrowdOwnedContracts(crowdOwnedContracts) {
     return _.orderBy(crowdOwnedContracts, ['balance', 'name'], ['desc', 'asc']);
   }
@@ -26,9 +37,11 @@ class Home extends Component {
       return null;
     }
 
-    let {registryStore, crowdOwnedStore} = this.props;
-
-    let crowdOwnedContracts = crowdOwnedStore.get('crowdOwnedContracts');
+    let {registryStore, crowdOwnedStore, web3Store} = this.props;
+    let currentUserData = registryStore.get('currentUserData');
+    let crowdOwnedContracts = this.filterCrowdOwnedContracts(this.sortCrowdOwnedContracts(crowdOwnedStore.get('crowdOwnedContracts')));
+    let ownAddress = web3Store.get("web3").eth.defaultAccount;
+    let registryOwnerAddress = registryStore.get('ownerAddress');
 
     return (
       <div className="container">
@@ -39,11 +52,11 @@ class Home extends Component {
             <div className="row">
               <div className="col-sm-6">
 
-                {registryStore.get('currentUserData').isUserData ?
+                {currentUserData.isUserData ?
                   <div>
                     <h2>My Application Status</h2>
 
-                    <UserData userData={registryStore.get('currentUserData')}/>
+                    <UserData userData={currentUserData}/>
 
                   </div>
                   :
@@ -56,18 +69,22 @@ class Home extends Component {
               </div>
 
               <div className="col-sm-6">
-                <h3>Crowd Owned objects ({crowdOwnedContracts.length})</h3>
+                {(registryOwnerAddress === ownAddress || userDataHelpers.getEntryStateText(currentUserData.state) !== "NEW") ?
+                  <div>
+                    <h3>Crowd Owned objects ({crowdOwnedContracts.length})</h3>
 
-                {crowdOwnedStore.get('loadingCrowdOwnedContracts') ?
-                  "Loading CrowdOwned Contracts..."
-                  :
-                  <div className="crowd-owned-contracts listing-block">
-                    {crowdOwnedContracts.length === 0 ? <em>The CrowdOwned Contracts list is empty.</em> : null}
-                    {this.sortCrowdOwnedContracts(crowdOwnedContracts).map((crowdOwnedContract) => (
-                      <CrowdOwnedContract crowdOwnedContract={crowdOwnedContract} key={crowdOwnedContract.address}/>
-                    ))}
+                    {crowdOwnedStore.get('loadingCrowdOwnedContracts') ?
+                      "Loading CrowdOwned Contracts..."
+                      :
+                      <div className="crowd-owned-contracts listing-block">
+                        {crowdOwnedContracts.length === 0 ? <em>The CrowdOwned Contracts list is empty.</em> : null}
+                        {crowdOwnedContracts.map((crowdOwnedContract) => (
+                          <CrowdOwnedContract crowdOwnedContract={crowdOwnedContract} key={crowdOwnedContract.address}/>
+                        ))}
+                      </div>
+                    }
                   </div>
-                }
+                  : null}
               </div>
             </div>
           }

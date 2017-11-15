@@ -32,12 +32,16 @@ class CrowdOwnedDetails extends Component {
     return _.orderBy(ownersData, ['balance'], ['desc']);
   }
 
+  killCrowdOwnedContract(contractAddress) {
+    this.props.crowdOwnedActions.killCrowdOwnedContract({contractAddress: contractAddress});
+  }
+
   render() {
     if (!this.props.web3Store.get("web3")) {
       return null;
     }
 
-    let {crowdOwnedStore,web3Store} = this.props;
+    let {crowdOwnedStore, web3Store} = this.props;
 
     let crowdOwnedContract = crowdOwnedStore.get('crowdOwnedContract');
     let ownAddress = web3Store.get("web3").eth.defaultAccount;
@@ -58,7 +62,7 @@ class CrowdOwnedDetails extends Component {
                     <div>Total supply: {crowdOwnedContract.totalSupply}</div>
                     <div>In circulation: {crowdOwnedContract.circulatingSupply}</div>
                     <div>
-                      Latest valuation: 
+                      Latest valuation:
                       {crowdOwnedContract.lastValuation.isValuation ?
                         ` ${crowdOwnedContract.lastValuation.currency} ${crowdOwnedContract.lastValuation.value} (${moment(crowdOwnedContract.lastValuation.date).format("YYYY-MM-DD")})`
                         : 'N/A'}
@@ -93,15 +97,26 @@ class CrowdOwnedDetails extends Component {
                       <span className="balance">{crowdOwnedContract.balance}</span>&nbsp;
                       {crowdOwnedContract.symbol}
                     </div>
-                    <TokensTransferForm contractAddress={this.props.match.params.address}/>
+                    <TokensTransferForm contractAddress={crowdOwnedContract.address}/>
+
+                    {crowdOwnedContract.ownerAddress === ownAddress ?
+                      <div>
+                        <button className="btn btn-danger" type="button"
+                                onClick={() => this.killCrowdOwnedContract(crowdOwnedContract.address)}
+                                disabled={crowdOwnedStore.get("killingCrowdOwnedContract")}>
+                          Kill Contract
+                        </button>
+                      </div>
+                      : null}
                   </div>
                   <div className="col-sm-6">
                     <h3>Current owners</h3>
                     <ul>
                       {this.sortOwnersData(crowdOwnedContract.ownersData).map((ownerData) => (
                         <li key={ownerData.address}>
-                          {ownerData.address === ownAddress ? <strong>{ownerData.address} </strong> : <span>{ownerData.address} </span> }
-                           ({ownerData.balance} tokens, {100*ownerData.balance/100000 } %)
+                          {ownerData.address === ownAddress ? <strong>{ownerData.address} </strong> :
+                            <span>{ownerData.address} </span>}
+                          ({ownerData.balance} tokens, {100 * ownerData.balance / 100000} %)
                         </li>
                       ))}
                     </ul>

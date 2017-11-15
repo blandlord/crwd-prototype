@@ -18,6 +18,12 @@ async function loadCrowdOwnedContracts(web3) {
 
   for (let i = 0; i < contractsAddresses.length; i++) {
     let contractAddress = contractsAddresses[i];
+
+    let isCrowdOwnedAlive = await crowdOwnedManagerInstance.isCrowdOwnedAlive(contractAddress);
+    if(!isCrowdOwnedAlive){
+      continue;
+    }
+
     const values = await crowdOwnedManagerInstance.contractsData(contractAddress);
     let isContractData = values[2]; // make sure value exists
     if (isContractData) {
@@ -36,7 +42,9 @@ async function populateContractsData(web3, crowdOwnedContracts) {
 
   for (let i = 0; i < crowdOwnedContracts.length; i++) {
     let crowdOwnedContractData = crowdOwnedContracts[i];
+
     const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", crowdOwnedContractData.address);
+
     let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
     let imageUrl = await crowdOwnedInstance.imageUrl();
     crowdOwnedContractData.balance = balance.toNumber();
@@ -53,6 +61,7 @@ async function loadCrowdOwnedContract(web3, address) {
   let name = await crowdOwnedInstance.name();
   let symbol = await crowdOwnedInstance.symbol();
   let imageUrl = await crowdOwnedInstance.imageUrl();
+  let ownerAddress = await crowdOwnedInstance.owner();
   let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
   let contractBalance = await crowdOwnedInstance.balanceOf(crowdOwnedInstance.address);
   let contractEthBalance = await promisify(web3.eth.getBalance)(crowdOwnedInstance.address);
@@ -67,9 +76,11 @@ async function loadCrowdOwnedContract(web3, address) {
 
 
   const crowdOwnedContract = {
+    address,
     name,
     symbol,
     imageUrl,
+    ownerAddress,
     balance: balance.toNumber(),
     contractBalance: contractBalance.toNumber(),
     contractEthBalance: web3.fromWei(contractEthBalance.toNumber(), "ether"),
@@ -120,13 +131,21 @@ async function getOwnersData(web3, address) {
 }
 
 
+async function killCrowdOwnedContract(web3, contractAddress) {
+  const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", contractAddress);
+
+  let results = await crowdOwnedInstance.kill({gas: 200000});
+  return results;
+}
+
 let crowdOwnedService = {
   deployCrowdOwned: deployCrowdOwned,
   loadCrowdOwnedContracts: loadCrowdOwnedContracts,
   loadCrowdOwnedContract: loadCrowdOwnedContract,
   populateContractsData: populateContractsData,
   transferTokens: transferTokens,
-  getOwnersData
+  getOwnersData,
+  killCrowdOwnedContract
 };
 
 export default crowdOwnedService;

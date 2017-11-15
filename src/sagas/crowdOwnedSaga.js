@@ -105,6 +105,41 @@ function* saveNewTokensTransfer(data) {
 }
 
 
+function* killCrowdOwnedContract(data) {
+  yield put(crowdOwnedActions.postKillCrowdOwnedContract.request());
+  try {
+    const web3 = yield select(state => state.web3Store.get("web3"));
+    const results = yield call(crowdOwnedService.killCrowdOwnedContract, web3, data.contractAddress);
+
+    // delay to allow changes to be committed to local node
+    yield delay(1000);
+
+    yield put(crowdOwnedActions.postKillCrowdOwnedContract.success({results}));
+
+    console.log("killCrowdOwnedContract TX", results.tx);
+    yield put(notificationActions.success({
+      notification: {
+        title: 'contract killed successfully',
+        position: 'br'
+      }
+    }));
+  } catch (error) {
+    yield put(crowdOwnedActions.postKillCrowdOwnedContract.failure({error}));
+    yield put(notificationActions.error({
+      notification: {
+        title: 'failed to kill contract',
+        message: error.message,
+        position: 'br'
+      }
+    }));
+  }
+}
+
+function* redirectToHome(data) {
+  debugger
+  yield put(crowdOwnedActions.goToHome());
+}
+
 function* watchSaveNewCrowdOwnedContract() {
   yield takeEvery(crowdOwnedActions.SAVE_NEW_CROWD_OWNED_CONTRACT, saveNewCrowdOwnedContract);
 }
@@ -125,10 +160,17 @@ function* watchPostSaveNewTokensTransferSuccess() {
   yield takeEvery(crowdOwnedActions.POST_SAVE_NEW_TOKENS_TRANSFER.SUCCESS, loadCrowdOwnedContract);
 }
 
+function* watchKillCrowdOwnedContract() {
+  yield takeEvery(crowdOwnedActions.KILL_CROWD_OWNED_CONTRACT, killCrowdOwnedContract);
+}
+
+function* watchPostKillCrowdOwnedContractSuccess() {
+  yield takeEvery(crowdOwnedActions.POST_KILL_CROWD_OWNED_CONTRACT.SUCCESS, redirectToHome);
+}
+
 function* watchSetupWeb3Success() {
   yield takeEvery(web3Actions.SETUP_WEB3.SUCCESS, loadCrowdOwnedContracts);
 }
-
 
 export default function* crowdOwnedSaga() {
   yield all([
@@ -137,6 +179,8 @@ export default function* crowdOwnedSaga() {
     watchLoadCrowdOwnedContract(),
     watchSaveNewTokensTransfer(),
     watchPostSaveNewTokensTransferSuccess(),
+    watchKillCrowdOwnedContract(),
+    watchPostKillCrowdOwnedContractSuccess(),
     watchSetupWeb3Success(),
   ]);
 }

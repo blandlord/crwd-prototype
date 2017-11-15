@@ -100,6 +100,23 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
   };
 
 
+
+  const postKillCrowdOwnedContractRequest = (state) => {
+    return state
+      .set('killingCrowdOwnedContract', true);
+  };
+
+  const postKillCrowdOwnedContractSuccess = (state) => {
+    return state
+      .set('killingCrowdOwnedContract', false);
+  };
+
+  const postKillCrowdOwnedContractFailure = (state) => {
+    return state
+      .set('killingCrowdOwnedContract', false);
+  };
+
+
   const actions = {
     'SET_NEW_CROWD_OWNED_CONTRACT': () => setNewCrowdOwnedContract(state),
     'POST_SAVE_NEW_CROWD_OWNED_CONTRACT_REQUEST': () => postSaveNewCrowdOwnedContractRequest(state),
@@ -115,7 +132,10 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
     'SET_NEW_TOKENS_TRANSFER': () => setNewTokensTransfer(state),
     'POST_SAVE_NEW_TOKENS_TRANSFER_REQUEST': () => postSaveNewTokensTransferRequest(state),
     'POST_SAVE_NEW_TOKENS_TRANSFER_SUCCESS': () => postSaveNewTokensTransferSuccess(state),
-    'POST_SAVE_NEW_TOKENS_TRANSFER_FAILURE': () => postSaveNewTokensTransferFailure(state),
+    'POST_SAVE_NEW_TOKENS_TRANSFER_FAILURE': () => postSaveNewTokensTransferFailure(state),  
+    'POST_KILL_CROWD_OWNED_CONTRACT_REQUEST': () => postKillCrowdOwnedContractRequest(state),
+    'POST_KILL_CROWD_OWNED_CONTRACT_SUCCESS': () => postKillCrowdOwnedContractSuccess(state),
+    'POST_KILL_CROWD_OWNED_CONTRACT_FAILURE': () => postKillCrowdOwnedContractFailure(state),
     'DEFAULT': () => state
   };
 
