@@ -56,7 +56,7 @@ class Home extends Component {
               </div>
 
               <div className="col-sm-6">
-                <h3>Crowd Owned objects (13)</h3>
+                <h3>Crowd Owned objects ({crowdOwnedContracts.length})</h3>
 
                 {crowdOwnedStore.get('loadingCrowdOwnedContracts') ?
                   "Loading CrowdOwned Contracts..."
