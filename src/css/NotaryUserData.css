@@ -3,6 +3,15 @@
     margin-left: 10px;
 }
 
+.crowd-owned-details .label {
+  display: inline-block;
+  width: 9em;
+}
+
+.crowd-owned-details .balance {
+  margin-left: 1em;
+}
+
 .listing-block{
   background: #fff;
   height: 500px;
@@ -16,9 +25,8 @@
 }
 .media img{
   float: left;
-  width: 200px;
+  width: 160px;
   margin: 0;
-  height: 136px;
 }
 .media-body{
   border: 1px solid #bcbcbc;
@@ -27,5 +35,13 @@
   padding-left: 0.5em;
 }
 
-.media .price{float:left; width:100%; font-size:30px;font-weight:600; color:#4765AB;}
-.media .price small{display:block; font-size:17px; color:#232323;}
+.media .price{
+  float:left;
+  width: 100%;
+  font-size: 1.75em;
+  font-weight:600;
+}
+.media .price small{
+  display:block;
+  font-size:.75em;
+}

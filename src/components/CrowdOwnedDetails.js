@@ -50,40 +50,63 @@ class CrowdOwnedDetails extends Component {
             crowdOwnedStore.get('crowdOwnedContract') ?
               <div>
                 <div className="row">
-                  <div className="col-sm-6">
-                    <h1>Crowd Owned Contract</h1>
-                    <div>Name: {crowdOwnedContract.name}</div>
+                  <div className="col-sm-8 col-lg-9">
+                    <h1>{crowdOwnedContract.name}</h1>
                     <div>Symbol: {crowdOwnedContract.symbol}</div>
                     <div>Address: {crowdOwnedContract.address}</div>
-                    <div>Your Balance: {crowdOwnedContract.balance}</div>
-                    <div>Contract Balance: {crowdOwnedContract.contractBalance}</div>
-                    <div>Contract CRWD Balance: {crowdOwnedContract.contractCRWDBalance}</div>
+                    <div>Total supply: {crowdOwnedContract.totalSupply}</div>
+                    <div>In circulation: {crowdOwnedContract.circulatingSupply}</div>
                     <div>
-                      Latest valuation:
+                      Latest valuation: 
                       {crowdOwnedContract.lastValuation.isValuation ?
                         ` ${crowdOwnedContract.lastValuation.currency} ${crowdOwnedContract.lastValuation.value} (${moment(crowdOwnedContract.lastValuation.date).format("YYYY-MM-DD")})`
                         : 'N/A'}
                     </div>
+
+                    <div>Contract Balances:</div>
+                    <div>
+                      <span className="label label-success">{crowdOwnedContract.symbol}</span>
+                      <span className="balance">{crowdOwnedContract.contractBalance}</span>
+                    </div>
+                    <div>
+                      <span className="label label-primary">CRWD</span>
+                      <span className="balance">{crowdOwnedContract.contractCRWDBalance}</span>
+                    </div>
+                    <div>
+                      <span className="label label-default">ETH</span>
+                      <span className="balance">-</span>
+                    </div>
+                  </div>
+                  <div className="col-sm-4 col-lg-3">
                     {crowdOwnedContract.imageUrl ?
                       <div>
                         <img className="img-responsive" src={crowdOwnedContract.imageUrl} role="presentation"/>
                       </div>
                       : null}
-                    <div>
-                      Owners:
-                      <ul>
-                        {this.sortOwnersData(crowdOwnedContract.ownersData).map((ownerData) => (
-                          <li key={ownerData.address}>
-                            {ownerData.address} ({ownerData.balance} Token(s))
-                          </li>
-                        ))}
-                      </ul>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-sm-6">
+                    <h3>Transfer Tokens</h3>
+                    <div>Your balance:
+                      <span className="balance">{crowdOwnedContract.balance}</span>&nbsp;
+                      {crowdOwnedContract.symbol}
                     </div>
+                    <TokensTransferForm contractAddress={this.props.match.params.address}/>
+                  </div>
+                  <div className="col-sm-6">
+                    <h3>Current owners</h3>
+                    <ul>
+                      {this.sortOwnersData(crowdOwnedContract.ownersData).map((ownerData) => (
+                        <li key={ownerData.address}>
+                          {ownerData.address} ({ownerData.balance} tokens, {100*ownerData.balance/100000 } %)
+                        </li>
+                      ))}
+                      <li><strong>0x01234012340123401234</strong> highlight user address in list (ownerData.address eq user address)</li>
+                    </ul>
                   </div>
                 </div>
 
-                <h3>Transfer Tokens</h3>
-                <TokensTransferForm contractAddress={this.props.match.params.address}/>
               </div>
               :
               null}

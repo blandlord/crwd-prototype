@@ -36,29 +36,30 @@ class TokensTransferForm extends Component {
     let {crowdOwnedStore} = this.props;
 
     return (
-      <form className="token-transfer-form" onSubmit={(e) => this.onSubmit(e)}>
-        <div className="row">
-          <div className="form-group col-md-8">
-            <label>To:</label>
-            <input type="text" name="to" placeholder="Address: 0x0000102344123" className="form-control"
+      <form className="token-transfer-form form-horizontal" onSubmit={(e) => this.onSubmit(e)}>
+        <div className="form-group row">
+          <label className="control-label col-sm-3">Amount:</label>
+          <div className="col-sm-5">
+            <input type="text" name="amount" placeholder="0" className="form-control"
+                   value={crowdOwnedStore.get("newTokensTransfer").amount}
+                   onChange={(e) => this.updateInputValue(e.target.value, 'amount')}/>
+          </div>
+        </div>
+        <div className="form-group row">
+          <label className="control-label col-sm-3">To:</label>
+          <div className="col-sm-9">
+            <input type="text" name="to" placeholder="Address: 0x001122334455" className="form-control"
                    value={crowdOwnedStore.get("newTokensTransfer").to}
                    onChange={(e) => this.updateInputValue(e.target.value, 'to')}/>
           </div>
         </div>
 
-        <div className="row">
-          <div className="form-group col-md-6">
-            <label>Amount:</label>
-            <input type="text" name="amount" placeholder="TOK" className="form-control"
-                   value={crowdOwnedStore.get("newTokensTransfer").amount}
-                   onChange={(e) => this.updateInputValue(e.target.value, 'amount')}/>
-          </div>
+        <div className="form-group row">
+          <button className="btn btn-info pull-right" type="submit"
+                  disabled={!this.formValid() || crowdOwnedStore.get("savingNewTokensTransfer")}>
+            Submit
+          </button>
         </div>
-
-        <button className="btn btn-info" type="submit"
-                disabled={!this.formValid() || crowdOwnedStore.get("savingNewTokensTransfer")}>
-          Submit
-        </button>
 
         {crowdOwnedStore.get("savingNewTokensTransfer") ? <em>Transferring ...</em> : null}
       </form>
