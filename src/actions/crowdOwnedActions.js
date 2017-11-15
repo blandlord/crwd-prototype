@@ -1,8 +1,4 @@
 import {action, createRequestTypes} from '../utils/actionUtils';
-import {push} from 'react-router-redux'
-
-
-export const goToHome = data => push('/');
 
 
 export const SET_NEW_CROWD_OWNED_CONTRACT = 'SET_NEW_CROWD_OWNED_CONTRACT';

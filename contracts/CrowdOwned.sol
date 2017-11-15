@@ -57,6 +57,10 @@ contract CrowdOwned is StandardToken, Ownable {
   * @param _imageUrl CrowdOwned Object Image Url
   */
   function CrowdOwned(string _name, string _symbol, string _imageUrl, address _owner, Registry _registry) {
+    // prevent setting to null
+    require(_registry != address(0));
+    require(_owner != address(0));
+
     name = _name;
     symbol = _symbol;
     imageUrl = _imageUrl;
@@ -79,6 +83,9 @@ contract CrowdOwned is StandardToken, Ownable {
   * @param _registry Registry contract address
   */
   function setRegistry(Registry _registry) public onlyOwner {
+    // prevent setting to null
+    require(_registry != address(0));
+
     registry = _registry;
   }
 

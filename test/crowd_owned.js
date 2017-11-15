@@ -172,13 +172,16 @@ contract('CrowdOwned', function (accounts) {
 
       let ownerBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
 
-      let results = await tokenInstance.kill({from: accounts[0]});
+      await tokenInstance.kill({from: accounts[0]});
 
       let newContractBalance = await proxiedWeb3.eth.getBalance(tokenInstance.address);
       assert.equal(newContractBalance.toNumber(), 0);
 
       let newOwnerBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
-      assert.equal(newOwnerBalance.toNumber(), ownerBalance.toNumber() + parseInt(web3.toWei(0.5, "ether")) - results.receipt.gasUsed * 100000000000);
+      assert.equal(newOwnerBalance.toNumber() > ownerBalance.toNumber() + parseInt(web3.toWei(0.4, "ether")), true); // account for gas
+
+      let code = await proxiedWeb3.eth.getCode(tokenInstance.address);
+      assert.equal(code, "0x0");
     });
   });
 

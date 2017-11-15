@@ -19,8 +19,9 @@ async function loadCrowdOwnedContracts(web3) {
   for (let i = 0; i < contractsAddresses.length; i++) {
     let contractAddress = contractsAddresses[i];
 
-    let isCrowdOwnedAlive = await crowdOwnedManagerInstance.isCrowdOwnedAlive(contractAddress);
-    if(!isCrowdOwnedAlive){
+    let code = await promisify(web3.eth.getCode)(contractAddress);
+    if (code === "0x0") {
+      // contract was killed
       continue;
     }
 
@@ -94,7 +95,6 @@ async function loadCrowdOwnedContract(web3, address) {
       value: lastValuation[2],
       isValuation: lastValuation[3]
     },
-    address
   };
 
   return crowdOwnedContract;

@@ -1,6 +1,7 @@
 import {call, put, all, takeEvery, select} from 'redux-saga/effects';
 import {delay} from 'redux-saga'
 
+
 import * as crowdOwnedActions from '../actions/crowdOwnedActions';
 import * as web3Actions from '../actions/web3Actions';
 import * as notificationActions from '../actions/notificationActions';
@@ -135,11 +136,6 @@ function* killCrowdOwnedContract(data) {
   }
 }
 
-function* redirectToHome(data) {
-  debugger
-  yield put(crowdOwnedActions.goToHome());
-}
-
 function* watchSaveNewCrowdOwnedContract() {
   yield takeEvery(crowdOwnedActions.SAVE_NEW_CROWD_OWNED_CONTRACT, saveNewCrowdOwnedContract);
 }
@@ -165,7 +161,7 @@ function* watchKillCrowdOwnedContract() {
 }
 
 function* watchPostKillCrowdOwnedContractSuccess() {
-  yield takeEvery(crowdOwnedActions.POST_KILL_CROWD_OWNED_CONTRACT.SUCCESS, redirectToHome);
+  yield takeEvery(crowdOwnedActions.POST_KILL_CROWD_OWNED_CONTRACT.SUCCESS, loadCrowdOwnedContracts);
 }
 
 function* watchSetupWeb3Success() {

@@ -76,12 +76,4 @@ contract CrowdOwnedManager is Ownable {
     return contractsAddresses;
   }
 
-  /**
-  * @dev check if crowd owned is alive
-  */
-  function isCrowdOwnedAlive(address crowdOwnedAddress) public constant returns (bool)  {
-    return (CrowdOwned(crowdOwnedAddress).owner() != address(0));
-  }
-
-
 }

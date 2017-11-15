@@ -108,7 +108,8 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
 
   const postKillCrowdOwnedContractSuccess = (state) => {
     return state
-      .set('killingCrowdOwnedContract', false);
+      .set('killingCrowdOwnedContract', false)
+      .set('crowdOwnedContract', null);
   };
 
   const postKillCrowdOwnedContractFailure = (state) => {
