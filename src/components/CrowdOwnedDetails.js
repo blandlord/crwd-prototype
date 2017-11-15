@@ -37,9 +37,10 @@ class CrowdOwnedDetails extends Component {
       return null;
     }
 
-    let {crowdOwnedStore} = this.props;
+    let {crowdOwnedStore,web3Store} = this.props;
 
     let crowdOwnedContract = crowdOwnedStore.get('crowdOwnedContract');
+    let ownAddress = web3Store.get("web3").eth.defaultAccount;
 
     return (
       <div className="container">
@@ -99,10 +100,10 @@ class CrowdOwnedDetails extends Component {
                     <ul>
                       {this.sortOwnersData(crowdOwnedContract.ownersData).map((ownerData) => (
                         <li key={ownerData.address}>
-                          {ownerData.address} ({ownerData.balance} tokens, {100*ownerData.balance/100000 } %)
+                          {ownerData.address === ownAddress ? <strong>{ownerData.address} </strong> : <span>{ownerData.address} </span> }
+                           ({ownerData.balance} tokens, {100*ownerData.balance/100000 } %)
                         </li>
                       ))}
-                      <li><strong>0x01234012340123401234</strong> highlight user address in list (ownerData.address eq user address)</li>
                     </ul>
                   </div>
                 </div>
