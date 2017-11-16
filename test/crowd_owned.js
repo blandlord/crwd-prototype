@@ -1,5 +1,6 @@
 const Registry = artifacts.require("./Registry.sol");
 const CrowdOwned = artifacts.require("./CrowdOwned.sol");
+const CRWDToken = artifacts.require("./CRWDToken.sol");
 
 const expectRequireFailure = require('./support/expectRequireFailure');
 const proxiedWeb3Handler = require('./support/proxiedWeb3Handler.js');
@@ -9,13 +10,14 @@ let STATE = require('./utils/state');
 
 contract('CrowdOwned', function (accounts) {
 
-  let web3, proxiedWeb3, registryInstance, tokenInstance;
+  let web3, proxiedWeb3, registryInstance, crwdTokenInstance, tokenInstance;
 
   before(async function beforeTest() {
     web3 = CrowdOwned.web3;
     proxiedWeb3 = new Proxy(web3, proxiedWeb3Handler);
 
     registryInstance = await Registry.deployed();
+    crwdTokenInstance = await CRWDToken.deployed();
     tokenInstance = await CrowdOwned.new("My Token", "MYT", "http://example.com/image", accounts[0], registryInstance.address, {gas: 3000000});
   });
 
@@ -154,31 +156,49 @@ contract('CrowdOwned', function (accounts) {
   });
 
   describe('kill', function () {
+    let crwdTotalSupply;
+
     before(async function beforeTest() {
       await proxiedWeb3.eth.sendTransaction({
         from: accounts[0],
         to: tokenInstance.address,
         value: web3.toWei(0.5, "ether")
-      })
+      });
+
+      crwdTotalSupply = (await crwdTokenInstance.totalSupply()).toNumber();
+
+      await crwdTokenInstance.transfer(tokenInstance.address, Math.pow(10, 18), {from: accounts[0]});
     });
 
     it("not owner cannot kill", async function () {
-      await expectRequireFailure(() => tokenInstance.kill({from: accounts[1]}));
+      await expectRequireFailure(() => tokenInstance.kill(crwdTokenInstance.address, {from: accounts[1]}));
     });
 
     it("if owner kills and sends funds to owner", async function () {
-      let contractBalance = await proxiedWeb3.eth.getBalance(tokenInstance.address);
-      assert.equal(contractBalance.toNumber(), web3.toWei(0.5, "ether"));
+      let contractEthBalance = await proxiedWeb3.eth.getBalance(tokenInstance.address);
+      assert.equal(contractEthBalance.toNumber(), web3.toWei(0.5, "ether"));
 
-      let ownerBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
+      let contractCrwdBalance = await crwdTokenInstance.balanceOf(tokenInstance.address);
+      assert.equal(contractCrwdBalance.toNumber(), Math.pow(10, 18));
 
-      await tokenInstance.kill({from: accounts[0]});
+      let ownerCrwdBalance = await crwdTokenInstance.balanceOf(accounts[0]);
+      assert.equal(ownerCrwdBalance.toNumber(), crwdTotalSupply - Math.pow(10, 18));
 
-      let newContractBalance = await proxiedWeb3.eth.getBalance(tokenInstance.address);
-      assert.equal(newContractBalance.toNumber(), 0);
+      let ownerEthBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
 
-      let newOwnerBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
-      assert.equal(newOwnerBalance.toNumber() > ownerBalance.toNumber() + parseInt(web3.toWei(0.4, "ether")), true); // account for gas
+      await tokenInstance.kill(crwdTokenInstance.address, {from: accounts[0]});
+
+      let newContractEthBalance = await proxiedWeb3.eth.getBalance(tokenInstance.address);
+      assert.equal(newContractEthBalance.toNumber(), 0);
+
+      let newOwnerEthBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
+      assert.equal(newOwnerEthBalance.toNumber() > ownerEthBalance.toNumber() + parseInt(web3.toWei(0.49, "ether")), true); // account for gas
+
+      let newContractCrwdBalance = await crwdTokenInstance.balanceOf(tokenInstance.address);
+      assert.equal(newContractCrwdBalance.toNumber(), 0);
+
+      let newOwnerCrwdBalance = await crwdTokenInstance.balanceOf(accounts[0]);
+      assert.equal(newOwnerCrwdBalance.toNumber(), crwdTotalSupply);
 
       let code = await proxiedWeb3.eth.getCode(tokenInstance.address);
       assert.equal(code, "0x0");

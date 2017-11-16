@@ -5,6 +5,7 @@ import './StandardToken.sol';
 import './Ownable.sol';
 import './Registry.sol';
 import './CrowdOwnedManager.sol';
+import './CRWDToken.sol';
 
 
 contract CrowdOwned is StandardToken, Ownable {
@@ -214,8 +215,13 @@ contract CrowdOwned is StandardToken, Ownable {
 
   /**
   * @dev Kills contract
+  * @param _crwdToken valuation blockheight
   */
-  function kill() public onlyOwner {
+  function kill(CRWDToken _crwdToken) public onlyOwner {
+    // Transfer CRWD Tokens balance to owner
+    _crwdToken.transfer(owner, _crwdToken.balanceOf(address(this)));
+
+    // kill contract and send ETH balance to owner
     selfdestruct(owner);
   }
 

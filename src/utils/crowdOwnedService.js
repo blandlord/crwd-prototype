@@ -57,7 +57,7 @@ async function populateContractsData(web3, crowdOwnedContracts) {
 
 async function loadCrowdOwnedContract(web3, address) {
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", address);
-  const crwdTokenInstance = await  await contractService.getDeployedInstance(web3, "CRWDToken");
+  const crwdTokenInstance = await contractService.getDeployedInstance(web3, "CRWDToken");
 
   let name = await crowdOwnedInstance.name();
   let symbol = await crowdOwnedInstance.symbol();
@@ -133,8 +133,9 @@ async function getOwnersData(web3, address) {
 
 async function killCrowdOwnedContract(web3, contractAddress) {
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", contractAddress);
+  const crwdTokenInstance = await contractService.getDeployedInstance(web3, "CRWDToken");
 
-  let results = await crowdOwnedInstance.kill({gas: 200000});
+  let results = await crowdOwnedInstance.kill(crwdTokenInstance.address, {gas: 200000});
   return results;
 }
 
