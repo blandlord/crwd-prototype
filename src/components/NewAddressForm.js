@@ -31,7 +31,7 @@ class NewAddressForm extends Component {
     return (
       <form className="new-address-form" onSubmit={(e) => this.onSubmit(e)}>
         <div className="row">
-          <div className="form-group col-md-8">
+          <div className="form-group col-xs-12">
             <label>Your ethereum address:</label>
             <input type="text" name="user-address" placeholder="0x000123abc" className="form-control"
                    value={web3Store.get("web3").eth.defaultAccount}
@@ -40,7 +40,7 @@ class NewAddressForm extends Component {
         </div>
 
         <div className="row">
-          <div className="form-group col-md-6">
+          <div className="form-group col-xs-6 col-md-8">
             <label>Your social security number:</label>
             <input type="text" name="ssn" placeholder="NL-123456789" className="form-control"
                    value={registryStore.get("newUserData").ssn}

@@ -79,11 +79,11 @@ class CrowdOwnedDetails extends Component {
                     </div>
                     <div>
                       <span className="label label-default">ETH</span>
-                      <span className="balance">{crowdOwnedContract.contractEthBalance}</span>
+                      <span className="balance">{crowdOwnedContract.contractEthBalance}</span>&nbsp;
                       <span className="euro">(€ ...)</span>
                     </div>
                   </div>
-                  <div className="col-sm-4 col-lg-3">
+                  <div className="col-xs-8 col-sm-4 col-lg-3">
                     {crowdOwnedContract.imageUrl ?
                       <div>
                         <img className="img-responsive" src={crowdOwnedContract.imageUrl} role="presentation"/>
@@ -95,22 +95,22 @@ class CrowdOwnedDetails extends Component {
                   <div className="col-sm-6">
                     <h3>incoming ETH transactions</h3>
                     <div className="row">
-                      <div className="col-sm-3 date">2017-11-07</div>
-                      <div className="col-sm-3 date">blockheight</div>
-                      <div className="col-sm-3 amount">ETH 2.12005</div>
-                      <div className="col-sm-3 euro">€ 600 (optional)</div>
+                      <div className="col-xs-12 col-sm-3 date">2017-11-07</div>
+                      <div className="col-xs-4 col-sm-3 date">blockheight</div>
+                      <div className="col-xs-4 col-sm-3 amount">ETH 2.12005</div>
+                      <div className="col-xs-4 col-sm-3 euro">€ 600 (optional)</div>
                     </div>
                     <div className="row">
-                      <div className="col-sm-3 date">2017-10-05</div>
-                      <div className="col-sm-3 date">blockheight</div>
-                      <div className="col-sm-3 amount">ETH 2.23005</div>
-                      <div className="col-sm-3 euro">€ 600 </div>
+                      <div className="col-xs-12 col-sm-3 date">2017-10-05</div>
+                      <div className="col-xs-4 col-sm-3 date">blockheight</div>
+                      <div className="col-xs-4 col-sm-3 amount">ETH 2.23005</div>
+                      <div className="col-xs-4 col-sm-3 euro">€ 600 </div>
                     </div>
                     <div className="row">
-                      <div className="col-sm-3 date">2017-09-06</div>
-                      <div className="col-sm-3 date">blockheight</div>
-                      <div className="col-sm-3 amount">ETH 1.89005</div>
-                      <div className="col-sm-3 euro">€ 600</div>
+                      <div className="col-xs-12 col-sm-3 date">2017-09-06</div>
+                      <div className="col-xs-4 col-sm-3 date">blockheight</div>
+                      <div className="col-xs-4 col-sm-3 amount">ETH 1.89005</div>
+                      <div className="col-xs-4 col-sm-3 euro">€ 600</div>
                     </div>
                   </div>
                   <div className="col-sm-6">
@@ -121,16 +121,6 @@ class CrowdOwnedDetails extends Component {
                     </div>
                     <TokensTransferForm contractAddress={crowdOwnedContract.address}/>
 
-                    {crowdOwnedContract.ownerAddress === ownAddress ?
-                      <div>
-                        <button className="btn btn-danger" type="button"
-                                onClick={() => this.killCrowdOwnedContract(crowdOwnedContract.address)}
-                                disabled={crowdOwnedStore.get("killingCrowdOwnedContract")}>
-                          Kill Contract
-                        </button>
-                      </div>
-                      : null}
-                    
                     <h3>Current owners</h3>
                     <ul>
                       {this.sortOwnersData(crowdOwnedContract.ownersData).map((ownerData) => (
@@ -148,6 +138,20 @@ class CrowdOwnedDetails extends Component {
               :
               null}
         </div>
+        
+        <div className="well">
+          You are the owner of this contract and have the power to stop the project. &nbsp;
+          {crowdOwnedContract.ownerAddress === ownAddress ?
+            <span>
+              <button className="btn btn-danger" type="button"
+                      onClick={() => this.killCrowdOwnedContract(crowdOwnedContract.address)}
+                      disabled={crowdOwnedStore.get("killingCrowdOwnedContract")}>
+                Kill Contract
+              </button>
+            </span>
+            : null}
+        </div>
+        
       </div>
     );
   }

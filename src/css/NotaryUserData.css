@@ -1,6 +1,6 @@
 
 .notary-verify-button {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .crowd-owned-details .label {
@@ -14,9 +14,11 @@
 
 .listing-block{
   background: #fff;
-  height: 500px;
   padding-top: 20px;
+/*
+  height: 500px;
   overflow-y: scroll;
+*/
 }
 .media {
   background: #fff;
@@ -31,6 +33,7 @@
 .media-body{
   border: 1px solid #bcbcbc;
   border-left: 0;
+  border-right: 0;
   height: 136px;
   padding-left: 0.5em;
 }
@@ -44,4 +47,18 @@
 .media .price small{
   display:block;
   font-size:.75em;
+}
+
+.navbar {
+  margin-bottom: 0;
+}
+
+.home-header {
+  background-image: url(https://blandlord.com/static/img/bg/bg-utrecht.jpg);
+}
+.jumbotron {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+}
+.jumbotron h1 {
 }
