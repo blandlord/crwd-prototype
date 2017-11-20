@@ -71,3 +71,6 @@ build/
 
 # truffle config
 truffle.js
+
+# frontend build
+build_webpack/

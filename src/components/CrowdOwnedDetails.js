@@ -104,7 +104,7 @@ class CrowdOwnedDetails extends Component {
                       <div className="col-xs-12 col-sm-3 date">2017-10-05</div>
                       <div className="col-xs-4 col-sm-3 date">blockheight</div>
                       <div className="col-xs-4 col-sm-3 amount">ETH 2.23005</div>
-                      <div className="col-xs-4 col-sm-3 euro">€ 600 </div>
+                      <div className="col-xs-4 col-sm-3 euro">€ 600</div>
                     </div>
                     <div className="row">
                       <div className="col-xs-12 col-sm-3 date">2017-09-06</div>
@@ -134,24 +134,22 @@ class CrowdOwnedDetails extends Component {
                   </div>
                 </div>
 
+                {crowdOwnedContract.ownerAddress === ownAddress ?
+                  <div className="well">
+                    You are the owner of this contract and have the power to stop the project. &nbsp;
+                    <span>
+                      <button className="btn btn-danger" type="button"
+                              onClick={() => this.killCrowdOwnedContract(crowdOwnedContract.address)}
+                              disabled={crowdOwnedStore.get("killingCrowdOwnedContract")}>
+                      Kill Contract
+                     </button>
+                    </span>
+                  </div>
+                  : null}
               </div>
               :
               null}
         </div>
-        
-        <div className="well">
-          You are the owner of this contract and have the power to stop the project. &nbsp;
-          {crowdOwnedContract.ownerAddress === ownAddress ?
-            <span>
-              <button className="btn btn-danger" type="button"
-                      onClick={() => this.killCrowdOwnedContract(crowdOwnedContract.address)}
-                      disabled={crowdOwnedStore.get("killingCrowdOwnedContract")}>
-                Kill Contract
-              </button>
-            </span>
-            : null}
-        </div>
-        
       </div>
     );
   }
