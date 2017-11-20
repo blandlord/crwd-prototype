@@ -27,15 +27,16 @@ class NotaryUserData extends Component {
     let registryStore = this.props.registryStore;
 
     return (
-      <li>
+      <li className="list-group-item">
+        <h4>SSN: {userData.ssn}&nbsp;
         <span className={`label label-${ userDataHelpers.getEntryLabel(userData.state) }`}>
           {userDataStateText}
-        </span>
-        Address : {userData.userAddress} / SSN : {userData.ssn}
+        </span></h4>
+        <span>{userData.userAddress}</span>
 
         {userDataStateText === "NEW" ?
           <div>
-            <a href className="btn btn-primary btn-xs notary-verify-button"
+            <a href className="btn btn-success btn-xs notary-verify-button"
                onClick={(e) => this.onVerifyClick(e, userData.userAddress, "VERIFIED")}
                disabled={registryStore.get('settingState')}>
               Verify
@@ -52,7 +53,7 @@ class NotaryUserData extends Component {
 
         {userDataStateText === "VERIFIED" ?
           <div>
-            <a href className="btn btn-danger btn-xs notary-verify-button"
+            <a href className="btn btn-warning btn-xs notary-verify-button"
                onClick={(e) => this.onVerifyClick(e, userData.userAddress, "EXPIRED")}
                disabled={registryStore.get('settingState')}>
               Expire

@@ -42,7 +42,7 @@ class Notary extends Component {
                   {registryStore.get('loadingUsersData') ?
                     "Loading Users Data..."
                     :
-                    <ul className="entries">
+                    <ul className="entries list-group">
                       {registryStore.get('usersData').length === 0 ? <em>The registry is empty.</em> : null}
                       {registryStore.get('usersData').map((userData) => (
                         <NotaryUserData userData={userData} key={userData.userAddress}/>

@@ -12,12 +12,12 @@ class UserData extends Component {
     let userData = this.props.userData;
 
     return (
-      <li>
+      <div>
         <span className={`label label-${ userDataHelpers.getEntryLabel(userData.state) }`}>
           {userDataHelpers.getEntryStateText(userData.state)}
         </span>
         {userData.userAddress}
-      </li>
+      </div>
     );
   }
 }
