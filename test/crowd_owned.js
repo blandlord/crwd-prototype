@@ -155,16 +155,25 @@ contract('CrowdOwned', function (accounts) {
 
   });
 
-  describe('kill', function () {
-    let crwdTotalSupply;
-
-    before(async function beforeTest() {
-      await proxiedWeb3.eth.sendTransaction({
+  describe('payable', function () {
+    it("logs payments", async function () {
+      let results = await tokenInstance.sendTransaction({
         from: accounts[0],
         to: tokenInstance.address,
         value: web3.toWei(0.5, "ether")
       });
 
+      let log = results.logs[0];
+      assert.equal(log.args._sender, accounts[0]);
+      assert.equal(log.args._blockheight, log.blockNumber);
+      assert.equal(log.args._value, web3.toWei(0.5, "ether"));
+    });
+  });
+
+  describe('kill', function () {
+    let crwdTotalSupply;
+
+    before(async function beforeTest() {
       crwdTotalSupply = (await crwdTokenInstance.totalSupply()).toNumber();
 
       await crwdTokenInstance.transfer(tokenInstance.address, Math.pow(10, 18), {from: accounts[0]});

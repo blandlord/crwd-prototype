@@ -72,7 +72,7 @@ let getWeb3 = () => new Promise(function (resolve, reject) {
 
         if (process.env.NODE_ENV === "development") {
           // assign to window vars for debugging
-          window.debugVars.web3 = web3 ;
+          window.debugVars.web3 = web3;
         }
 
         resolve({web3, networkName});
@@ -81,9 +81,22 @@ let getWeb3 = () => new Promise(function (resolve, reject) {
   });
 });
 
+function getEventLogs(contractInstance, eventName, filter = {}) {
+  return new Promise((resolve, reject) => {
+    let event = contractInstance[eventName](filter, {fromBlock: 0, toBlock: 'latest'});
+    event.get((err, logs) => {
+      if (err) {
+        return reject(err);
+      }
+
+      resolve(logs);
+    });
+  })
+}
 
 let web3Service = {
   getWeb3: getWeb3,
+  getEventLogs: getEventLogs
 };
 
 

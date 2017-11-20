@@ -1,6 +1,8 @@
 import contractService from '../utils/contractService';
+import web3Service from '../utils/web3Service';
 
 const promisify = require("promisify-es6");
+const _ = require("lodash");
 
 async function deployCrowdOwned(web3, newCrowdOwnedContractData) {
   const crowdOwnedManagerInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedManager");
@@ -75,6 +77,22 @@ async function loadCrowdOwnedContract(web3, address) {
   let lastValuationBlock = await promisify(web3.eth.getBlock)(lastValuation[0].toNumber());
   let lastValuationDate = new Date(lastValuationBlock.timestamp * 1000);
 
+  let paymentLogs = await web3Service.getEventLogs(crowdOwnedInstance, "EthPaymentReceived");
+
+  let incomingEthPayments = [];
+  for (let i = 0; i < paymentLogs.length; i++) {
+    let paymentLog = paymentLogs[i];
+    let incomingEthPayment = {};
+    incomingEthPayment.tx = paymentLog.transactionHash;
+    incomingEthPayment.value = web3.fromWei(paymentLog.args._value.toNumber(), 'ether');
+    incomingEthPayment.blockheight = paymentLog.args._blockheight.toNumber();
+
+    let block = await promisify(web3.eth.getBlock)(incomingEthPayment.blockheight);
+    incomingEthPayment.date = new Date(block.timestamp * 1000);
+
+    incomingEthPayments.push(incomingEthPayment);
+  }
+  incomingEthPayments = _.orderBy(incomingEthPayments, ['date'], ['desc']);
 
   const crowdOwnedContract = {
     address,
@@ -95,6 +113,7 @@ async function loadCrowdOwnedContract(web3, address) {
       value: lastValuation[2],
       isValuation: lastValuation[3]
     },
+    incomingEthPayments
   };
 
   return crowdOwnedContract;

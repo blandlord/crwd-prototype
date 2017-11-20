@@ -94,24 +94,13 @@ class CrowdOwnedDetails extends Component {
                 <div className="row">
                   <div className="col-sm-6">
                     <h3>incoming ETH transactions</h3>
-                    <div className="row">
-                      <div className="col-xs-12 col-sm-3 date">2017-11-07</div>
-                      <div className="col-xs-4 col-sm-3 date">blockheight</div>
-                      <div className="col-xs-4 col-sm-3 amount">ETH 2.12005</div>
-                      <div className="col-xs-4 col-sm-3 euro">€ 600 (optional)</div>
-                    </div>
-                    <div className="row">
-                      <div className="col-xs-12 col-sm-3 date">2017-10-05</div>
-                      <div className="col-xs-4 col-sm-3 date">blockheight</div>
-                      <div className="col-xs-4 col-sm-3 amount">ETH 2.23005</div>
-                      <div className="col-xs-4 col-sm-3 euro">€ 600</div>
-                    </div>
-                    <div className="row">
-                      <div className="col-xs-12 col-sm-3 date">2017-09-06</div>
-                      <div className="col-xs-4 col-sm-3 date">blockheight</div>
-                      <div className="col-xs-4 col-sm-3 amount">ETH 1.89005</div>
-                      <div className="col-xs-4 col-sm-3 euro">€ 600</div>
-                    </div>
+                    {crowdOwnedContract.incomingEthPayments.map((incomingEthPayment) => (
+                      <div className="row" key={incomingEthPayment.tx}>
+                        <div className="col-xs-12 col-sm-3 date">{moment(incomingEthPayment.date).format("YYYY-MM-DD")}</div>
+                        <div className="col-xs-4 col-sm-3 date">Block #{incomingEthPayment.blockheight}</div>
+                        <div className="col-xs-4 col-sm-3 amount">ETH {incomingEthPayment.value}</div>
+                      </div>
+                    ))}
                   </div>
                   <div className="col-sm-6">
                     <h3>Transfer Tokens</h3>

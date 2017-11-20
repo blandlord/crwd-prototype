@@ -16,6 +16,8 @@ contract CrowdOwned is StandardToken, Ownable {
 
   event ValuationDeleted(uint indexed _blockheight);
 
+  event EthPaymentReceived(address indexed _sender, uint _blockheight, uint _value);
+
   /*
    * Storage
    */
@@ -229,6 +231,8 @@ contract CrowdOwned is StandardToken, Ownable {
   * @dev Fallback function to receive funds
   */
   function() payable {
+    // Log event
+    EthPaymentReceived(msg.sender, block.number, msg.value);
   }
 
 
