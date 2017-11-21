@@ -80,7 +80,9 @@ class CrowdOwnedDetails extends Component {
                     <div>
                       <span className="label label-default">ETH</span>
                       <span className="balance">{crowdOwnedContract.contractEthBalance}</span>&nbsp;
-                      <span className="euro">(€ ...)</span>
+                      <span className="euro">
+                        (€ {Math.round(crowdOwnedContract.contractEthBalance * crowdOwnedContract.ethEurRate * 100) / 100})
+                      </span>
                     </div>
                   </div>
                   <div className="col-xs-8 col-sm-4 col-lg-3">
@@ -96,7 +98,8 @@ class CrowdOwnedDetails extends Component {
                     <h3>incoming ETH transactions</h3>
                     {crowdOwnedContract.incomingEthPayments.map((incomingEthPayment) => (
                       <div className="row" key={incomingEthPayment.tx}>
-                        <div className="col-xs-12 col-sm-3 date">{moment(incomingEthPayment.date).format("YYYY-MM-DD")}</div>
+                        <div
+                          className="col-xs-12 col-sm-3 date">{moment(incomingEthPayment.date).format("YYYY-MM-DD")}</div>
                         <div className="col-xs-4 col-sm-3 date">Block #{incomingEthPayment.blockheight}</div>
                         <div className="col-xs-4 col-sm-3 amount">ETH {incomingEthPayment.value}</div>
                       </div>

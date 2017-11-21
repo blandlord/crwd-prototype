@@ -1,5 +1,6 @@
 import contractService from '../utils/contractService';
 import web3Service from '../utils/web3Service';
+import currencyConversionService from '../utils/currencyConversionService';
 
 const promisify = require("promisify-es6");
 const _ = require("lodash");
@@ -94,6 +95,8 @@ async function loadCrowdOwnedContract(web3, address) {
   }
   incomingEthPayments = _.orderBy(incomingEthPayments, ['date'], ['desc']);
 
+  let ethEurRate = await currencyConversionService.getEthEurRate();
+
   const crowdOwnedContract = {
     address,
     name,
@@ -113,7 +116,8 @@ async function loadCrowdOwnedContract(web3, address) {
       value: lastValuation[2],
       isValuation: lastValuation[3]
     },
-    incomingEthPayments
+    incomingEthPayments,
+    ethEurRate
   };
 
   return crowdOwnedContract;
