@@ -10,6 +10,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
 
 import TokensTransferForm from './TokensTransferForm';
+import SaveValuationForm from './SaveValuationForm';
 
 
 class CrowdOwnedDetails extends Component {
@@ -64,8 +65,11 @@ class CrowdOwnedDetails extends Component {
                     <div>
                       Latest valuation:
                       {crowdOwnedContract.lastValuation.isValuation ?
-                        ` ${crowdOwnedContract.lastValuation.currency} ${crowdOwnedContract.lastValuation.value} (${moment(crowdOwnedContract.lastValuation.date).format("YYYY-MM-DD")})`
+                        ` ${crowdOwnedContract.lastValuation.currency} ${crowdOwnedContract.lastValuation.value} (${moment(crowdOwnedContract.lastValuation.date).format("YYYY-MM-DD")}) (Block #${crowdOwnedContract.lastValuation.blockheight})`
                         : 'N/A'}
+                    </div>
+                    <div>
+                      Valuation per Token: € {crowdOwnedContract.contractValuationPerToken}
                     </div>
 
                     <div>Contract Balances:</div>
@@ -81,7 +85,7 @@ class CrowdOwnedDetails extends Component {
                       <span className="label label-default">ETH</span>
                       <span className="balance">{crowdOwnedContract.contractEthBalance}</span>&nbsp;
                       <span className="euro">
-                        (€ {Math.round(crowdOwnedContract.contractEthBalance * crowdOwnedContract.ethEurRate * 100) / 100})
+                        (€ {crowdOwnedContract.contractEthEurValue})
                       </span>
                     </div>
                   </div>
@@ -90,7 +94,9 @@ class CrowdOwnedDetails extends Component {
                       <div>
                         <img className="img-responsive" src={crowdOwnedContract.imageUrl} role="presentation"/>
                       </div>
-                      : null}
+                      :
+                      null
+                    }
                   </div>
                 </div>
                 <div className="row">
@@ -127,6 +133,17 @@ class CrowdOwnedDetails extends Component {
                 </div>
 
                 {crowdOwnedContract.ownerAddress === ownAddress ?
+                  <div className="row">
+                    <div className="col-md-6">
+                      <h3>Save Valuation</h3>
+                      <SaveValuationForm contractAddress={crowdOwnedContract.address}/>
+                    </div>
+                  </div>
+                  :
+                  null
+                }
+
+                {crowdOwnedContract.ownerAddress === ownAddress ?
                   <div className="well">
                     You are the owner of this contract and have the power to stop the project. &nbsp;
                     <span>
@@ -137,10 +154,12 @@ class CrowdOwnedDetails extends Component {
                      </button>
                     </span>
                   </div>
-                  : null}
+                  : null
+                }
               </div>
               :
-              null}
+              null
+          }
         </div>
       </div>
     );

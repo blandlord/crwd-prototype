@@ -58,26 +58,7 @@ async function populateContractsData(web3, crowdOwnedContracts) {
   return crowdOwnedContracts;
 }
 
-async function loadCrowdOwnedContract(web3, address) {
-  const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", address);
-  const crwdTokenInstance = await contractService.getDeployedInstance(web3, "CRWDToken");
-
-  let name = await crowdOwnedInstance.name();
-  let symbol = await crowdOwnedInstance.symbol();
-  let imageUrl = await crowdOwnedInstance.imageUrl();
-  let ownerAddress = await crowdOwnedInstance.owner();
-  let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
-  let contractBalance = await crowdOwnedInstance.balanceOf(crowdOwnedInstance.address);
-  let contractEthBalance = await promisify(web3.eth.getBalance)(crowdOwnedInstance.address);
-  let totalSupply = await crowdOwnedInstance.totalSupply();
-  let circulatingSupply = await crowdOwnedInstance.circulatingSupply();
-
-  let contractCRWDBalance = await crwdTokenInstance.balanceOf(crowdOwnedInstance.address);
-
-  let lastValuation = await crowdOwnedInstance.getValuation(0);
-  let lastValuationBlock = await promisify(web3.eth.getBlock)(lastValuation[0].toNumber());
-  let lastValuationDate = new Date(lastValuationBlock.timestamp * 1000);
-
+async function getIncomingEthPayments(web3, crowdOwnedInstance) {
   let paymentLogs = await web3Service.getEventLogs(crowdOwnedInstance, "EthPaymentReceived");
 
   let incomingEthPayments = [];
@@ -94,8 +75,45 @@ async function loadCrowdOwnedContract(web3, address) {
     incomingEthPayments.push(incomingEthPayment);
   }
   incomingEthPayments = _.orderBy(incomingEthPayments, ['date'], ['desc']);
+  return incomingEthPayments;
+}
+
+async function loadCrowdOwnedContract(web3, address) {
+  const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", address);
+  const crwdTokenInstance = await contractService.getDeployedInstance(web3, "CRWDToken");
+
+  let name = await crowdOwnedInstance.name();
+  let symbol = await crowdOwnedInstance.symbol();
+  let imageUrl = await crowdOwnedInstance.imageUrl();
+  let ownerAddress = await crowdOwnedInstance.owner();
+  let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
+  let contractBalance = await crowdOwnedInstance.balanceOf(crowdOwnedInstance.address);
+  let contractWeiBalance = await promisify(web3.eth.getBalance)(crowdOwnedInstance.address);
+  let contractEthBalance = web3.fromWei(contractWeiBalance.toNumber(), "ether");
+
+  let totalSupply = (await crowdOwnedInstance.totalSupply()).toNumber();
+  let circulatingSupply = (await crowdOwnedInstance.circulatingSupply()).toNumber();
 
   let ethEurRate = await currencyConversionService.getEthEurRate();
+  let contractEthEurValue = Math.round(contractEthBalance * ethEurRate * 100) / 100;
+
+  let contractCRWDBalance = await crwdTokenInstance.balanceOf(crowdOwnedInstance.address);
+
+  let lastValuationResults = await crowdOwnedInstance.getValuation(0);
+  let lastValuationBlock = await promisify(web3.eth.getBlock)(lastValuationResults[0].toNumber());
+  let lastValuationDate = lastValuationBlock ? new Date(lastValuationBlock.timestamp * 1000) : null;
+  let lastValuation = {
+    date: lastValuationDate,
+    blockheight: lastValuationResults[0].toNumber(),
+    currency: web3.toAscii(lastValuationResults[1]).replace(/\u0000/g, ""),
+    value: lastValuationResults[2].toNumber(),
+    isValuation: lastValuationResults[3]
+  };
+
+  let contractTotalValuation = contractEthEurValue + lastValuation.value;
+  let contractValuationPerToken = circulatingSupply > 0 ? Math.round(contractTotalValuation / circulatingSupply * 10000) / 10000 : 'N/A';
+
+  let incomingEthPayments = await getIncomingEthPayments(web3, crowdOwnedInstance);
 
   const crowdOwnedContract = {
     address,
@@ -105,19 +123,16 @@ async function loadCrowdOwnedContract(web3, address) {
     ownerAddress,
     balance: balance.toNumber(),
     contractBalance: contractBalance.toNumber(),
-    contractEthBalance: web3.fromWei(contractEthBalance.toNumber(), "ether"),
+    contractEthBalance: contractEthBalance,
     contractCRWDBalance: contractCRWDBalance.toNumber(),
-    totalSupply: totalSupply.toNumber(),
-    circulatingSupply: circulatingSupply.toNumber(),
-    lastValuation: {
-      date: lastValuationDate,
-      blockheight: lastValuation[0],
-      currency: web3.toAscii(lastValuation[1]).replace(/\u0000/g, ""),
-      value: lastValuation[2],
-      isValuation: lastValuation[3]
-    },
+    totalSupply: totalSupply,
+    circulatingSupply: circulatingSupply,
+    lastValuation: lastValuation,
     incomingEthPayments,
-    ethEurRate
+    ethEurRate,
+    contractEthEurValue,
+    contractTotalValuation,
+    contractValuationPerToken
   };
 
   return crowdOwnedContract;
@@ -153,12 +168,23 @@ async function getOwnersData(web3, address) {
   return ownersData;
 }
 
-
 async function killCrowdOwnedContract(web3, contractAddress) {
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", contractAddress);
   const crwdTokenInstance = await contractService.getDeployedInstance(web3, "CRWDToken");
 
   let results = await crowdOwnedInstance.kill(crwdTokenInstance.address, {gas: 200000});
+  return results;
+}
+
+async function saveValuation(web3, newValuation) {
+  const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", newValuation.contractAddress);
+
+  let lastValuationBlockheight = (await crowdOwnedInstance.getLastValuationBlockheight()).toNumber();
+  if (newValuation.blockheight <= lastValuationBlockheight) {
+    throw new Error(`Blockheight needs to be higher than last valuation blockheight (${lastValuationBlockheight})`);
+  }
+
+  let results = await crowdOwnedInstance.saveValuation(newValuation.blockheight, newValuation.currency, newValuation.value, {gas: 200000});
   return results;
 }
 
@@ -169,7 +195,8 @@ let crowdOwnedService = {
   populateContractsData: populateContractsData,
   transferTokens: transferTokens,
   getOwnersData,
-  killCrowdOwnedContract
+  killCrowdOwnedContract,
+  saveValuation
 };
 
 export default crowdOwnedService;

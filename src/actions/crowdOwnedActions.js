@@ -62,3 +62,17 @@ export const postKillCrowdOwnedContract = {
   success: (data) => action(POST_KILL_CROWD_OWNED_CONTRACT.SUCCESS, data),
   failure: (error) => action(POST_KILL_CROWD_OWNED_CONTRACT.FAILURE, error),
 };
+
+
+export const SET_NEW_VALUATION = 'SET_NEW_VALUATION';
+export const setNewValuation = data => action(SET_NEW_VALUATION, data);
+
+export const SAVE_NEW_VALUATION = 'SAVE_NEW_VALUATION';
+export const saveNewValuation = data => action(SAVE_NEW_VALUATION, data);
+
+export const POST_SAVE_NEW_VALUATION = createRequestTypes('POST_SAVE_NEW_VALUATION');
+export const postSaveNewValuation = {
+  request: () => action(POST_SAVE_NEW_VALUATION.REQUEST),
+  success: (data) => action(POST_SAVE_NEW_VALUATION.SUCCESS, data),
+  failure: (error) => action(POST_SAVE_NEW_VALUATION.FAILURE, error),
+};

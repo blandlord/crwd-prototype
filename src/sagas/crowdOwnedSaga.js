@@ -136,6 +136,41 @@ function* killCrowdOwnedContract(data) {
   }
 }
 
+function* saveNewValuation(data) {
+  yield put(crowdOwnedActions.postSaveNewValuation.request());
+  try {
+    const web3 = yield select(state => state.web3Store.get("web3"));
+    const newValuation = yield select(state => state.crowdOwnedStore.get("newValuation"));
+    const results = yield call(crowdOwnedService.saveValuation, web3, newValuation);
+
+    // delay to allow changes to be committed to local node
+    yield delay(1000);
+
+    yield put(crowdOwnedActions.postSaveNewValuation.success({
+      results,
+      contractAddress: newValuation.contractAddress
+    }));
+
+    console.log("saveNewValuation TX", results.tx);
+    yield put(notificationActions.success({
+      notification: {
+        title: 'saved valuation successfully',
+        position: 'br'
+      }
+    }));
+  } catch (error) {
+    yield put(crowdOwnedActions.postSaveNewValuation.failure({error}));
+    yield put(notificationActions.error({
+      notification: {
+        title: 'failed to save valuation',
+        message: error.message,
+        position: 'br'
+      }
+    }));
+  }
+}
+
+
 function* watchSaveNewCrowdOwnedContract() {
   yield takeEvery(crowdOwnedActions.SAVE_NEW_CROWD_OWNED_CONTRACT, saveNewCrowdOwnedContract);
 }
@@ -164,6 +199,14 @@ function* watchPostKillCrowdOwnedContractSuccess() {
   yield takeEvery(crowdOwnedActions.POST_KILL_CROWD_OWNED_CONTRACT.SUCCESS, loadCrowdOwnedContracts);
 }
 
+function* watchSaveNewValuation() {
+  yield takeEvery(crowdOwnedActions.SAVE_NEW_VALUATION, saveNewValuation);
+}
+
+function* watchPostSaveNewValuationSuccess() {
+  yield takeEvery(crowdOwnedActions.POST_SAVE_NEW_VALUATION.SUCCESS, loadCrowdOwnedContract);
+}
+
 function* watchSetupWeb3Success() {
   yield takeEvery(web3Actions.SETUP_WEB3.SUCCESS, loadCrowdOwnedContracts);
 }
@@ -177,6 +220,8 @@ export default function* crowdOwnedSaga() {
     watchPostSaveNewTokensTransferSuccess(),
     watchKillCrowdOwnedContract(),
     watchPostKillCrowdOwnedContractSuccess(),
+    watchSaveNewValuation(),
+    watchPostSaveNewValuationSuccess(),
     watchSetupWeb3Success(),
   ]);
 }

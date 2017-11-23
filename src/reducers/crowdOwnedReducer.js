@@ -12,6 +12,11 @@ let initialData = {
   newTokensTransfer: {
     to: '',
     amount: 0
+  },
+  newValuation: {
+    blockheight: 0,
+    currency: 'EUR',
+    value: 0,
   }
 };
 
@@ -98,8 +103,7 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
     return state
       .set('savingNewTokensTransfer', false);
   };
-
-
+  
 
   const postKillCrowdOwnedContractRequest = (state) => {
     return state
@@ -117,6 +121,28 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
       .set('killingCrowdOwnedContract', false);
   };
 
+
+  const setNewValuation = (state) => {
+    return state
+      .set('newValuation', action.newValuation);
+  };
+
+  const postSaveNewValuationRequest = (state) => {
+    return state
+      .set('savingNewValuation', true);
+  };
+
+  const postSaveNewValuationSuccess = (state) => {
+    return state
+      .set('savingNewValuation', false)
+      .set('newValuation', initialData.newValuation);
+  };
+
+  const postSaveNewValuationFailure = (state) => {
+    return state
+      .set('savingNewValuation', false);
+  };
+  
 
   const actions = {
     'SET_NEW_CROWD_OWNED_CONTRACT': () => setNewCrowdOwnedContract(state),
@@ -137,6 +163,10 @@ export default function crowdOwnedReducer(state = new ImmutableMap(initialData),
     'POST_KILL_CROWD_OWNED_CONTRACT_REQUEST': () => postKillCrowdOwnedContractRequest(state),
     'POST_KILL_CROWD_OWNED_CONTRACT_SUCCESS': () => postKillCrowdOwnedContractSuccess(state),
     'POST_KILL_CROWD_OWNED_CONTRACT_FAILURE': () => postKillCrowdOwnedContractFailure(state),
+    'SET_NEW_VALUATION': () => setNewValuation(state),
+    'POST_SAVE_NEW_VALUATION_REQUEST': () => postSaveNewValuationRequest(state),
+    'POST_SAVE_NEW_VALUATION_SUCCESS': () => postSaveNewValuationSuccess(state),
+    'POST_SAVE_NEW_VALUATION_FAILURE': () => postSaveNewValuationFailure(state),
     'DEFAULT': () => state
   };
 
