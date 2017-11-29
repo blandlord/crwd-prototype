@@ -46,3 +46,28 @@ export const fetchLoadOwnerAddress = {
   success: (data) => action(FETCH_LOAD_OWNER_ADDRESS.SUCCESS, data),
   failure: (error) => action(FETCH_LOAD_OWNER_ADDRESS.FAILURE, error),
 };
+
+
+
+export const SET_NEW_NOTARY_DATA = 'SET_NEW_NOTARY_DATA';
+export const setNewNotaryData = data => action(SET_NEW_NOTARY_DATA, data);
+
+export const SAVE_NEW_NOTARY_DATA = 'SAVE_NEW_NOTARY_DATA';
+export const saveNewNotaryData = data => action(SAVE_NEW_NOTARY_DATA, data);
+
+export const POST_SAVE_NEW_NOTARY_DATA = createRequestTypes('POST_SAVE_NEW_NOTARY_DATA');
+export const postSaveNewNotaryData = {
+  request: () => action(POST_SAVE_NEW_NOTARY_DATA.REQUEST),
+  success: (data) => action(POST_SAVE_NEW_NOTARY_DATA.SUCCESS, data),
+  failure: (error) => action(POST_SAVE_NEW_NOTARY_DATA.FAILURE, error),
+};
+
+export const LOAD_NOTARIES_DATA = 'LOAD_NOTARIES_DATA';
+export const loadNotariesData = data => action(LOAD_NOTARIES_DATA, data);
+
+export const FETCH_LOAD_NOTARIES_DATA = createRequestTypes('FETCH_LOAD_NOTARIES_DATA');
+export const fetchLoadNotariesData = {
+  request: () => action(FETCH_LOAD_NOTARIES_DATA.REQUEST),
+  success: (data) => action(FETCH_LOAD_NOTARIES_DATA.SUCCESS, data),
+  failure: (error) => action(FETCH_LOAD_NOTARIES_DATA.FAILURE, error),
+};

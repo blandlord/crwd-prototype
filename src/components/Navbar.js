@@ -52,6 +52,9 @@ class Navbar extends Component {
               <li>
                 <NavLink exact to="/notary">Notary</NavLink>
               </li>
+              <li>
+                <NavLink exact to="/admin">Admin</NavLink>
+              </li>
             </ul>
             <ul className="nav navbar-nav navbar-right">
               <li className="dropdown">

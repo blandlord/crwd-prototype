@@ -12,6 +12,8 @@ contract Registry is Ownable {
 
   event StateUpdated(address indexed userAddress, State state);
 
+  event NotaryAdded(address indexed notaryaddress, string name, string websiteUrl);
+
   /*
    *  Storage
    */
@@ -26,6 +28,16 @@ contract Registry is Ownable {
   State state;
   string ssn;
   bool isUserData;
+  }
+
+  mapping (address => NotaryData) public notariesData;
+
+  address[] public notaryAddresses;
+
+  struct NotaryData {
+  string name;
+  string websiteUrl;
+  bool isNotaryData;
   }
 
   /*
@@ -103,4 +115,39 @@ contract Registry is Ownable {
   function isVerifiedAndValid(address _userAddress) public constant returns (bool) {
     return usersData[_userAddress].state == State.VERIFIED;
   }
+
+  /// @dev Allows to add a notary to the registry
+  /// @param _name Notary name
+  /// @param _websiteUrl Notary website url
+  function addNotary(address _address, string _name, string _websiteUrl) public onlyOwner {
+    // check _address not null
+    require(_address != address(0));
+    // check _name not null
+    require(bytes(_name).length != 0);
+    // check _websiteUrl not null
+    require(bytes(_websiteUrl).length != 0);
+    // avoid overwrite
+    require(!isNotaryData(_address));
+
+    // create new entry
+    notariesData[_address].name = _name;
+    notariesData[_address].websiteUrl = _websiteUrl;
+    notariesData[_address].isNotaryData = true;
+    notaryAddresses.push(_address);
+
+    // Log event
+    NotaryAdded(_address, _name, _websiteUrl);
+  }
+
+  /// @dev Checks if a notary address exists
+  /// @param _notaryAddress notary address to be checked
+  function isNotaryData(address _notaryAddress) public constant returns (bool) {
+    return notariesData[_notaryAddress].isNotaryData;
+  }
+
+  /// @dev fetch notary addresses
+  function getNotaryAddresses() public constant returns (address[])  {
+    return notaryAddresses;
+  }
+
 }

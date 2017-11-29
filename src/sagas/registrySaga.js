@@ -88,6 +88,49 @@ function* setState(data) {
 }
 
 
+function* saveNewNotaryData(data) {
+  yield put(registryActions.postSaveNewNotaryData.request());
+  try {
+    const web3 = yield select(state => state.web3Store.get("web3"));
+    const newNotaryData = yield select(state => state.registryStore.get("newNotaryData"));
+    const results = yield call(registryService.addNotary, web3, newNotaryData);
+
+    // delay to allow changes to be committed to local node
+    yield delay(1000);
+
+    yield put(registryActions.postSaveNewNotaryData.success({results}));
+
+    console.log("saveNewNotaryData TX", results.tx);
+    yield put(notificationActions.success({
+      notification: {
+        title: 'new notary saved',
+        position: 'br'
+      }
+    }));
+  } catch (error) {
+    yield put(registryActions.postSaveNewNotaryData.failure({error}));
+    yield put(notificationActions.error({
+      notification: {
+        title: 'failed to save new notary',
+        message: error.message,
+        position: 'br'
+      }
+    }));
+  }
+}
+
+function* loadNotariesData(data) {
+  yield put(registryActions.fetchLoadNotariesData.request());
+  try {
+    const web3 = yield select(state => state.web3Store.get("web3"));
+    const notariesData = yield call(registryService.loadNotariesData, web3);
+    yield put(registryActions.fetchLoadNotariesData.success({notariesData}));
+  } catch (error) {
+    yield put(registryActions.fetchLoadNotariesData.failure({error}));
+  }
+}
+
+
 function* watchSaveNewUserData() {
   yield takeEvery(registryActions.SAVE_NEW_USER_DATA, saveNewUserData);
 }
@@ -108,9 +151,22 @@ function* watchPostSetStateSuccess() {
   yield takeEvery(registryActions.POST_SET_STATE.SUCCESS, loadUsersData);
 }
 
+function* watchSaveNewNotaryData() {
+  yield takeEvery(registryActions.SAVE_NEW_NOTARY_DATA, saveNewNotaryData);
+}
+
+function* watchPostSaveNewNotaryDataSuccess() {
+  yield takeEvery(registryActions.POST_SAVE_NEW_NOTARY_DATA.SUCCESS, loadNotariesData);
+}
+
+function* watchLoadNotariesData() {
+  yield takeEvery(registryActions.LOAD_NOTARIES_DATA, loadNotariesData);
+}
+
 function* watchSetupWeb3Success() {
   yield takeEvery(web3Actions.SETUP_WEB3.SUCCESS, loadUsersData);
   yield takeEvery(web3Actions.SETUP_WEB3.SUCCESS, loadOwnerAddress);
+  yield takeEvery(web3Actions.SETUP_WEB3.SUCCESS, loadNotariesData);
 }
 
 export default function* registrySaga() {
@@ -120,6 +176,9 @@ export default function* registrySaga() {
     watchSetState(),
     watchPostSaveNewUserDataSuccess(),
     watchPostSetStateSuccess(),
+    watchSaveNewNotaryData(),
+    watchPostSaveNewNotaryDataSuccess(),
+    watchLoadNotariesData(),
     watchSetupWeb3Success(),
   ]);
 }

@@ -7,6 +7,7 @@ import {Router, Route} from 'react-router-dom'
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Notary from './components/Notary';
+import Admin from './components/Admin';
 import CrowdOwnedDetails from './components/CrowdOwnedDetails';
 import history from './history'
 
@@ -19,6 +20,7 @@ ReactDOM.render(
         <Navbar/>
         <Route exact path="/" component={Home}/>
         <Route exact path="/notary" component={Notary}/>
+        <Route exact path="/admin" component={Admin}/>
         <Route exact path="/crowd-owned/:address" component={CrowdOwnedDetails}/>
       </div>
     </Router>

@@ -166,4 +166,70 @@ contract('Registry', function (accounts) {
 
   });
 
+  describe('addNotary/getNotaryAddresses', function () {
+
+    let notary_1 = {
+      address: accounts[5],
+      name: "Notary 1",
+      websiteUrl: "http://www.notary1.example.com"
+    };
+    let notary_2 = {
+      address: accounts[6],
+      name: "Notary 2",
+      websiteUrl: "http://www.notary2.example.com"
+    };
+
+    it("adding as not an owner throws an error", async function () {
+      const instance = await  Registry.deployed();
+
+      await expectRequireFailure(() => instance.addNotary(notary_1.address, notary_1.name, notary_1.websiteUrl, {from: accounts[1]}));
+    });
+
+    it("the owner can add notaries which can be retrieved", async function () {
+      const instance = await  Registry.deployed();
+
+      await instance.addNotary(notary_1.address, notary_1.name, notary_1.websiteUrl, {from: accounts[0]});
+      await instance.addNotary(notary_2.address, notary_2.name, notary_2.websiteUrl, {from: accounts[0]});
+
+      let notaryAddresses = await instance.getNotaryAddresses();
+      assert.equal(notaryAddresses[0], notary_1.address);
+      assert.equal(notaryAddresses[1], notary_2.address);
+
+      let notaryData_1 = await instance.notariesData(notary_1.address);
+      assert.equal(notaryData_1[0], notary_1.name);
+      assert.equal(notaryData_1[1], notary_1.websiteUrl);
+      assert.equal(notaryData_1[2], true);
+
+      let notaryData_2 = await instance.notariesData(notary_2.address);
+      assert.equal(notaryData_2[0], notary_2.name);
+      assert.equal(notaryData_2[1], notary_2.websiteUrl);
+      assert.equal(notaryData_2[2], true);
+    });
+
+    it("adding an already existing user address throws an error", async function () {
+      const instance = await  Registry.deployed();
+
+      await expectRequireFailure(() => instance.addNotary(notary_1.address, notary_1.name, notary_1.websiteUrl, {from: accounts[0]}));
+    });
+
+    it("adding a empty address throws an error", async function () {
+      const instance = await  Registry.deployed();
+
+      await expectRequireFailure(() => instance.addNotary("", "name", "example.com", {from: accounts[0]}));
+    });
+
+    it("adding a empty name throws an error", async function () {
+      const instance = await  Registry.deployed();
+
+      await expectRequireFailure(() => instance.addNotary("0x0001", "", "example.com", {from: accounts[0]}));
+    });
+
+    it("adding a empty website url throws an error", async function () {
+      const instance = await  Registry.deployed();
+
+      await expectRequireFailure(() => instance.addNotary("0x0001", "name", "", {from: accounts[0]}));
+    });
+
+  });
+
 });

@@ -6,9 +6,12 @@ let initialData = {
     ssn: '',
   },
   usersData: [],
-  currentUserData:{
-    
-  }
+  currentUserData: {},
+  newNotaryData: {
+    name: '',
+    websiteUrl: '',
+    address: ''
+  },
 };
 
 export default function registryReducer(state = new ImmutableMap(initialData), action) {
@@ -50,9 +53,7 @@ export default function registryReducer(state = new ImmutableMap(initialData), a
     return state
       .set('loadingUsersData', false);
   };
-  
-  
-  
+
 
   const postSetStateRequest = (state) => {
     return state
@@ -70,7 +71,6 @@ export default function registryReducer(state = new ImmutableMap(initialData), a
   };
 
 
-  
   const fetchLoadOwnerAddressRequest = (state) => {
     return state
       .set('loadingOwnerAddress', true);
@@ -86,9 +86,46 @@ export default function registryReducer(state = new ImmutableMap(initialData), a
     return state
       .set('loadingOwnerAddress', false);
   };
-  
-  
-  
+
+
+  const setNewNotaryData = (state) => {
+    return state
+      .set('newNotaryData', action.newNotaryData);
+  };
+
+  const postSaveNewNotaryDataRequest = (state) => {
+    return state
+      .set('savingNewNotaryData', true);
+  };
+
+  const postSaveNewNotaryDataSuccess = (state) => {
+    return state
+      .set('savingNewNotaryData', false)
+      .set('newNotaryData', initialData.newNotaryData);
+  };
+
+  const postSaveNewNotaryDataFailure = (state) => {
+    return state
+      .set('savingNewNotaryData', false);
+  };
+
+  const fetchLoadNotariesDataRequest = (state) => {
+    return state
+      .set('loadingNotariesData', true);
+  };
+
+  const fetchLoadNotariesDataSuccess = (state) => {
+    return state
+      .set('loadingNotariesData', false)
+      .set('notariesData', action.notariesData);
+  };
+
+  const fetchLoadNotariesDataFailure = (state) => {
+    return state
+      .set('loadingNotariesData', false);
+  };
+
+
   const actions = {
     'SET_NEW_USER_DATA': () => setNewUserData(state),
     'POST_SAVE_NEW_USER_DATA_REQUEST': () => postSaveNewUserDataRequest(state),
@@ -103,6 +140,13 @@ export default function registryReducer(state = new ImmutableMap(initialData), a
     'FETCH_LOAD_OWNER_ADDRESS_REQUEST': () => fetchLoadOwnerAddressRequest(state),
     'FETCH_LOAD_OWNER_ADDRESS_SUCCESS': () => fetchLoadOwnerAddressSuccess(state),
     'FETCH_LOAD_OWNER_ADDRESS_FAILURE': () => fetchLoadOwnerAddressFailure(state),
+    'SET_NEW_NOTARY_DATA': () => setNewNotaryData(state),
+    'POST_SAVE_NEW_NOTARY_DATA_REQUEST': () => postSaveNewNotaryDataRequest(state),
+    'POST_SAVE_NEW_NOTARY_DATA_SUCCESS': () => postSaveNewNotaryDataSuccess(state),
+    'POST_SAVE_NEW_NOTARY_DATA_FAILURE': () => postSaveNewNotaryDataFailure(state),
+    'FETCH_LOAD_NOTARIES_DATA_REQUEST': () => fetchLoadNotariesDataRequest(state),
+    'FETCH_LOAD_NOTARIES_DATA_SUCCESS': () => fetchLoadNotariesDataSuccess(state),
+    'FETCH_LOAD_NOTARIES_DATA_FAILURE': () => fetchLoadNotariesDataFailure(state),
     'DEFAULT': () => state
   };
 

@@ -61,12 +61,45 @@ async function setState(web3, userAddress, state) {
   return results;
 }
 
+async function addNotary(web3, newNotaryData) {
+  const instance = await contractService.getDeployedInstance(web3, "Registry");
+
+  let results = await instance.addNotary(newNotaryData.address, newNotaryData.name, newNotaryData.websiteUrl, {gas: 400000});
+  return results;
+}
+
+async function loadNotariesData(web3) {
+  const instance = await contractService.getDeployedInstance(web3, "Registry");
+
+  let notaryAddresses = await instance.getNotaryAddresses();
+
+  const notariesData = [];
+
+  for (let i = 0; i < notaryAddresses.length; i++) {
+    let notaryAddress = notaryAddresses[i];
+    const values = await instance.notariesData(notaryAddress);
+    let isNotaryData = values[2]; // make sure value exists
+    if (isNotaryData) {
+      notariesData.push({
+        name: values[0],
+        websiteUrl: values[1],
+        address: notaryAddress,
+      });
+    }
+  }
+
+  return notariesData;
+}
+
+
 let registryService = {
   addUserAddress: addUserAddress,
   loadUsersData: loadUsersData,
   loadCurrentUserData: loadCurrentUserData,
   loadOwnerAddress: loadOwnerAddress,
   setState: setState,
+  addNotary,
+  loadNotariesData,
 };
 
 export default registryService;
