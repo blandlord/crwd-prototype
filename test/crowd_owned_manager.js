@@ -3,10 +3,10 @@ const CrowdOwned = artifacts.require("./CrowdOwned.sol");
 const Registry = artifacts.require("./Registry.sol");
 const CRWDToken = artifacts.require("./CRWDToken.sol");
 
+const expectRequireFailure = require('./support/expectRequireFailure');
 const proxiedWeb3Handler = require('./support/proxiedWeb3Handler.js');
 
 contract('CrowdOwnedManager', function (accounts) {
-
   let web3, proxiedWeb3;
   let registryInstance, crwdTokenInstance, crowdOwnedManagerInstance, crowdOwnedInstance;
 
@@ -36,8 +36,19 @@ contract('CrowdOwnedManager', function (accounts) {
   });
 
   describe('deployCrowdOwned', function () {
+    before(async function beforeTest() {
+      // add account 5 as notary
+      await registryInstance.addNotary(accounts[5], "my notary", "notary.example.com", {from: accounts[0]});
+    });
+
+    context('not notary', function () {
+      it("cannot deploy", async function () {
+        await expectRequireFailure(() => crowdOwnedManagerInstance.deployCrowdOwned("Token A", "TOKA", "http://example.com/image", {from: accounts[0]}));
+      });
+    });
+
     it("deploys CrowdOwned contract and saves data in CrowdOwnedManager", async function () {
-      let results = await crowdOwnedManagerInstance.deployCrowdOwned("Token A", "TOKA", "http://example.com/image");
+      let results = await crowdOwnedManagerInstance.deployCrowdOwned("Token A", "TOKA", "http://example.com/image", {from: accounts[5]});
 
       let log = results.logs[0];
       let loggedTokenAddress = log.args.contractAddress;
@@ -51,10 +62,10 @@ contract('CrowdOwnedManager', function (accounts) {
       let imageUrl = await crowdOwnedInstance.imageUrl();
       assert.equal(imageUrl, "http://example.com/image");
       let owner = await crowdOwnedInstance.owner();
-      assert.equal(owner, accounts[0]);
+      assert.equal(owner, accounts[5]);
       let registryAddress = await crowdOwnedInstance.registry();
       assert.equal(registryAddress, registryInstance.address);
-      let balanceOfOwner = await crowdOwnedInstance.balanceOf(accounts[0]);
+      let balanceOfOwner = await crowdOwnedInstance.balanceOf(accounts[5]);
       assert.equal(balanceOfOwner.toNumber(), 100000);
 
       let contractsAddresses = await crowdOwnedManagerInstance.getContractsAddresses();

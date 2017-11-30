@@ -57,8 +57,11 @@ contract('CrowdOwned', function (accounts) {
       await registryInstance.addUserAddress("SSN-1", {from: accounts[1]});
       await registryInstance.addUserAddress("SSN-2", {from: accounts[2]});
 
+      // add account 5 as notary
+      await registryInstance.addNotary(accounts[5], "my notary", "notary.example.com", {from: accounts[0]});
+
       // verify address 1
-      await registryInstance.setState(accounts[1], STATE.VERIFIED, {from: accounts[0]});
+      await registryInstance.setState(accounts[1], STATE.VERIFIED, {from: accounts[5]});
     });
 
     it("transferable if destination is in registry list & verified", async function () {

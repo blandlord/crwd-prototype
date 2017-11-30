@@ -59,7 +59,7 @@ class Home extends Component {
                     <p>If you want to join an existing project, please activate your blockchain account and the
                       City will open up for you.</p>
 
-                    {(registryOwnerAddress === ownAddress || userDataHelpers.getEntryStateText(currentUserData.state) !== "NEW") ?
+                    {(registryOwnerAddress === ownAddress || currentUserData.isNotary || userDataHelpers.getEntryStateText(currentUserData.state) !== "NEW") ?
                       <CrowdOwnedObjects/>
                       : null
                     }

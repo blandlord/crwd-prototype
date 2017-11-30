@@ -35,10 +35,10 @@ contract CrowdOwnedManager is Ownable {
   */
 
   /**
-   * @dev Throws if called by any account other than the registry owner.
+   * @dev Throws if called by any account other than a registry notary.
    */
-  modifier onlyRegistryOwner() {
-    require(msg.sender == registry.owner());
+  modifier onlyRegistryNotary() {
+    require(registry.isNotaryAddress(msg.sender));
     _;
   }
 
@@ -54,7 +54,7 @@ contract CrowdOwnedManager is Ownable {
   /**
   * @dev deploy CrowdOwned contract
   */
-  function deployCrowdOwned(string _name, string _symbol, string _imageUrl) public onlyRegistryOwner {
+  function deployCrowdOwned(string _name, string _symbol, string _imageUrl) public onlyRegistryNotary {
     // deploy contract
     CrowdOwned crowdOwned = new CrowdOwned(_name, _symbol, _imageUrl, msg.sender, registry);
 

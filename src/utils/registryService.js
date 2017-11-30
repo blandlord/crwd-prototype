@@ -35,12 +35,14 @@ async function loadCurrentUserData(web3) {
   const instance = await contractService.getDeployedInstance(web3, "Registry");
 
   const values = await instance.usersData(web3.eth.defaultAccount);
+  const isNotary = await instance.isNotaryAddress(web3.eth.defaultAccount);
 
   let currentUserData = {
     state: values[0].toNumber(),
     ssn: values[1],
     isUserData: values[2],
-    userAddress: web3.eth.defaultAccount
+    userAddress: web3.eth.defaultAccount,
+    isNotary: isNotary
   };
 
   return currentUserData;

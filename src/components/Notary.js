@@ -14,20 +14,21 @@ class Notary extends Component {
   }
 
   render() {
-    let {registryStore,web3Store} = this.props;
+    let {registryStore, web3Store} = this.props;
 
     if (!web3Store.get("web3")) {
       return null;
     }
 
+    let currentUserData = registryStore.get('currentUserData');
 
     return (
       <div className="container">
         <div className="home">
-          {registryStore.get('loadingOwnerAddress') ?
+          {registryStore.get('loadingUsersData') || registryStore.get('loadingOwnerAddress') ?
             "Loading permissions ..."
             :
-            registryStore.get('ownerAddress') !== web3Store.get("web3").eth.defaultAccount ?
+            !currentUserData.isNotary ?
               "Not Authorized ..."
               :
               <div className="row">

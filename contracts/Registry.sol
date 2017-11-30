@@ -41,6 +41,18 @@ contract Registry is Ownable {
   }
 
   /*
+  * Modifiers
+  */
+
+  /**
+   * @dev Throws if called by an account that is not a notary address.
+   */
+  modifier onlyNotary() {
+    require(isNotaryAddress(msg.sender));
+    _;
+  }
+
+  /*
    * Public functions
    */
   /// @dev Contract constructor
@@ -74,7 +86,7 @@ contract Registry is Ownable {
   /// @dev Set state on user address
   /// @param _userAddress user address
   /// @param _state new state
-  function setState(address _userAddress, uint _state) public onlyOwner {
+  function setState(address _userAddress, uint _state) public onlyNotary {
     // make sure user address exists
     require(isUserData(_userAddress));
     // make sure valid state transition
@@ -127,7 +139,7 @@ contract Registry is Ownable {
     // check _websiteUrl not null
     require(bytes(_websiteUrl).length != 0);
     // avoid overwrite
-    require(!isNotaryData(_address));
+    require(!isNotaryAddress(_address));
 
     // create new entry
     notariesData[_address].name = _name;
@@ -140,9 +152,9 @@ contract Registry is Ownable {
   }
 
   /// @dev Checks if a notary address exists
-  /// @param _notaryAddress notary address to be checked
-  function isNotaryData(address _notaryAddress) public constant returns (bool) {
-    return notariesData[_notaryAddress].isNotaryData;
+  /// @param _address notary address to be checked
+  function isNotaryAddress(address _address) public constant returns (bool) {
+    return notariesData[_address].isNotaryData;
   }
 
   /// @dev fetch notary addresses
