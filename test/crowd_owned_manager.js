@@ -2,13 +2,14 @@ const CrowdOwnedManager = artifacts.require("./CrowdOwnedManager.sol");
 const CrowdOwned = artifacts.require("./CrowdOwned.sol");
 const Registry = artifacts.require("./Registry.sol");
 const CRWDToken = artifacts.require("./CRWDToken.sol");
+const CrowdOwnedExchange = artifacts.require("./CrowdOwnedExchange.sol");
 
 const expectRequireFailure = require('./support/expectRequireFailure');
 const proxiedWeb3Handler = require('./support/proxiedWeb3Handler.js');
 
 contract('CrowdOwnedManager', function (accounts) {
   let web3, proxiedWeb3;
-  let registryInstance, crwdTokenInstance, crowdOwnedManagerInstance, crowdOwnedInstance;
+  let registryInstance, crwdTokenInstance, crowdOwnedManagerInstance, crowdOwnedExchangeInstance,crowdOwnedInstance;
 
   before(async function beforeTest() {
     web3 = CrowdOwned.web3;
@@ -16,6 +17,7 @@ contract('CrowdOwnedManager', function (accounts) {
 
     registryInstance = await Registry.deployed();
     crwdTokenInstance = await CRWDToken.deployed();
+    crowdOwnedExchangeInstance = await CrowdOwnedExchange.deployed();
     crowdOwnedManagerInstance = await CrowdOwnedManager.deployed();
   });
 
@@ -27,10 +29,16 @@ contract('CrowdOwnedManager', function (accounts) {
       assert.equal(registryAddress, registryInstance.address);
     });
 
-    it('CRWDToken set ok', async function it() {
+    it('crwdToken set ok', async function it() {
       let crwdTokenAddress = await crowdOwnedManagerInstance.crwdToken();
 
       assert.equal(crwdTokenAddress, crwdTokenInstance.address);
+    });
+
+    it('crowdOwnedExchange set ok', async function it() {
+      let crowdOwnedExchangeAddress = await crowdOwnedManagerInstance.crowdOwnedExchange();
+
+      assert.equal(crowdOwnedExchangeAddress, crowdOwnedExchangeInstance.address);
     });
 
   });
@@ -65,6 +73,8 @@ contract('CrowdOwnedManager', function (accounts) {
       assert.equal(owner, accounts[5]);
       let registryAddress = await crowdOwnedInstance.registry();
       assert.equal(registryAddress, registryInstance.address);
+      let crowdOwnedExchangeAddress = await crowdOwnedInstance.crowdOwnedExchange();
+      assert.equal(crowdOwnedExchangeAddress, crowdOwnedExchangeInstance.address);
       let balanceOfOwner = await crowdOwnedInstance.balanceOf(accounts[5]);
       assert.equal(balanceOfOwner.toNumber(), 100000);
 

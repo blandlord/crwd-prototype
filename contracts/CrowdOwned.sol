@@ -5,6 +5,7 @@ import './StandardToken.sol';
 import './Ownable.sol';
 import './Registry.sol';
 import './CrowdOwnedManager.sol';
+import './CrowdOwnedExchange.sol';
 import './CRWDToken.sol';
 
 
@@ -23,24 +24,26 @@ contract CrowdOwned is StandardToken, Ownable {
    */
   Registry public registry;
 
+  CrowdOwnedExchange public crowdOwnedExchange;
+
   string public  name;
 
   string public  symbol;
 
   string public  imageUrl;
 
-  mapping (address => bool) ownerAddressInitialized;
+  mapping(address => bool) ownerAddressInitialized;
 
   address[] public ownerAddresses;
 
-  mapping (uint => Valuation) public valuationsData;
+  mapping(uint => Valuation) public valuationsData;
 
   uint[] public valuationBlockheights;
 
   struct Valuation {
-  bytes32 currency;
-  uint value;
-  bool isValuation;
+    bytes32 currency;
+    uint value;
+    bool isValuation;
   }
 
 
@@ -59,9 +62,10 @@ contract CrowdOwned is StandardToken, Ownable {
   * @param _symbol Contract Symbol
   * @param _imageUrl CrowdOwned Object Image Url
   */
-  function CrowdOwned(string _name, string _symbol, string _imageUrl, address _owner, Registry _registry) {
+  function CrowdOwned(string _name, string _symbol, string _imageUrl, address _owner, Registry _registry, CrowdOwnedExchange _crowdOwnedExchange) {
     // prevent setting to null
     require(_registry != address(0));
+    require(_crowdOwnedExchange != address(0));
     require(_owner != address(0));
 
     name = _name;
@@ -73,6 +77,9 @@ contract CrowdOwned is StandardToken, Ownable {
 
     // set registry
     registry = _registry;
+
+    // set exchange
+    crowdOwnedExchange = _crowdOwnedExchange;
 
     totalSupply = INITIAL_SUPPLY;
     balances[_owner] = INITIAL_SUPPLY;
@@ -125,7 +132,7 @@ contract CrowdOwned is StandardToken, Ownable {
   * @param _to The address to transfer to.
   */
   function isValidTransfer(address _to) public constant returns (bool){
-    return (_to == address(this) || registry.isVerifiedAndValid(_to));
+    return (_to == address(this) || _to == address(crowdOwnedExchange) || registry.isVerifiedAndValid(_to));
   }
 
   /**

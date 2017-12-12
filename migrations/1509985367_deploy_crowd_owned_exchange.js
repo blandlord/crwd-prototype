@@ -1,7 +1,7 @@
 const Registry = artifacts.require("./Registry.sol");
 const CRWDToken = artifacts.require("./CRWDToken.sol");
-const CrowdOwnedManager = artifacts.require("./CrowdOwnedManager.sol");
+const CrowdOwnedExchange = artifacts.require("./CrowdOwnedExchange.sol");
 
 module.exports = function (deployer) {
-  deployer.deploy(CrowdOwnedManager, Registry.address, CRWDToken.address);
+  deployer.deploy(CrowdOwnedExchange, Registry.address, CRWDToken.address);
 };

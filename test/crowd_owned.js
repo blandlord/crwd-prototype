@@ -1,6 +1,7 @@
 const Registry = artifacts.require("./Registry.sol");
 const CrowdOwned = artifacts.require("./CrowdOwned.sol");
 const CRWDToken = artifacts.require("./CRWDToken.sol");
+const CrowdOwnedExchange = artifacts.require("./CrowdOwnedExchange.sol");
 
 const expectRequireFailure = require('./support/expectRequireFailure');
 const proxiedWeb3Handler = require('./support/proxiedWeb3Handler.js');
@@ -10,7 +11,7 @@ let STATE = require('./utils/state');
 
 contract('CrowdOwned', function (accounts) {
 
-  let web3, proxiedWeb3, registryInstance, crwdTokenInstance, tokenInstance;
+  let web3, proxiedWeb3, registryInstance, crwdTokenInstance, tokenInstance, crowdOwnedExchangeInstance;
 
   before(async function beforeTest() {
     web3 = CrowdOwned.web3;
@@ -18,7 +19,8 @@ contract('CrowdOwned', function (accounts) {
 
     registryInstance = await Registry.deployed();
     crwdTokenInstance = await CRWDToken.deployed();
-    tokenInstance = await CrowdOwned.new("My Token", "MYT", "http://example.com/image", accounts[0], registryInstance.address, {gas: 3000000});
+    crowdOwnedExchangeInstance = await CrowdOwnedExchange.deployed();
+    tokenInstance = await CrowdOwned.new("My Token", "MYT", "http://example.com/image", accounts[0], registryInstance.address, crowdOwnedExchangeInstance.address, {gas: 3000000});
   });
 
   describe('proper instantiation', function () {

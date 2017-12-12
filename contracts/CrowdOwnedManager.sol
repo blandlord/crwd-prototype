@@ -5,6 +5,7 @@ import "./Ownable.sol";
 import "./CrowdOwned.sol";
 import "./Registry.sol";
 import "./CRWDToken.sol";
+import "./CrowdOwnedExchange.sol";
 
 
 contract CrowdOwnedManager is Ownable {
@@ -20,14 +21,16 @@ contract CrowdOwnedManager is Ownable {
 
   CRWDToken public crwdToken;
 
-  mapping (address => ContractData) public contractsData;
+  CrowdOwnedExchange public crowdOwnedExchange;
+
+  mapping(address => ContractData) public contractsData;
 
   address[] public contractsAddresses;
 
   struct ContractData {
-  string name;
-  string symbol;
-  bool isContractData;
+    string name;
+    string symbol;
+    bool isContractData;
   }
 
   /*
@@ -46,9 +49,10 @@ contract CrowdOwnedManager is Ownable {
   * Public functions
   */
   /// @dev Contract constructor
-  function CrowdOwnedManager(Registry _registry, CRWDToken _crwdToken) {
+  function CrowdOwnedManager(Registry _registry, CRWDToken _crwdToken, CrowdOwnedExchange _crowdOwnedExchange) {
     registry = _registry;
     crwdToken = _crwdToken;
+    crowdOwnedExchange = _crowdOwnedExchange;
   }
 
   /**
@@ -56,7 +60,7 @@ contract CrowdOwnedManager is Ownable {
   */
   function deployCrowdOwned(string _name, string _symbol, string _imageUrl) public onlyRegistryNotary {
     // deploy contract
-    CrowdOwned crowdOwned = new CrowdOwned(_name, _symbol, _imageUrl, msg.sender, registry);
+    CrowdOwned crowdOwned = new CrowdOwned(_name, _symbol, _imageUrl, msg.sender, registry, crowdOwnedExchange);
 
     var contractAddress = address(crowdOwned);
 
