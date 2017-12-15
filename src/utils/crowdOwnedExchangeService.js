@@ -19,11 +19,12 @@ async function loadOrders(web3, crowdOwnedAddress) {
     let canceled = orderData[5];
     if (isOrderData && !executed && !canceled) {
       orders.push({
-        orderType: orderDataHelpers.getOrderTypeText(orderData[0].toNumber()),
+        orderType: orderData[0].toNumber(),
         price: orderData[1].toNumber(),
         amount: orderData[2].toNumber(),
         userAddress: orderData[3],
         id: orderId,
+        tokenAddress: crowdOwnedAddress
       });
     }
   }
@@ -34,12 +35,12 @@ async function loadOrders(web3, crowdOwnedAddress) {
 async function createOrder(web3, orderData) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
 
-  let isBalanceSufficient = await crowdOwnedExchangeInstance.isBalanceSufficient(true, orderData.tokenAddress, orderData.orderType, orderData.price, orderData.amount);
+  let isBalanceSufficient = await crowdOwnedExchangeInstance.isBalanceSufficient(true, orderData.tokenAddress, orderData.orderType, orderData.fullDecimalsPrice, orderData.amount);
   if (!isBalanceSufficient) {
     throw new Error(`Balance insufficient for this order`);
   }
 
-  let results = await crowdOwnedExchangeInstance.createOrder(orderData.tokenAddress, orderData.orderType, orderData.price, orderData.amount, {gas: 200000});
+  let results = await crowdOwnedExchangeInstance.createOrder(orderData.tokenAddress, orderData.orderType, orderData.fullDecimalsPrice, orderData.amount, {gas: 200000});
   return results;
 }
 
@@ -50,10 +51,15 @@ async function cancelOrder(web3, tokenAddress, orderId) {
   return results;
 }
 
-async function takeOrder(web3, tokenAddress, orderId) {
+async function takeOrder(web3, tokenAddress, order) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
 
-  let results = crowdOwnedExchangeInstance.takeOrder(tokenAddress, orderId, {gas: 200000});
+  let isBalanceSufficient = await crowdOwnedExchangeInstance.isBalanceSufficient(false, order.tokenAddress, order.orderType, order.price, order.amount);
+  if (!isBalanceSufficient) {
+    throw new Error(`Balance insufficient for this order`);
+  }
+
+  let results = crowdOwnedExchangeInstance.takeOrder(tokenAddress, order.id, {gas: 200000});
   return results;
 }
 
@@ -84,6 +90,11 @@ async function depositCrowdOwnedTokens(web3, crowdOwnedAddress, amount) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", crowdOwnedAddress);
 
+  const walletTokenBalance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
+  if (walletTokenBalance.toNumber() < amount) {
+    throw new Error(`Cannot deposit more than wallet balance (${walletTokenBalance.toNumber()})`);
+  }
+
   await crowdOwnedInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {gas: 200000});
   let results = await crowdOwnedExchangeInstance.depositCrowdOwnedTokens(crowdOwnedAddress, amount, {gas: 200000});
   return results;
@@ -91,6 +102,11 @@ async function depositCrowdOwnedTokens(web3, crowdOwnedAddress, amount) {
 
 async function withdrawCrowdOwnedTokens(web3, crowdOwnedAddress, amount) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
+
+  const tokenBalance = await crowdOwnedExchangeInstance.tokenBalanceOf(crowdOwnedAddress, web3.eth.defaultAccount);
+  if (tokenBalance.toNumber() < amount) {
+    throw new Error(`Cannot withdraw more than available balance (${tokenBalance.toNumber()})`);
+  }
 
   let results = await crowdOwnedExchangeInstance.withdrawCrowdOwnedTokens(crowdOwnedAddress, amount, {gas: 200000});
   return results;
@@ -100,6 +116,11 @@ async function depositCRWDTokens(web3, amount) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
   const crwdTokenInstance = await contractService.getDeployedInstance(web3, "CRWDToken");
 
+  const walletCrwdBalance = await crwdTokenInstance.balanceOf(web3.eth.defaultAccount);
+  if (walletCrwdBalance.toNumber() < amount) {
+    throw new Error(`Cannot deposit more than wallet balance (${walletCrwdBalance.toNumber() / Math.pow(10,18)})`);
+  }
+
   await crwdTokenInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {gas: 100000});
   let results = await crowdOwnedExchangeInstance.depositCRWDTokens(amount, {gas: 200000});
   return results;
@@ -107,6 +128,11 @@ async function depositCRWDTokens(web3, amount) {
 
 async function withdrawCRWDTokens(web3, amount) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
+
+  const crwdBalance = await crowdOwnedExchangeInstance.crwdBalanceOf(web3.eth.defaultAccount);
+  if (crwdBalance.toNumber() < amount) {
+    throw new Error(`Cannot withdraw more than available balance (${crwdBalance.toNumber() / Math.pow(10,18)})`);
+  }
 
   let results = await crowdOwnedExchangeInstance.withdrawCRWDTokens(amount, {gas: 200000});
   return results;

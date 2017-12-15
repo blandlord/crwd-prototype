@@ -5,7 +5,7 @@ let initialData = {
   orders: [],
   balances: {},
   newOrder: {
-    tokenAddress: '',
+    tokenAddress: null,
     orderType: 0,
     price: 0,
     amount: 0,

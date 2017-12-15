@@ -9,7 +9,9 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
 
 import BalanceForms from './BalanceForms';
-
+import NewOrderForm from './NewOrderForm';
+import Order from './Order';
+import orderDataHelpers from '../utils/orderDataHelpers';
 
 class CrowdOwnedExchange extends Component {
   componentDidMount() {
@@ -43,6 +45,14 @@ class CrowdOwnedExchange extends Component {
     this.props.crowdOwnedExchangeActions.loadBalances({crowdOwnedAddress: address});
   }
 
+  getBuyOrders(orders) {
+    return orders.filter((order) => orderDataHelpers.getOrderTypeText(order.orderType) === "BUY").sort((a, b) => b.price - a.price);
+  }
+
+  getSellOrders(orders) {
+    return orders.filter((order) => orderDataHelpers.getOrderTypeText(order.orderType) === "SELL").sort((a, b) => a.price - b.price);
+  }
+
   render() {
     if (!this.props.web3Store.get("web3")) {
       return null;
@@ -52,7 +62,7 @@ class CrowdOwnedExchange extends Component {
 
     let crowdOwnedContractSummary = crowdOwnedExchangeStore.get('crowdOwnedContractSummary');
     let balances = crowdOwnedExchangeStore.get('balances');
-    let ownAddress = web3Store.get("web3").eth.defaultAccount;
+    let orders = crowdOwnedExchangeStore.get('orders');
     let crowdOwnedAddress = this.props.match.params.address;
 
     return (
@@ -90,9 +100,14 @@ class CrowdOwnedExchange extends Component {
                       <table className="table table-responsive table-condensed table-bordered">
                         <thead>
                         <tr>
-                          <th></th>
-                          <th>Wallet</th>
-                          <th>Exchange</th>
+                          <th rowSpan="2"></th>
+                          <th rowSpan="2">Wallet</th>
+                          <th colSpan="3">Exchange</th>
+                        </tr>
+                        <tr>
+                          <th>Total</th>
+                          <th>Available</th>
+                          <th>Locked</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -101,7 +116,12 @@ class CrowdOwnedExchange extends Component {
                           <td>{balances.walletCrwdBalance / Math.pow(10, 18)}</td>
                           <td>
                             {(balances.crwdBalance + balances.lockedCrwdBalance) / Math.pow(10, 18)}
-                            &nbsp; (Locked: {balances.lockedCrwdBalance / Math.pow(10, 18)})
+                          </td>
+                          <td>
+                            {balances.crwdBalance / Math.pow(10, 18)}
+                          </td>
+                          <td>
+                            {balances.lockedCrwdBalance / Math.pow(10, 18)}
                           </td>
                         </tr>
                         <tr>
@@ -109,7 +129,12 @@ class CrowdOwnedExchange extends Component {
                           <td>{balances.walletTokenBalance}</td>
                           <td>
                             {balances.tokenBalance + balances.lockedTokenBalance}
-                            &nbsp; (Locked: {balances.lockedTokenBalance})
+                          </td>
+                          <td>
+                            {balances.tokenBalance}
+                          </td>
+                          <td>
+                            {balances.lockedTokenBalance}
                           </td>
                         </tr>
                         </tbody>
@@ -119,9 +144,74 @@ class CrowdOwnedExchange extends Component {
                 </div>
 
                 <div className="row">
-                  <div className="col-sm-6">
+                  <div className="col-sm-12">
                     <h3>Deposit/Withdraw</h3>
                     <BalanceForms crowdOwnedAddress={crowdOwnedAddress}/>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-sm-12">
+                    <h3>Order Book</h3>
+
+                    {crowdOwnedExchangeStore.get('loadingOrders') ?
+                      "Loading Orders ..."
+                      :
+                      <div className="row">
+                        <div className="col-sm-6">
+                          <h4>
+                            Open Buy Orders
+                          </h4>
+
+                          <div className="table-responsive">
+                            <table className="table table-bordered table-hover table-striped">
+                              <thead>
+                              <tr>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th></th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              {orders ? this.getBuyOrders(orders).map((order) => <Order key={order.id} order={order}
+                                                                                        crowdOwnedAddress={crowdOwnedAddress}/>) : null}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div className="col-sm-6">
+                          <h4>
+                            Open Sell Orders
+                          </h4>
+
+                          <div className="table-responsive">
+                            <table className="table table-bordered table-hover table-striped">
+                              <thead>
+                              <tr>
+                                <th>Price</th>
+                                <th>Amount</th>
+                                <th></th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              {orders ? this.getSellOrders(orders).map((order) => <Order key={order.id} order={order}
+                                                                                         crowdOwnedAddress={crowdOwnedAddress}/>) : null}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    }
+
+                    <div className="row">
+                      <div className="col-sm-6">
+                        <h4>
+                          New Order
+                        </h4>
+                        <NewOrderForm crowdOwnedAddress={crowdOwnedAddress}/>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
 

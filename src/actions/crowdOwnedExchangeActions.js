@@ -52,7 +52,7 @@ export const cancelOrder = data => action(CANCEL_ORDER, data);
 
 export const POST_CANCEL_ORDER = createRequestTypes('POST_CANCEL_ORDER');
 export const postCancelOrder = {
-  request: () => action(POST_CANCEL_ORDER.REQUEST),
+  request: (data) => action(POST_CANCEL_ORDER.REQUEST,data),
   success: (data) => action(POST_CANCEL_ORDER.SUCCESS, data),
   failure: (error) => action(POST_CANCEL_ORDER.FAILURE, error),
 };
@@ -62,7 +62,7 @@ export const takeOrder = data => action(TAKE_ORDER, data);
 
 export const POST_TAKE_ORDER = createRequestTypes('POST_TAKE_ORDER');
 export const postTakeOrder = {
-  request: () => action(POST_TAKE_ORDER.REQUEST),
+  request: (data) => action(POST_TAKE_ORDER.REQUEST,data),
   success: (data) => action(POST_TAKE_ORDER.SUCCESS, data),
   failure: (error) => action(POST_TAKE_ORDER.FAILURE, error),
 };

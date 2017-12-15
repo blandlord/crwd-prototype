@@ -65,6 +65,9 @@ function* saveNewOrder(data) {
     const web3 = yield select(state => state.web3Store.get("web3"));
     const newOrder = yield select(state => state.crowdOwnedExchangeStore.get("newOrder"));
 
+    newOrder.fullDecimalsPrice = parseFloat(newOrder.price) * Math.pow(10, 18); // 18 decimals for CRWD
+    newOrder.amount = parseInt(newOrder.amount, 10);
+
     const results = yield call(crowdOwnedExchangeService.createOrder, web3, newOrder);
 
     // delay to allow changes to be committed to local node
@@ -123,11 +126,11 @@ function* cancelOrder(data) {
 }
 
 function* takeOrder(data) {
-  yield put(crowdOwnedExchangeActions.postTakeOrder.request({orderId: data.orderId}));
+  yield put(crowdOwnedExchangeActions.postTakeOrder.request({orderId: data.order.id}));
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
 
-    const results = yield call(crowdOwnedExchangeService.takeOrder, web3, data.crowdOwnedAddress, data.orderId);
+    const results = yield call(crowdOwnedExchangeService.takeOrder, web3, data.crowdOwnedAddress, data.order);
 
     // delay to allow changes to be committed to local node
     yield delay(1000);
