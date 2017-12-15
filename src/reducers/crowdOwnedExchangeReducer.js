@@ -1,6 +1,7 @@
 import {Map as ImmutableMap} from 'immutable';
 
 let initialData = {
+  crowdOwnedContractSummary: null,
   orders: [],
   balances: {},
   newOrder: {
@@ -16,6 +17,28 @@ let initialData = {
 };
 
 export default function crowdOwnedExchangeReducer(state = new ImmutableMap(initialData), action) {
+
+  const loadCrowdOwnedContractSummary = (state) => {
+    return state
+      .set('crowdOwnedContractSummary', null);
+  };
+
+  const fetchLoadCrowdOwnedContractSummaryRequest = (state) => {
+    return state
+      .set('loadingCrowdOwnedContractSummary', true);
+  };
+
+  const fetchLoadCrowdOwnedContractSummarySuccess = (state) => {
+    return state
+      .set('loadingCrowdOwnedContractSummary', false)
+      .set('crowdOwnedContractSummary', action.crowdOwnedContractSummary);
+  };
+
+  const fetchLoadCrowdOwnedContractSummaryFailure = (state) => {
+    return state
+      .set('loadingCrowdOwnedContractSummary', false);
+  };
+
 
   const fetchLoadOrdersRequest = (state) => {
     return state
@@ -186,6 +209,10 @@ export default function crowdOwnedExchangeReducer(state = new ImmutableMap(initi
   };
 
   const actions = {
+    'LOAD_CROWD_OWNED_CONTRACT_SUMMARY': () => loadCrowdOwnedContractSummary(state),
+    'FETCH_LOAD_CROWD_OWNED_CONTRACT_SUMMARY_REQUEST': () => fetchLoadCrowdOwnedContractSummaryRequest(state),
+    'FETCH_LOAD_CROWD_OWNED_CONTRACT_SUMMARY_SUCCESS': () => fetchLoadCrowdOwnedContractSummarySuccess(state),
+    'FETCH_LOAD_CROWD_OWNED_CONTRACT_SUMMARY_FAILURE': () => fetchLoadCrowdOwnedContractSummaryFailure(state),
     'FETCH_LOAD_ORDERS_REQUEST': () => fetchLoadOrdersRequest(state),
     'FETCH_LOAD_ORDERS_SUCCESS': () => fetchLoadOrdersSuccess(state),
     'FETCH_LOAD_ORDERS_FAILURE': () => fetchLoadOrdersFailure(state),

@@ -94,7 +94,13 @@ async function loadCrowdOwnedContract(web3, address) {
   let totalSupply = (await crowdOwnedInstance.totalSupply()).toNumber();
   let circulatingSupply = (await crowdOwnedInstance.circulatingSupply()).toNumber();
 
-  let ethEurRate = await currencyConversionService.getEthEurRate();
+  let ethEurRate = 0;
+  try {
+    ethEurRate = await currencyConversionService.getEthEurRate();
+  }
+  catch (err) {
+    console.log("Error getting ETH/EUR exchange rate:", err);
+  }
   let contractEthEurValue = Math.round(contractEthBalance * ethEurRate * 100) / 100;
 
   let contractCRWDBalance = await crwdTokenInstance.balanceOf(crowdOwnedInstance.address);
@@ -137,6 +143,25 @@ async function loadCrowdOwnedContract(web3, address) {
 
   return crowdOwnedContract;
 }
+
+
+async function loadCrowdOwnedContractSummary(web3, address) {
+  const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", address);
+
+  let name = await crowdOwnedInstance.name();
+  let symbol = await crowdOwnedInstance.symbol();
+  let imageUrl = await crowdOwnedInstance.imageUrl();
+
+  const crowdOwnedContract = {
+    address,
+    name,
+    symbol,
+    imageUrl,
+  };
+
+  return crowdOwnedContract;
+}
+
 
 async function transferTokens(web3, newTokensTransfer) {
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", newTokensTransfer.contractAddress);
@@ -189,10 +214,11 @@ async function saveValuation(web3, newValuation) {
 }
 
 let crowdOwnedService = {
-  deployCrowdOwned: deployCrowdOwned,
-  loadCrowdOwnedContracts: loadCrowdOwnedContracts,
-  loadCrowdOwnedContract: loadCrowdOwnedContract,
-  populateContractsData: populateContractsData,
+  deployCrowdOwned,
+  loadCrowdOwnedContracts,
+  loadCrowdOwnedContract,
+  loadCrowdOwnedContractSummary,
+  populateContractsData,
   transferTokens: transferTokens,
   getOwnersData,
   killCrowdOwnedContract,

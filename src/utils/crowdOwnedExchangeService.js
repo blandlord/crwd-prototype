@@ -84,16 +84,15 @@ async function depositCrowdOwnedTokens(web3, crowdOwnedAddress, amount) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", crowdOwnedAddress);
 
-  // no need to await as this would run previous to the deposit
-  crowdOwnedInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {gas: 100000});
-  let results = await crowdOwnedExchangeInstance.depositCrowdOwnedTokens(crowdOwnedAddress, amount, {gas: 100000});
+  await crowdOwnedInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {gas: 200000});
+  let results = await crowdOwnedExchangeInstance.depositCrowdOwnedTokens(crowdOwnedAddress, amount, {gas: 200000});
   return results;
 }
 
 async function withdrawCrowdOwnedTokens(web3, crowdOwnedAddress, amount) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
 
-  let results = await crowdOwnedExchangeInstance.withdrawCrowdOwnedTokens(crowdOwnedAddress, amount, {gas: 100000});
+  let results = await crowdOwnedExchangeInstance.withdrawCrowdOwnedTokens(crowdOwnedAddress, amount, {gas: 200000});
   return results;
 }
 
@@ -101,16 +100,15 @@ async function depositCRWDTokens(web3, amount) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
   const crwdTokenInstance = await contractService.getDeployedInstance(web3, "CRWDToken");
 
-  // no need to await as this would run previous to the deposit
-  crwdTokenInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {gas: 100000});
-  let results = await crowdOwnedExchangeInstance.depositCRWDTokens(amount, {gas: 100000});
+  await crwdTokenInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {gas: 100000});
+  let results = await crowdOwnedExchangeInstance.depositCRWDTokens(amount, {gas: 200000});
   return results;
 }
 
 async function withdrawCRWDTokens(web3, amount) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
 
-  let results = await crowdOwnedExchangeInstance.withdrawCRWDTokens(amount, {gas: 100000});
+  let results = await crowdOwnedExchangeInstance.withdrawCRWDTokens(amount, {gas: 200000});
   return results;
 }
 

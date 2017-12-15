@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import {NavLink} from "react-router-dom";
 
 const _ = require('lodash');
 import moment from 'moment';
@@ -113,6 +114,9 @@ class CrowdOwnedDetails extends Component {
                   </div>
                   <div className="col-sm-6">
                     <h3>Transfer Tokens</h3>
+
+                    <NavLink exact to={"/crowd-owned-exchange/" + crowdOwnedContract.address}>Exchange</NavLink>
+
                     <div>Your balance:
                       <span className="balance">{crowdOwnedContract.balance}</span>&nbsp;
                       {crowdOwnedContract.symbol}

@@ -5,13 +5,34 @@ import {delay} from 'redux-saga'
 import * as crowdOwnedExchangeActions from '../actions/crowdOwnedExchangeActions';
 import * as notificationActions from '../actions/notificationActions';
 
+import crowdOwnedService from '../utils/crowdOwnedService';
 import crowdOwnedExchangeService from '../utils/crowdOwnedExchangeService';
+
+function* loadCrowdOwnedContractSummary(data) {
+  yield put(crowdOwnedExchangeActions.fetchLoadCrowdOwnedContractSummary.request());
+  try {
+    const web3 = yield select(state => state.web3Store.get("web3"));
+    let crowdOwnedContractSummary = yield call(crowdOwnedService.loadCrowdOwnedContractSummary, web3, data.crowdOwnedAddress);
+
+    yield put(crowdOwnedExchangeActions.fetchLoadCrowdOwnedContractSummary.success({crowdOwnedContractSummary}));
+  } catch (error) {
+    yield put(crowdOwnedExchangeActions.fetchLoadCrowdOwnedContractSummary.failure({error}));
+  }
+}
+
 
 function* loadOrders(data) {
   yield put(crowdOwnedExchangeActions.fetchLoadOrders.request());
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
-    let orders = yield call(crowdOwnedExchangeService.loadOrders, web3, data.crowdOwnedAddress);
+
+    let crowdOwnedAddress = data.crowdOwnedAddress;
+    if (!crowdOwnedAddress) {
+      // address not passed, get from contract summary in store
+      crowdOwnedAddress = yield select(state => state.crowdOwnedExchangeStore.get("crowdOwnedContractSummary").address);
+    }
+
+    let orders = yield call(crowdOwnedExchangeService.loadOrders, web3, crowdOwnedAddress);
 
     yield put(crowdOwnedExchangeActions.fetchLoadOrders.success({orders}));
   } catch (error) {
@@ -23,7 +44,14 @@ function* loadBalances(data) {
   yield put(crowdOwnedExchangeActions.fetchLoadBalances.request());
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
-    const balances = yield call(crowdOwnedExchangeService.loadBalances, web3, data.crowdOwnedAddress);
+
+    let crowdOwnedAddress = data.crowdOwnedAddress;
+    if (!crowdOwnedAddress) {
+      // address not passed, get from contract summary in store
+      crowdOwnedAddress = yield select(state => state.crowdOwnedExchangeStore.get("crowdOwnedContractSummary").address);
+    }
+
+    const balances = yield call(crowdOwnedExchangeService.loadBalances, web3, crowdOwnedAddress);
 
     yield put(crowdOwnedExchangeActions.fetchLoadBalances.success({balances}));
   } catch (error) {
@@ -202,7 +230,7 @@ function* saveNewTokenWithdrawal(data) {
     const newTokenWithdrawalValue = yield select(state => state.crowdOwnedExchangeStore.get("newTokenWithdrawalValue"));
     let parseNewTokenWithdrawalValue = parseInt(newTokenWithdrawalValue, 10);   // no decimals for CrowdOwned
 
-    const results = yield call(crowdOwnedExchangeService.withdrawalCrowdOwnedTokens, web3, data.crowdOwnedAddress, parseNewTokenWithdrawalValue);
+    const results = yield call(crowdOwnedExchangeService.withdrawCrowdOwnedTokens, web3, data.crowdOwnedAddress, parseNewTokenWithdrawalValue);
 
     // delay to allow changes to be committed to local node
     yield delay(1000);
@@ -236,7 +264,7 @@ function* saveNewCrwdWithdrawal(data) {
     const newCrwdWithdrawalValue = yield select(state => state.crowdOwnedExchangeStore.get("newCrwdWithdrawalValue"));
     let parseNewCrwdWithdrawalValue = parseFloat(newCrwdWithdrawalValue) * Math.pow(10, 18);   // 18 decimals for CRWD
 
-    const results = yield call(crowdOwnedExchangeService.withdrawalCRWDTokens, web3, parseNewCrwdWithdrawalValue);
+    const results = yield call(crowdOwnedExchangeService.withdrawCRWDTokens, web3, parseNewCrwdWithdrawalValue);
 
     // delay to allow changes to be committed to local node
     yield delay(1000);
@@ -262,7 +290,9 @@ function* saveNewCrwdWithdrawal(data) {
   }
 }
 
-
+function* watchLoadCrowdOwnedContract() {
+  yield takeEvery(crowdOwnedExchangeActions.LOAD_CROWD_OWNED_CONTRACT_SUMMARY, loadCrowdOwnedContractSummary);
+}
 
 function* watchLoadOrders() {
   yield takeEvery(crowdOwnedExchangeActions.LOAD_ORDERS, loadOrders);
@@ -333,6 +363,7 @@ function* watchPostSaveNewCrwdWithdrawalSuccess() {
 
 export default function* crowdOwnedExchangeSaga() {
   yield all([
+    watchLoadCrowdOwnedContract(),
     watchLoadOrders(),
     watchLoadBalances(),
     watchSaveNewOrder(),

@@ -1,6 +1,17 @@
 import {action, createRequestTypes} from '../utils/actionUtils';
 
 
+export const LOAD_CROWD_OWNED_CONTRACT_SUMMARY = 'LOAD_CROWD_OWNED_CONTRACT_SUMMARY';
+export const loadCrowdOwnedContractSummary = data => action(LOAD_CROWD_OWNED_CONTRACT_SUMMARY, data);
+
+export const FETCH_LOAD_CROWD_OWNED_CONTRACT_SUMMARY = createRequestTypes('FETCH_LOAD_CROWD_OWNED_CONTRACT_SUMMARY');
+export const fetchLoadCrowdOwnedContractSummary = {
+  request: () => action(FETCH_LOAD_CROWD_OWNED_CONTRACT_SUMMARY.REQUEST),
+  success: (data) => action(FETCH_LOAD_CROWD_OWNED_CONTRACT_SUMMARY.SUCCESS, data),
+  failure: (error) => action(FETCH_LOAD_CROWD_OWNED_CONTRACT_SUMMARY.FAILURE, error),
+};
+
+
 export const LOAD_BALANCES = 'LOAD_BALANCES';
 export const loadBalances = data => action(LOAD_BALANCES, data);
 

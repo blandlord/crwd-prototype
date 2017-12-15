@@ -38,7 +38,6 @@ export const fetchLoadCrowdOwnedContract = {
 };
 
 
-
 export const SET_NEW_TOKENS_TRANSFER = 'SET_NEW_TOKENS_TRANSFER';
 export const setNewTokensTransfer = data => action(SET_NEW_TOKENS_TRANSFER, data);
 
