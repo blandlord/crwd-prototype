@@ -1,5 +1,4 @@
 import contractService from '../utils/contractService';
-import orderDataHelpers from '../utils/orderDataHelpers';
 
 const _ = require("lodash");
 

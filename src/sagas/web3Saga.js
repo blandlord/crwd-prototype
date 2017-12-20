@@ -1,9 +1,9 @@
-import {call, put, all, takeEvery} from 'redux-saga/effects';
+import {call, put, all, takeEvery, select} from 'redux-saga/effects';
 
 import * as web3Actions from '../actions/web3Actions';
 
 import web3Service from '../utils/web3Service';
-
+import logWatchService from '../utils/logWatchService';
 
 function* initWeb3(data) {
   yield put(web3Actions.setupWeb3.request());
@@ -15,13 +15,24 @@ function* initWeb3(data) {
   }
 }
 
+function* startLogWatch(data) {
+  const web3 = yield select(state => state.web3Store.get("web3"));
+  yield call(logWatchService.start, web3, {crowdOwnedAddress: data.crowdOwnedAddress});
+}
+
+
 function* watchInitWeb3() {
   yield takeEvery(web3Actions.INIT_WEB3, initWeb3);
+}
+
+function* watchStartLogWatch() {
+  yield takeEvery(web3Actions.START_LOG_WATCH, startLogWatch);
 }
 
 
 export default function* web3Saga() {
   yield all([
-    watchInitWeb3()
+    watchInitWeb3(),
+    watchStartLogWatch(),
   ]);
 }

@@ -3,7 +3,6 @@ import React, {Component} from 'react'
 const _ = require('lodash');
 
 import * as crowdOwnedExchangeActions from '../actions/crowdOwnedExchangeActions';
-import orderDataHelpers from '../utils/orderDataHelpers';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'

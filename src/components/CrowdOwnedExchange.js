@@ -3,6 +3,7 @@ import React, {Component} from 'react'
 const _ = require('lodash');
 
 import * as crowdOwnedExchangeActions from '../actions/crowdOwnedExchangeActions';
+import * as web3Actions from '../actions/web3Actions';
 import * as notificationActions from '../actions/notificationActions';
 
 import {bindActionCreators} from 'redux';
@@ -28,6 +29,13 @@ class CrowdOwnedExchange extends Component {
     this.loadCrowdOwnedContractSummary();
     this.loadOrders();
     this.loadBalances();
+
+    this.startLogWatch();
+  }
+
+  startLogWatch() {
+    let address = this.props.match.params.address;
+    this.props.web3Actions.startLogWatch({crowdOwnedAddress: address});
   }
 
   loadCrowdOwnedContractSummary() {
@@ -58,7 +66,7 @@ class CrowdOwnedExchange extends Component {
       return null;
     }
 
-    let {crowdOwnedExchangeStore, web3Store} = this.props;
+    let {crowdOwnedExchangeStore} = this.props;
 
     let crowdOwnedContractSummary = crowdOwnedExchangeStore.get('crowdOwnedContractSummary');
     let balances = crowdOwnedExchangeStore.get('balances');
@@ -237,6 +245,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     crowdOwnedExchangeActions: bindActionCreators(crowdOwnedExchangeActions, dispatch),
+    web3Actions: bindActionCreators(web3Actions, dispatch),
     notificationActions: bindActionCreators(notificationActions, dispatch),
   };
 };
