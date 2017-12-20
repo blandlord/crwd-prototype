@@ -61,7 +61,6 @@ async function start(web3, params = {}) {
           return console.log("[logWatchService] loadBalancesEvents error:", error);
         }
 
-        console.log("loadBalancesEvents",result)
         store.dispatch(crowdOwnedExchangeActions.loadBalances({crowdOwnedAddress}));
       });
     }
@@ -85,7 +84,6 @@ async function start(web3, params = {}) {
           return console.log("[logWatchService] loadOrdersEvents error:", error);
         }
 
-        console.log("loadOrdersEvents",result)
         store.dispatch(crowdOwnedExchangeActions.loadOrders({crowdOwnedAddress}));
       });
     }
