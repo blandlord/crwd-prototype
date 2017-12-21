@@ -46,7 +46,7 @@ async function createOrder(web3, orderData) {
 async function cancelOrder(web3, tokenAddress, orderId) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
 
-  let results = crowdOwnedExchangeInstance.cancelOrder(tokenAddress, orderId, {gas: 200000});
+  let results = await crowdOwnedExchangeInstance.cancelOrder(tokenAddress, orderId, {gas: 200000});
   return results;
 }
 
@@ -58,7 +58,7 @@ async function takeOrder(web3, tokenAddress, order) {
     throw new Error(`Balance insufficient for this order`);
   }
 
-  let results = crowdOwnedExchangeInstance.takeOrder(tokenAddress, order.id, {gas: 200000});
+  let results = await crowdOwnedExchangeInstance.takeOrder(tokenAddress, order.id, {gas: 200000});
   return results;
 }
 
