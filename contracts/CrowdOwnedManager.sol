@@ -49,7 +49,7 @@ contract CrowdOwnedManager is Ownable {
   * Public functions
   */
   /// @dev Contract constructor
-  function CrowdOwnedManager(Registry _registry, CRWDToken _crwdToken, CrowdOwnedExchange _crowdOwnedExchange) {
+  function CrowdOwnedManager(Registry _registry, CRWDToken _crwdToken, CrowdOwnedExchange _crowdOwnedExchange) public {
     registry = _registry;
     crwdToken = _crwdToken;
     crowdOwnedExchange = _crowdOwnedExchange;

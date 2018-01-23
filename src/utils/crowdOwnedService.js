@@ -8,7 +8,10 @@ const _ = require("lodash");
 async function deployCrowdOwned(web3, newCrowdOwnedContractData) {
   const crowdOwnedManagerInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedManager");
 
-  let results = await crowdOwnedManagerInstance.deployCrowdOwned(newCrowdOwnedContractData.name, newCrowdOwnedContractData.symbol, newCrowdOwnedContractData.imageUrl, {gas: 2000000});
+  let results = await crowdOwnedManagerInstance.deployCrowdOwned(newCrowdOwnedContractData.name, newCrowdOwnedContractData.symbol, newCrowdOwnedContractData.imageUrl, {
+    from: web3.eth.defaultAccount,
+    gas: 4000000
+  });
   return results;
 }
 
@@ -162,7 +165,6 @@ async function loadCrowdOwnedContractSummary(web3, address) {
   return crowdOwnedContract;
 }
 
-
 async function transferTokens(web3, newTokensTransfer) {
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", newTokensTransfer.contractAddress);
 
@@ -176,7 +178,10 @@ async function transferTokens(web3, newTokensTransfer) {
     throw new Error("Cannot transfer more than the current balance");
   }
 
-  let results = await crowdOwnedInstance.transfer(newTokensTransfer.to, newTokensTransfer.amount, {gas: 120000});
+  let results = await crowdOwnedInstance.transfer(newTokensTransfer.to, newTokensTransfer.amount, {
+    from: web3.eth.defaultAccount,
+    gas: 120000
+  });
   return results;
 }
 
@@ -188,7 +193,7 @@ async function getOwnersData(web3, address) {
   let ownersData = [];
   for (let i = 0; i < ownerAddresses.length; i++) {
     let balance = await crowdOwnedInstance.balanceOf(ownerAddresses[i]);
-    ownersData.push({balance: balance.toNumber(), address: ownerAddresses[i]});
+    ownersData.push({ balance: balance.toNumber(), address: ownerAddresses[i] });
   }
   return ownersData;
 }
@@ -197,7 +202,10 @@ async function killCrowdOwnedContract(web3, contractAddress) {
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", contractAddress);
   const crwdTokenInstance = await contractService.getDeployedInstance(web3, "CRWDToken");
 
-  let results = await crowdOwnedInstance.kill(crwdTokenInstance.address, {gas: 200000});
+  let results = await crowdOwnedInstance.kill(crwdTokenInstance.address, {
+    from: web3.eth.defaultAccount,
+    gas: 200000
+  });
   return results;
 }
 
@@ -209,7 +217,10 @@ async function saveValuation(web3, newValuation) {
     throw new Error(`Blockheight needs to be higher than last valuation blockheight (${lastValuationBlockheight})`);
   }
 
-  let results = await crowdOwnedInstance.saveValuation(newValuation.blockheight, newValuation.currency, newValuation.value, {gas: 200000});
+  let results = await crowdOwnedInstance.saveValuation(newValuation.blockheight, newValuation.currency, newValuation.value, {
+    from: web3.eth.defaultAccount,
+    gas: 200000
+  });
   return results;
 }
 

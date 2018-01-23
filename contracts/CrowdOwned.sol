@@ -62,7 +62,7 @@ contract CrowdOwned is StandardToken, Ownable {
   * @param _symbol Contract Symbol
   * @param _imageUrl CrowdOwned Object Image Url
   */
-  function CrowdOwned(string _name, string _symbol, string _imageUrl, address _owner, Registry _registry, CrowdOwnedExchange _crowdOwnedExchange) {
+  function CrowdOwned(string _name, string _symbol, string _imageUrl, address _owner, Registry _registry, CrowdOwnedExchange _crowdOwnedExchange) public {
     // prevent setting to null
     require(_registry != address(0));
     require(_crowdOwnedExchange != address(0));
@@ -221,7 +221,6 @@ contract CrowdOwned is StandardToken, Ownable {
     return (blockheight, valuationsData[blockheight].currency, valuationsData[blockheight].value, valuationsData[blockheight].isValuation);
   }
 
-
   /**
   * @dev Kills contract
   * @param _crwdToken valuation blockheight
@@ -237,10 +236,9 @@ contract CrowdOwned is StandardToken, Ownable {
   /**
   * @dev Fallback function to receive funds
   */
-  function() payable {
+  function() public payable {
     // Log event
     EthPaymentReceived(msg.sender, block.number, msg.value);
   }
-
 
 }

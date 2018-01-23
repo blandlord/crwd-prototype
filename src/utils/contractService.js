@@ -1,14 +1,18 @@
 const truffleContract = require('truffle-contract');
 
+const CrowdOwned = require('../../build/contracts/CrowdOwned.json');
+const CrowdOwnedExchange = require('../../build/contracts/CrowdOwnedExchange.json');
+const CrowdOwnedManager = require('../../build/contracts/CrowdOwnedManager.json');
+const CRWDToken = require('../../build/contracts/CRWDToken.json');
+const Registry = require('../../build/contracts/Registry.json');
 
-// Load Contracts Data
-const requireContext = require.context("../../build/contracts/", true, /\.(json)$/);
-const contracts = {};
-requireContext.keys().forEach((filename) => {
-  let contractData = requireContext(filename);
-  contracts[contractData.contract_name] = contractData;
-});
-
+const contracts = {
+  CrowdOwned,
+  CrowdOwnedExchange,
+  CrowdOwnedManager,
+  CRWDToken,
+  Registry,
+};
 
 const deployedInstances = {};
 

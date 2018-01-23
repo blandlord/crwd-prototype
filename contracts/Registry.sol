@@ -56,7 +56,7 @@ contract Registry is Ownable {
    * Public functions
    */
   /// @dev Contract constructor
-  function Registry() {
+  function Registry() public {
   }
 
   /// @dev Allows to add an address to the registry
@@ -101,7 +101,7 @@ contract Registry is Ownable {
   /// @dev Checks if a state transition is valid
   /// @param _fromState old state
   /// @param _toState new state
-  function isValidStateTransition(State _fromState, State _toState) internal constant returns (bool) {
+  function isValidStateTransition(State _fromState, State _toState) internal pure returns (bool) {
     if (_fromState == State.NEW && (_toState == State.VERIFIED || _toState == State.DENIED)) {
       return true;
     }

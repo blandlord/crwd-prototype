@@ -4,7 +4,10 @@ import contractService from '../utils/contractService';
 async function addUserAddress(web3, newUserData) {
   const instance = await contractService.getDeployedInstance(web3, "Registry");
 
-  let results = await instance.addUserAddress(newUserData.userAddress, newUserData.ssn, {gas: 400000});
+  let results = await instance.addUserAddress(newUserData.userAddress, newUserData.ssn, {
+    from: web3.eth.defaultAccount,
+    gas: 400000
+  });
   return results;
 }
 
@@ -58,7 +61,7 @@ async function loadOwnerAddress(web3) {
 async function setState(web3, userAddress, state) {
   const instance = await contractService.getDeployedInstance(web3, "Registry");
 
-  let results = await instance.setState(userAddress, state, {gas: 400000});
+  let results = await instance.setState(userAddress, state, { gas: 400000 });
 
   return results;
 }
@@ -66,7 +69,10 @@ async function setState(web3, userAddress, state) {
 async function addNotary(web3, newNotaryData) {
   const instance = await contractService.getDeployedInstance(web3, "Registry");
 
-  let results = await instance.addNotary(newNotaryData.address, newNotaryData.name, newNotaryData.websiteUrl, {gas: 400000});
+  let results = await instance.addNotary(newNotaryData.address, newNotaryData.name, newNotaryData.websiteUrl, {
+    from: web3.eth.defaultAccount,
+    gas: 400000
+  });
   return results;
 }
 

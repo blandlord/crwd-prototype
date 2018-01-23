@@ -22,7 +22,7 @@ contract CRWDToken is StandardToken {
   /**
   * @dev Contract constructor
   */
-  function CRWDToken() {
+  function CRWDToken() public {
     totalSupply = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
   }

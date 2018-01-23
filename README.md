@@ -41,6 +41,11 @@ To run tests
 truffle test
 ````
 
+To load demo data
+````
+truffle exec truffle-scripts/demo-init.js
+````
+
 To start webpack development server (PORT 3000)
 ````
 npm run start

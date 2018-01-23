@@ -39,14 +39,20 @@ async function createOrder(web3, orderData) {
     throw new Error(`Balance insufficient for this order`);
   }
 
-  let results = await crowdOwnedExchangeInstance.createOrder(orderData.tokenAddress, orderData.orderType, orderData.fullDecimalsPrice, orderData.amount, {gas: 200000});
+  let results = await crowdOwnedExchangeInstance.createOrder(orderData.tokenAddress, orderData.orderType, orderData.fullDecimalsPrice, orderData.amount, {
+    from: web3.eth.defaultAccount,
+    gas: 200000
+  });
   return results;
 }
 
 async function cancelOrder(web3, tokenAddress, orderId) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
 
-  let results = await crowdOwnedExchangeInstance.cancelOrder(tokenAddress, orderId, {gas: 200000});
+  let results = await crowdOwnedExchangeInstance.cancelOrder(tokenAddress, orderId, {
+    from: web3.eth.defaultAccount,
+    gas: 200000
+  });
   return results;
 }
 
@@ -58,7 +64,10 @@ async function takeOrder(web3, tokenAddress, order) {
     throw new Error(`Balance insufficient for this order`);
   }
 
-  let results = await crowdOwnedExchangeInstance.takeOrder(tokenAddress, order.id, {gas: 200000});
+  let results = await crowdOwnedExchangeInstance.takeOrder(tokenAddress, order.id, {
+    from: web3.eth.defaultAccount,
+    gas: 200000
+  });
   return results;
 }
 
@@ -94,8 +103,14 @@ async function depositCrowdOwnedTokens(web3, crowdOwnedAddress, amount) {
     throw new Error(`Cannot deposit more than wallet balance (${walletTokenBalance.toNumber()})`);
   }
 
-  await crowdOwnedInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {gas: 200000});
-  let results = await crowdOwnedExchangeInstance.depositCrowdOwnedTokens(crowdOwnedAddress, amount, {gas: 200000});
+  await crowdOwnedInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {
+    from: web3.eth.defaultAccount,
+    gas: 200000
+  });
+  let results = await crowdOwnedExchangeInstance.depositCrowdOwnedTokens(crowdOwnedAddress, amount, {
+    from: web3.eth.defaultAccount,
+    gas: 200000
+  });
   return results;
 }
 
@@ -107,7 +122,10 @@ async function withdrawCrowdOwnedTokens(web3, crowdOwnedAddress, amount) {
     throw new Error(`Cannot withdraw more than available balance (${tokenBalance.toNumber()})`);
   }
 
-  let results = await crowdOwnedExchangeInstance.withdrawCrowdOwnedTokens(crowdOwnedAddress, amount, {gas: 200000});
+  let results = await crowdOwnedExchangeInstance.withdrawCrowdOwnedTokens(crowdOwnedAddress, amount, {
+    from: web3.eth.defaultAccount,
+    gas: 200000
+  });
   return results;
 }
 
@@ -117,11 +135,17 @@ async function depositCRWDTokens(web3, amount) {
 
   const walletCrwdBalance = await crwdTokenInstance.balanceOf(web3.eth.defaultAccount);
   if (walletCrwdBalance.toNumber() < amount) {
-    throw new Error(`Cannot deposit more than wallet balance (${walletCrwdBalance.toNumber() / Math.pow(10,18)})`);
+    throw new Error(`Cannot deposit more than wallet balance (${walletCrwdBalance.toNumber() / Math.pow(10, 18)})`);
   }
 
-  await crwdTokenInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {gas: 100000});
-  let results = await crowdOwnedExchangeInstance.depositCRWDTokens(amount, {gas: 200000});
+  await crwdTokenInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {
+    from: web3.eth.defaultAccount,
+    gas: 100000
+  });
+  let results = await crowdOwnedExchangeInstance.depositCRWDTokens(amount, {
+    from: web3.eth.defaultAccount,
+    gas: 200000
+  });
   return results;
 }
 
@@ -130,10 +154,13 @@ async function withdrawCRWDTokens(web3, amount) {
 
   const crwdBalance = await crowdOwnedExchangeInstance.crwdBalanceOf(web3.eth.defaultAccount);
   if (crwdBalance.toNumber() < amount) {
-    throw new Error(`Cannot withdraw more than available balance (${crwdBalance.toNumber() / Math.pow(10,18)})`);
+    throw new Error(`Cannot withdraw more than available balance (${crwdBalance.toNumber() / Math.pow(10, 18)})`);
   }
 
-  let results = await crowdOwnedExchangeInstance.withdrawCRWDTokens(amount, {gas: 200000});
+  let results = await crowdOwnedExchangeInstance.withdrawCRWDTokens(amount, {
+    from: web3.eth.defaultAccount,
+    gas: 200000
+  });
   return results;
 }
 
