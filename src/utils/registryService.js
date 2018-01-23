@@ -61,7 +61,9 @@ async function loadOwnerAddress(web3) {
 async function setState(web3, userAddress, state) {
   const instance = await contractService.getDeployedInstance(web3, "Registry");
 
-  let results = await instance.setState(userAddress, state, { gas: 400000 });
+  let results = await instance.setState(userAddress, state, {
+    from: web3.eth.defaultAccount,
+    gas: 400000 });
 
   return results;
 }
