@@ -16,11 +16,15 @@ async function run() {
     websiteUrl: "http://demo-notary.example.com",
   };
 
-  let crowdOwnedContractData = {
+  let crowdOwnedContractData = [{
     name: "TinyOne, Andijk",
     symbol: "NL1619V001",
     imageUrl: "http://www.jachthavenandijk.nl/wp-content/uploads/2017/09/IMG_8578.jpg",
-  };
+  }, {
+    name: "Schieweg, Rotterdam Noord",
+    symbol: "NL3038A001",
+    imageUrl: "http://www.mevrouwdeaankoopmakelaar.nl/Rotterdam/wp-content/uploads/2014/05/foto-succesvol-aangekocht.jpg",
+  }];
 
   const registryInstance = await Registry.deployed();
   const crowdOwnedManagerInstance = await CrowdOwnedManager.deployed();
@@ -30,11 +34,11 @@ async function run() {
     from: ownerAddress,
     gas: 400000
   });
-  console.log("Notary added");
+  console.log("Notary added: " + notaryData.address);
 
   let isNotary = await registryInstance.isNotaryAddress(notaryAddress);
   if(isNotary){
-    console.log("Notary registered ok");
+    console.log("Notary registered ok: " + notaryData.name);
   }
   else{
     console.log("Notary not registered");
@@ -42,11 +46,13 @@ async function run() {
   }
 
   // deploy crowd owned data
-  await crowdOwnedManagerInstance.deployCrowdOwned(crowdOwnedContractData.name, crowdOwnedContractData.symbol, crowdOwnedContractData.imageUrl, {
-    from: notaryAddress,
-    gas: 4000000
+  await crowdOwnedContractData.forEach(function (contractData) {
+    crowdOwnedManagerInstance.deployCrowdOwned(contractData.name, contractData.symbol, contractData.imageUrl, {
+      from: notaryAddress,
+      gas: 4000000
+    });
+    console.log("CrowdOwned contract deployed: " + contractData.symbol);
   });
-  console.log("CrowOwned contract deployed");
 }
 
 module.exports = function (callback) {
