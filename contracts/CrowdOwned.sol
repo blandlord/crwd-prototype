@@ -160,6 +160,12 @@ contract CrowdOwned is StandardToken, Ownable {
     return ownerAddresses;
   }
 
+  /**
+  * @dev get owner addresses length
+  */
+  function getOwnerAddressesLength() public constant returns (uint) {
+    return ownerAddresses.length;
+  }
 
   /**
   * @dev Save valuation

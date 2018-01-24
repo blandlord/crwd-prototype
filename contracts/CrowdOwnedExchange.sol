@@ -75,6 +75,7 @@ contract CrowdOwnedExchange is Ownable {
   /**
   * @dev Contract constructor
   * @param _registry Registry address
+  * @param _crwdToken CRWD Token address
   */
   function CrowdOwnedExchange(Registry _registry, CRWDToken _crwdToken) public {
     // prevent setting to null

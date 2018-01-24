@@ -1,8 +1,8 @@
-const CrowdOwnedManager = artifacts.require("./CrowdOwnedManager.sol");
 const CrowdOwned = artifacts.require("./CrowdOwned.sol");
 const Registry = artifacts.require("./Registry.sol");
 const CRWDToken = artifacts.require("./CRWDToken.sol");
 const CrowdOwnedExchange = artifacts.require("./CrowdOwnedExchange.sol");
+const CrowdOwnedManager = artifacts.require("./CrowdOwnedManager.sol");
 
 const expectRequireFailure = require('./support/expectRequireFailure');
 const proxiedWeb3Handler = require('./support/proxiedWeb3Handler.js');
