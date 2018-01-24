@@ -27,8 +27,10 @@ contract VotingManager is Ownable {
     uint deadline;
     uint tokensCirculatingSupply;
     mapping(address => uint) tokensOwned;
-    Vote[] votes;
     mapping(address => bool) voted;
+    uint yesWeightedTotal;
+    uint noWeightedTotal;
+    uint abstainWeightedTotal;
     bool isProposal;
   }
 
@@ -77,6 +79,9 @@ contract VotingManager is Ownable {
 
     proposals[crowdOwnedAddress].push(proposal);
 
+    // take token circulation/ownership snapshot
+    saveTokensOwned(crowdOwnedAddress, proposalId);
+
     NewProposal(msg.sender, proposalId);
   }
 
@@ -102,6 +107,41 @@ contract VotingManager is Ownable {
   }
 
   /**
+  * @dev Vote for proposal
+  * @param _tokenAddress Token Address
+  * @param _proposalId Proposal id
+  * @param _choice Vote Choice
+  */
+  function vote(address _tokenAddress, uint _proposalId, uint _choice) public {
+    // check proposal exists
+    require(proposals[_tokenAddress][_proposalId - 1].isProposal);
+    // check proposal still ongoing
+    require(proposals[_tokenAddress][_proposalId - 1].deadline > block.number);
+    // check voter was owner at proposal creation time
+    require(getProposalTokensOwned(_tokenAddress, _proposalId, msg.sender) > 0);
+    // check hasn't voted already
+    require(!hasVoted(_tokenAddress, _proposalId, msg.sender));
+    // check vote valid 
+    require(VoteChoice(_choice) == VoteChoice.YES || VoteChoice(_choice) == VoteChoice.NO || VoteChoice(_choice) == VoteChoice.ABSTAIN);
+
+    uint weightedVote = getProposalTokensOwned(_tokenAddress, _proposalId, msg.sender) ;
+
+    // count vote in
+    if (VoteChoice(_choice) == VoteChoice.YES) {
+      proposals[_tokenAddress][_proposalId - 1].yesWeightedTotal += weightedVote;
+    }
+    else if  (VoteChoice(_choice) == VoteChoice.NO){
+      proposals[_tokenAddress][_proposalId - 1].noWeightedTotal += weightedVote;
+    }
+    else if  (VoteChoice(_choice) == VoteChoice.ABSTAIN){
+      proposals[_tokenAddress][_proposalId - 1].abstainWeightedTotal += weightedVote;
+    }
+    
+    // mark has voted
+    proposals[_tokenAddress][_proposalId - 1].voted[msg.sender] = true;
+  }
+
+  /**
   * @dev Get number of proposals
   * @param _tokenAddress Token Address
   */
@@ -115,19 +155,46 @@ contract VotingManager is Ownable {
   * @param _proposalId Proposal id
   */
   function getProposal(address _tokenAddress, uint _proposalId) constant public
-  returns (address creator,
+  returns (
+    address creator,
     string title,
     string description,
     uint deadline,
     uint tokensCirculatingSupply,
-    bool isProposal){
-    Proposal memory proposal = proposals[_tokenAddress][_proposalId];
-    return (proposal.creator,
+    bool isProposal
+  ){
+    Proposal memory proposal = proposals[_tokenAddress][_proposalId - 1];
+
+    return (
+    proposal.creator,
     proposal.title,
     proposal.description,
     proposal.deadline,
     proposal.tokensCirculatingSupply,
-    proposal.isProposal);
+    proposal.isProposal
+    );
+  }
+
+  /**
+  * @dev Get tokens owned by address at proposal creation time
+  * @param _tokenAddress Token Address
+  * @param _proposalId Proposal id
+  * @param _ownerAddress Owner Address
+  */
+  function getProposalTokensOwned(address _tokenAddress, uint _proposalId, address _ownerAddress) constant public returns (uint tokensOwned){
+
+    return proposals[_tokenAddress][_proposalId - 1].tokensOwned[_ownerAddress];
+  }
+
+  /**
+  * @dev checks if address has voted
+  * @param _tokenAddress Token Address
+  * @param _proposalId Proposal id
+  * @param _ownerAddress Owner Address
+  */
+  function hasVoted(address _tokenAddress, uint _proposalId, address _ownerAddress) constant public returns (bool voted){
+
+    return proposals[_tokenAddress][_proposalId - 1].voted[_ownerAddress];
   }
 
 }
