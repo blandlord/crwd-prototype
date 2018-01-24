@@ -59,19 +59,23 @@ contract VotingManager is Ownable {
   */
   function createProposal(CrowdOwned _crowdOwned, string _title, string _description, uint _duration) public {
     // check creator is owner
-   // require(_crowdOwned.balanceOf(msg.sender) > 0);
+    require(_crowdOwned.balanceOf(msg.sender) > 0);
 
     address crowdOwnedAddress = address(_crowdOwned);
 
     // create proposal
     uint proposalId = getProposalsLength(crowdOwnedAddress) + 1;
 
-    proposals[crowdOwnedAddress][proposalId].creator = msg.sender;
-    proposals[crowdOwnedAddress][proposalId].title = _title;
-    proposals[crowdOwnedAddress][proposalId].description = _description;
-    proposals[crowdOwnedAddress][proposalId].start = block.number;
-    proposals[crowdOwnedAddress][proposalId].deadline = block.number.add(_duration);
-    proposals[crowdOwnedAddress][proposalId].isProposal = true;
+    Proposal storage proposal;
+
+    proposal.creator = msg.sender;
+    proposal.title = _title;
+    proposal.description = _description;
+    proposal.start = block.number;
+    proposal.deadline = block.number.add(_duration);
+    proposal.isProposal = true;
+
+    proposals[crowdOwnedAddress].push(proposal);
 
     NewProposal(msg.sender, proposalId);
   }
@@ -110,7 +114,7 @@ contract VotingManager is Ownable {
   * @param _tokenAddress Token Address
   * @param _proposalId Proposal id
   */
-  function getOrder(address _tokenAddress, uint _proposalId) constant public
+  function getProposal(address _tokenAddress, uint _proposalId) constant public
   returns (address creator,
     string title,
     string description,

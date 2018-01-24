@@ -46,7 +46,6 @@ contract('VotingManager', function (accounts) {
     let duration = 40320;
 
     it("ok", async function () {
-
       await votingManagerInstance.createProposal(
         tokenInstance.address,
         title,
@@ -54,7 +53,7 @@ contract('VotingManager', function (accounts) {
         duration,
         { from: accounts[0], gas: 4000000 });
 
-      let proposalsLength = await votingManagerInstance.getProposalsLength();
+      let proposalsLength = await votingManagerInstance.getProposalsLength(tokenInstance.address);
       assert.equal(proposalsLength.toNumber(), 1);
     });
   });
