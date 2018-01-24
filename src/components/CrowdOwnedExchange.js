@@ -11,8 +11,7 @@ import {connect} from 'react-redux'
 
 import BalanceForms from './BalanceForms';
 import NewOrderForm from './NewOrderForm';
-import Order from './Order';
-import orderDataHelpers from '../utils/orderDataHelpers';
+import OrderBook from './OrderBook';
 
 class CrowdOwnedExchange extends Component {
   componentDidMount() {
@@ -53,14 +52,6 @@ class CrowdOwnedExchange extends Component {
     this.props.crowdOwnedExchangeActions.loadBalances({crowdOwnedAddress: address});
   }
 
-  getBuyOrders(orders) {
-    return orders.filter((order) => orderDataHelpers.getOrderTypeText(order.orderType) === "BUY").sort((a, b) => b.price - a.price);
-  }
-
-  getSellOrders(orders) {
-    return orders.filter((order) => orderDataHelpers.getOrderTypeText(order.orderType) === "SELL").sort((a, b) => a.price - b.price);
-  }
-
   render() {
     if (!this.props.web3Store.get("web3")) {
       return null;
@@ -70,7 +61,6 @@ class CrowdOwnedExchange extends Component {
 
     let crowdOwnedContractSummary = crowdOwnedExchangeStore.get('crowdOwnedContractSummary');
     let balances = crowdOwnedExchangeStore.get('balances');
-    let orders = crowdOwnedExchangeStore.get('orders');
     let crowdOwnedAddress = this.props.match.params.address;
 
     return (
@@ -165,50 +155,7 @@ class CrowdOwnedExchange extends Component {
                     {crowdOwnedExchangeStore.get('loadingOrders') ?
                       "Loading Orders ..."
                       :
-                      <div className="row">
-                        <div className="col-sm-6">
-                          <h4>
-                            Open Buy Orders
-                          </h4>
-
-                          <div className="table-responsive">
-                            <table className="table table-bordered table-hover table-striped">
-                              <thead>
-                              <tr>
-                                <th>Price</th>
-                                <th>Amount</th>
-                                <th></th>
-                              </tr>
-                              </thead>
-                              <tbody>
-                              {orders ? this.getBuyOrders(orders).map((order) => <Order key={order.id} order={order}
-                                                                                        crowdOwnedAddress={crowdOwnedAddress}/>) : null}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                        <div className="col-sm-6">
-                          <h4>
-                            Open Sell Orders
-                          </h4>
-
-                          <div className="table-responsive">
-                            <table className="table table-bordered table-hover table-striped">
-                              <thead>
-                              <tr>
-                                <th>Price</th>
-                                <th>Amount</th>
-                                <th></th>
-                              </tr>
-                              </thead>
-                              <tbody>
-                              {orders ? this.getSellOrders(orders).map((order) => <Order key={order.id} order={order}
-                                                                                         crowdOwnedAddress={crowdOwnedAddress}/>) : null}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
+                      <OrderBook crowdOwnedAddress={crowdOwnedAddress}/>
                     }
 
                     <div className="row">

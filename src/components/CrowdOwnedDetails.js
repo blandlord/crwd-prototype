@@ -5,6 +5,7 @@ const _ = require('lodash');
 import moment from 'moment';
 
 import * as crowdOwnedActions from '../actions/crowdOwnedActions';
+import * as crowdOwnedExchangeActions from '../actions/crowdOwnedExchangeActions';
 import * as notificationActions from '../actions/notificationActions';
 
 import {bindActionCreators} from 'redux';
@@ -12,6 +13,7 @@ import {connect} from 'react-redux'
 
 import TokensTransferForm from './TokensTransferForm';
 import SaveValuationForm from './SaveValuationForm';
+import OrderBook from './OrderBook';
 
 
 class CrowdOwnedDetails extends Component {
@@ -27,7 +29,10 @@ class CrowdOwnedDetails extends Component {
 
   loadCrowdOwnedContract() {
     let address = this.props.match.params.address;
-    this.props.crowdOwnedActions.loadCrowdOwnedContract({contractAddress: address});
+    this.props.crowdOwnedActions.loadCrowdOwnedContract({ contractAddress: address });
+
+    // load exchange orders
+    this.props.crowdOwnedExchangeActions.loadOrders({ crowdOwnedAddress: address });
   }
 
   sortOwnersData(ownersData) {
@@ -35,7 +40,7 @@ class CrowdOwnedDetails extends Component {
   }
 
   killCrowdOwnedContract(contractAddress) {
-    this.props.crowdOwnedActions.killCrowdOwnedContract({contractAddress: contractAddress});
+    this.props.crowdOwnedActions.killCrowdOwnedContract({ contractAddress: contractAddress });
   }
 
   render() {
@@ -43,7 +48,7 @@ class CrowdOwnedDetails extends Component {
       return null;
     }
 
-    let {crowdOwnedStore, web3Store} = this.props;
+    let { crowdOwnedStore, crowdOwnedExchangeStore, web3Store } = this.props;
 
     let crowdOwnedContract = crowdOwnedStore.get('crowdOwnedContract');
     let ownAddress = web3Store.get("web3").eth.defaultAccount;
@@ -133,6 +138,15 @@ class CrowdOwnedDetails extends Component {
                         </li>
                       ))}
                     </ul>
+
+                    <h3>Exchange Orderbook</h3>
+
+                    {crowdOwnedExchangeStore.get('loadingOrders') ?
+                      "Loading Orders ..."
+                      :
+                      <OrderBook crowdOwnedAddress={crowdOwnedContract.address} isSummary={true}/>
+                    }
+
                   </div>
                 </div>
 
@@ -176,12 +190,14 @@ const mapStateToProps = (state) => {
     web3Store: state.web3Store,
     registryStore: state.registryStore,
     crowdOwnedStore: state.crowdOwnedStore,
+    crowdOwnedExchangeStore: state.crowdOwnedExchangeStore,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     crowdOwnedActions: bindActionCreators(crowdOwnedActions, dispatch),
+    crowdOwnedExchangeActions: bindActionCreators(crowdOwnedExchangeActions, dispatch),
     notificationActions: bindActionCreators(notificationActions, dispatch),
   };
 };
