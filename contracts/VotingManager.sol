@@ -28,16 +28,13 @@ contract VotingManager is Ownable {
     uint tokensCirculatingSupply;
     mapping(address => uint) tokensOwned;
     mapping(address => bool) voted;
+    mapping(address => VoteChoice) votes;
     uint yesWeightedTotal;
     uint noWeightedTotal;
     uint abstainWeightedTotal;
     bool isProposal;
   }
 
-  struct Vote {
-    VoteChoice choice;
-    address voter;
-  }
 
   enum VoteChoice {YES, NO, ABSTAIN}
 
@@ -102,7 +99,11 @@ contract VotingManager is Ownable {
     // save tokens owned snapshot
     for (uint i = 0; i < ownerAddressesLength; i++) {
       address ownerAddress = CrowdOwned(_crowdOwnedAddress).ownerAddresses(i);
-      proposal.tokensOwned[ownerAddress] = CrowdOwned(_crowdOwnedAddress).balanceOf(ownerAddress);
+
+      // do not take tokens owned by the contract into account
+      if (ownerAddress != _crowdOwnedAddress) {
+        proposal.tokensOwned[ownerAddress] = CrowdOwned(_crowdOwnedAddress).balanceOf(ownerAddress);
+      }
     }
   }
 
@@ -124,19 +125,22 @@ contract VotingManager is Ownable {
     // check vote valid 
     require(VoteChoice(_choice) == VoteChoice.YES || VoteChoice(_choice) == VoteChoice.NO || VoteChoice(_choice) == VoteChoice.ABSTAIN);
 
-    uint weightedVote = getProposalTokensOwned(_tokenAddress, _proposalId, msg.sender) ;
+    uint weightedVote = getProposalTokensOwned(_tokenAddress, _proposalId, msg.sender);
 
     // count vote in
     if (VoteChoice(_choice) == VoteChoice.YES) {
       proposals[_tokenAddress][_proposalId - 1].yesWeightedTotal += weightedVote;
     }
-    else if  (VoteChoice(_choice) == VoteChoice.NO){
+    else if (VoteChoice(_choice) == VoteChoice.NO) {
       proposals[_tokenAddress][_proposalId - 1].noWeightedTotal += weightedVote;
     }
-    else if  (VoteChoice(_choice) == VoteChoice.ABSTAIN){
+    else if (VoteChoice(_choice) == VoteChoice.ABSTAIN) {
       proposals[_tokenAddress][_proposalId - 1].abstainWeightedTotal += weightedVote;
     }
-    
+
+    // save choice
+    proposals[_tokenAddress][_proposalId - 1].votes[msg.sender] = VoteChoice(_choice);
+
     // mark has voted
     proposals[_tokenAddress][_proposalId - 1].voted[msg.sender] = true;
   }
@@ -159,8 +163,12 @@ contract VotingManager is Ownable {
     address creator,
     string title,
     string description,
+    uint start,
     uint deadline,
     uint tokensCirculatingSupply,
+    uint yesWeightedTotal,
+    uint noWeightedTotal,
+    uint abstainWeightedTotal,
     bool isProposal
   ){
     Proposal memory proposal = proposals[_tokenAddress][_proposalId - 1];
@@ -169,8 +177,12 @@ contract VotingManager is Ownable {
     proposal.creator,
     proposal.title,
     proposal.description,
+    proposal.start,
     proposal.deadline,
     proposal.tokensCirculatingSupply,
+    proposal.yesWeightedTotal,
+    proposal.noWeightedTotal,
+    proposal.abstainWeightedTotal,
     proposal.isProposal
     );
   }
@@ -195,6 +207,26 @@ contract VotingManager is Ownable {
   function hasVoted(address _tokenAddress, uint _proposalId, address _ownerAddress) constant public returns (bool voted){
 
     return proposals[_tokenAddress][_proposalId - 1].voted[_ownerAddress];
+  }
+
+  /**
+  * @dev get my vote
+  * @param _tokenAddress Token Address
+  * @param _proposalId Proposal id
+  */
+  function getMyVote(address _tokenAddress, uint _proposalId) constant public returns (uint voteChoice){
+
+    return uint(proposals[_tokenAddress][_proposalId - 1].votes[msg.sender]);
+  }
+
+  /**
+  * @dev get yes weighted percentage
+  * @param _tokenAddress Token Address
+  * @param _proposalId Proposal id
+  */
+  function getYesResults(address _tokenAddress, uint _proposalId) constant public returns (uint){
+
+    return (proposals[_tokenAddress][_proposalId - 1].yesWeightedTotal * 100) / (proposals[_tokenAddress][_proposalId - 1].yesWeightedTotal + proposals[_tokenAddress][_proposalId - 1].noWeightedTotal);
   }
 
 }
