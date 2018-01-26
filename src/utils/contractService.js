@@ -5,6 +5,7 @@ const CrowdOwnedExchange = require('../../build/contracts/CrowdOwnedExchange.jso
 const CrowdOwnedManager = require('../../build/contracts/CrowdOwnedManager.json');
 const CRWDToken = require('../../build/contracts/CRWDToken.json');
 const Registry = require('../../build/contracts/Registry.json');
+const VotingManager = require('../../build/contracts/VotingManager.json');
 
 const contracts = {
   CrowdOwned,
@@ -12,6 +13,7 @@ const contracts = {
   CrowdOwnedManager,
   CRWDToken,
   Registry,
+  VotingManager,
 };
 
 const deployedInstances = {};

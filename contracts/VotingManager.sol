@@ -60,6 +60,9 @@ contract VotingManager is Ownable {
     // check creator is owner
     require(_crowdOwned.balanceOf(msg.sender) > 0);
 
+    // check duration is not null
+    require(_duration > 0);
+
     address crowdOwnedAddress = address(_crowdOwned);
 
     // create proposal
@@ -117,7 +120,7 @@ contract VotingManager is Ownable {
     // check proposal exists
     require(proposals[_tokenAddress][_proposalId - 1].isProposal);
     // check proposal still ongoing
-    require(proposals[_tokenAddress][_proposalId - 1].deadline > block.number);
+    require(!isClosed(_tokenAddress, _proposalId));
     // check voter was owner at proposal creation time
     require(getProposalTokensOwned(_tokenAddress, _proposalId, msg.sender) > 0);
     // check hasn't voted already
@@ -227,6 +230,16 @@ contract VotingManager is Ownable {
   function getYesResults(address _tokenAddress, uint _proposalId) constant public returns (uint){
 
     return (proposals[_tokenAddress][_proposalId - 1].yesWeightedTotal * 100) / (proposals[_tokenAddress][_proposalId - 1].yesWeightedTotal + proposals[_tokenAddress][_proposalId - 1].noWeightedTotal);
+  }
+
+  /**
+   * @dev checks if proposal voting closed
+   * @param _tokenAddress Token Address
+   * @param _proposalId Proposal id
+   */
+  function isClosed(address _tokenAddress, uint _proposalId) constant public returns (bool closed){
+
+    return proposals[_tokenAddress][_proposalId - 1].deadline <= block.number;
   }
 
 }

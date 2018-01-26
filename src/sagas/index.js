@@ -5,6 +5,7 @@ import web3Saga from './web3Saga';
 import registrySaga from './registrySaga';
 import crowdOwnedSaga from './crowdOwnedSaga';
 import crowdOwnedExchangeSaga from './crowdOwnedExchangeSaga';
+import votingManagerSaga from './votingManagerSaga';
 
 
 export const runSagas = (sagaMiddleware) => {
@@ -13,6 +14,7 @@ export const runSagas = (sagaMiddleware) => {
     yield fork(registrySaga);
     yield fork(crowdOwnedSaga);
     yield fork(crowdOwnedExchangeSaga);
+    yield fork(votingManagerSaga);
     yield fork(errorsSaga);
   }
 

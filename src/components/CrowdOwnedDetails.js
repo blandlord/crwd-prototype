@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import * as crowdOwnedActions from '../actions/crowdOwnedActions';
 import * as crowdOwnedExchangeActions from '../actions/crowdOwnedExchangeActions';
+import * as votingManagerActions from '../actions/votingManagerActions';
 import * as notificationActions from '../actions/notificationActions';
 
 import {bindActionCreators} from 'redux';
@@ -14,6 +15,8 @@ import {connect} from 'react-redux'
 import TokensTransferForm from './TokensTransferForm';
 import SaveValuationForm from './SaveValuationForm';
 import OrderBook from './OrderBook';
+import NewProposalForm from './NewProposalForm';
+import ProposalsList from './ProposalsList';
 
 
 class CrowdOwnedDetails extends Component {
@@ -33,6 +36,9 @@ class CrowdOwnedDetails extends Component {
 
     // load exchange orders
     this.props.crowdOwnedExchangeActions.loadOrders({ crowdOwnedAddress: address });
+
+    // load proposals
+    this.props.votingManagerActions.loadProposals({ crowdOwnedAddress: address });
   }
 
   sortOwnersData(ownersData) {
@@ -48,7 +54,7 @@ class CrowdOwnedDetails extends Component {
       return null;
     }
 
-    let { crowdOwnedStore, crowdOwnedExchangeStore, web3Store } = this.props;
+    let { crowdOwnedStore, crowdOwnedExchangeStore, votingManagerStore, web3Store } = this.props;
 
     let crowdOwnedContract = crowdOwnedStore.get('crowdOwnedContract');
     let ownAddress = web3Store.get("web3").eth.defaultAccount;
@@ -161,6 +167,22 @@ class CrowdOwnedDetails extends Component {
                   null
                 }
 
+                <div className="row">
+                  <div className="col-md-6">
+                    <h3>New Proposal</h3>
+                    <NewProposalForm crowdOwnedAddress={crowdOwnedContract.address}/>
+                  </div>
+                  <div className="col-md-6">
+                    <h3>Proposals</h3>
+                    {votingManagerStore.get('loadingProposals') ?
+                      "Loading Proposals ..."
+                      :
+                      <ProposalsList crowdOwnedAddress={crowdOwnedContract.address}
+                                     proposals={votingManagerStore.get('proposals')}/>
+                    }
+                  </div>
+                </div>
+
                 {crowdOwnedContract.ownerAddress === ownAddress ?
                   <div className="well">
                     You are the owner of this contract and have the power to stop the project. &nbsp;
@@ -191,6 +213,7 @@ const mapStateToProps = (state) => {
     registryStore: state.registryStore,
     crowdOwnedStore: state.crowdOwnedStore,
     crowdOwnedExchangeStore: state.crowdOwnedExchangeStore,
+    votingManagerStore: state.votingManagerStore,
   };
 };
 
@@ -198,6 +221,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     crowdOwnedActions: bindActionCreators(crowdOwnedActions, dispatch),
     crowdOwnedExchangeActions: bindActionCreators(crowdOwnedExchangeActions, dispatch),
+    votingManagerActions: bindActionCreators(votingManagerActions, dispatch),
     notificationActions: bindActionCreators(notificationActions, dispatch),
   };
 };
