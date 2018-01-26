@@ -34,9 +34,9 @@ class ProposalsList extends Component {
           proposal.isClosed ?
             <div>
               <p>
-                YES: "{proposal.title}" <br/>
+                {proposal.granted ? "YES" : "NO"}: "{proposal.title}" <br/>
                 {proposal.description} <br/>
-                Voting closed on {proposal.closedDate.toISOString()}: {proposal.yesResults}% in favor <br/>
+                Voting closed on {proposal.deadlineDate.toISOString()}: {proposal.yesResults}% in favor <br/>
                 {proposal.percentages.YES}% YES, {proposal.percentages.NO}% NO, {proposal.percentages.ABSTAIN}%
                 ABSTAIN, {proposal.percentages.NO_SHOW}% no show<br/>
                 {proposal.hasVoted ?
@@ -57,27 +57,29 @@ class ProposalsList extends Component {
               {proposal.hasVoted ?
                 <span>You voted {proposal.ownVote}</span>
                 :
-                <div>
-                  Please vote:
-                  <button className="btn btn-xs btn-primary vote-button" type="button"
-                          onClick={() => this.saveVote(proposal, 0)}
-                          disabled={votingManagerStore.get("voting")}>
-                    Yes
-                  </button>
+                (proposal.proposalTokensOwned > 0 ?
+                  <div>
+                    Please vote:
+                    <button className="btn btn-xs btn-primary vote-button" type="button"
+                            onClick={() => this.saveVote(proposal, 0)}
+                            disabled={votingManagerStore.get("voting")}>
+                      Yes
+                    </button>
 
-                  <button className="btn btn-xs btn-danger vote-button" type="button"
-                          onClick={() => this.saveVote(proposal, 1)}
-                          disabled={votingManagerStore.get("voting")}>
-                    No
-                  </button>
+                    <button className="btn btn-xs btn-danger vote-button" type="button"
+                            onClick={() => this.saveVote(proposal, 1)}
+                            disabled={votingManagerStore.get("voting")}>
+                      No
+                    </button>
 
-                  <button className="btn btn-xs btn-info vote-button" type="button"
-                          onClick={() => this.saveVote(proposal, 2)}
-                          disabled={votingManagerStore.get("voting")}>
-                    Abstain
-                  </button>
+                    <button className="btn btn-xs btn-info vote-button" type="button"
+                            onClick={() => this.saveVote(proposal, 2)}
+                            disabled={votingManagerStore.get("voting")}>
+                      Abstain
+                    </button>
 
-                </div>
+                  </div>
+                  : null)
               }
 
             </div>

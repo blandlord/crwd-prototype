@@ -12,8 +12,8 @@ function* saveNewProposal(data) {
     const web3 = yield select(state => state.web3Store.get("web3"));
     const newProposal = yield select(state => state.votingManagerStore.get("newProposal"));
 
-    // convert duration to blocks
-    newProposal.duration = parseInt(newProposal.durationInDays * 24 * 3600 / 15, 10);
+    // convert duration to seconds
+    newProposal.duration = parseInt(newProposal.durationInDays * 24 * 3600, 10);
 
     const results = yield call(votingManagerService.createProposal, web3, newProposal);
 

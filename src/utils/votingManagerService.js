@@ -1,8 +1,6 @@
 import contractService from '../utils/contractService';
 
-const promisify = require("promisify-es6");
 const _ = require("lodash");
-const moment = require("moment");
 
 let VOTE_CHOICE = {
   YES: 0,
@@ -53,17 +51,13 @@ async function loadProposals(web3, crowdOwnedAddress) {
         crowdOwnedAddress: crowdOwnedAddress
       };
 
-      let startBlock = await promisify(web3.eth.getBlock)(proposal.start);
-      proposal.startDate = new Date(startBlock.timestamp * 1000);
-      proposal.deadlineDate = moment(proposal.startDate).add((proposal.deadline - proposal.start) * 15, 'second');
+      proposal.startDate = new Date(proposal.start);
+      proposal.deadlineDate = new Date(proposal.deadline);
 
-      let isClosed = await votingManagerInstance.isClosed(crowdOwnedAddress, proposalId);
+      let isClosed = new Date() > proposal.deadlineDate;
       proposal.isClosed = isClosed;
 
       if (isClosed) {
-        let closedBlock = await promisify(web3.eth.getBlock)(proposal.deadline);
-        proposal.closedDate = new Date(closedBlock.timestamp * 1000);
-
         let yesResults = _.round(100 * (proposal.yesWeightedTotal) / (proposal.yesWeightedTotal + proposal.noWeightedTotal), 1);
         proposal.yesResults = yesResults;
         proposal.granted = proposal.yesResults > 50;
@@ -79,6 +73,9 @@ async function loadProposals(web3, crowdOwnedAddress) {
       else {
         let percentageOfVotesMade = _.round(100 * (proposal.yesWeightedTotal + proposal.noWeightedTotal + proposal.abstainWeightedTotal) / proposal.tokensCirculatingSupply, 0);
         proposal.percentageOfVotesMade = percentageOfVotesMade;
+
+        let proposalTokensOwned = await votingManagerInstance.getProposalTokensOwned(crowdOwnedAddress, proposalId, web3.eth.defaultAccount);
+        proposal.proposalTokensOwned = proposalTokensOwned;
       }
 
       let hasVoted = await votingManagerInstance.hasVoted(crowdOwnedAddress, proposalId, web3.eth.defaultAccount);

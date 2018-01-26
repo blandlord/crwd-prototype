@@ -54,7 +54,7 @@ contract VotingManager is Ownable {
   * @param _crowdOwned Crowd Owned Address
   * @param _title Title
   * @param _description Description
-  * @param _duration Duration in number of blocks
+  * @param _duration Duration in seconds
   */
   function createProposal(CrowdOwned _crowdOwned, string _title, string _description, uint _duration) public {
     // check creator is owner
@@ -73,8 +73,8 @@ contract VotingManager is Ownable {
     proposal.creator = msg.sender;
     proposal.title = _title;
     proposal.description = _description;
-    proposal.start = block.number;
-    proposal.deadline = block.number.add(_duration);
+    proposal.start = block.timestamp.mul(1000); // convert to milliseconds
+    proposal.deadline = (block.timestamp.add(_duration)).mul(1000);
     proposal.isProposal = true;
 
     proposals[crowdOwnedAddress].push(proposal);
@@ -239,7 +239,7 @@ contract VotingManager is Ownable {
    */
   function isClosed(address _tokenAddress, uint _proposalId) constant public returns (bool closed){
 
-    return proposals[_tokenAddress][_proposalId - 1].deadline <= block.number;
+    return proposals[_tokenAddress][_proposalId - 1].deadline <= block.timestamp;
   }
 
 }

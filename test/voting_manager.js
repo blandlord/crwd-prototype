@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const promisify = require("promisify-es6");
 
 const VotingManager = artifacts.require("./VotingManager.sol");
 const CrowdOwned = artifacts.require("./CrowdOwned.sol");
@@ -28,7 +29,7 @@ contract('VotingManager', function (accounts) {
     //deploy token
     tokenInstance = await CrowdOwned.new("Example Token", "EXT", "http://example.com/image", accounts[0], registryInstance.address, crowdOwnedExchangeInstance.address, {
       from: accounts[0],
-      gas: 3000000
+      gas: 4000000
     });
 
     // add addresses to registry
@@ -52,7 +53,7 @@ contract('VotingManager', function (accounts) {
   describe('create proposal', function () {
     let title = "Proposal 1 Title";
     let description = "Proposal 1 description";
-    let duration = 40320;
+    let duration = 604800; // a week  in seconds
 
     it("ok", async function () {
       let results = await votingManagerInstance.createProposal(
@@ -63,7 +64,7 @@ contract('VotingManager', function (accounts) {
         { from: accounts[0], gas: 4000000 });
 
       let log = results.logs[0];
-      let blockNumber = log.blockNumber;
+      let block = await promisify(web3.eth.getBlock)(log.blockNumber);
 
       let proposalsLength = await votingManagerInstance.getProposalsLength(tokenInstance.address);
       assert.equal(proposalsLength.toNumber(), 1);
@@ -72,8 +73,8 @@ contract('VotingManager', function (accounts) {
       assert.equal(proposalData[0], accounts[0]);
       assert.equal(proposalData[1], title);
       assert.equal(proposalData[2], description);
-      assert.equal(proposalData[3].toNumber(), blockNumber);
-      assert.equal(proposalData[4].toNumber(), blockNumber + duration);
+      assert.equal(proposalData[3].toNumber(), block.timestamp * 1000);
+      assert.equal(proposalData[4].toNumber(), (block.timestamp + duration) * 1000);
       assert.equal(proposalData[5].toNumber(), 100000);
       assert.equal(proposalData[6], 0);
       assert.equal(proposalData[7], 0);
