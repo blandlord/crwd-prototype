@@ -104,7 +104,7 @@ async function loadPendingProposals(web3) {
     let proposals = await loadProposals(web3, crowdOwnedAddress);
 
     pendingProposals[crowdOwnedAddress] = _.filter(proposals, (proposal) => {
-      return !proposal.isClosed && !proposal.hasVoted;
+      return !proposal.isClosed && !proposal.hasVoted && proposal.proposalTokensOwned > 0;
     });
   }
 
