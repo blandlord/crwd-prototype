@@ -35,3 +35,14 @@ export const postSaveVote = {
   success: (data) => action(POST_SAVE_VOTE.SUCCESS, data),
   failure: (error) => action(POST_SAVE_VOTE.FAILURE, error),
 };
+
+
+export const LOAD_PENDING_PROPOSALS = 'LOAD_PENDING_PROPOSALS';
+export const loadPendingProposals = data => action(LOAD_PENDING_PROPOSALS, data);
+
+export const FETCH_LOAD_PENDING_PROPOSALS = createRequestTypes('FETCH_LOAD_PENDING_PROPOSALS');
+export const fetchLoadPendingProposals = {
+  request: () => action(FETCH_LOAD_PENDING_PROPOSALS.REQUEST),
+  success: (data) => action(FETCH_LOAD_PENDING_PROPOSALS.SUCCESS, data),
+  failure: (error) => action(FETCH_LOAD_PENDING_PROPOSALS.FAILURE, error),
+};

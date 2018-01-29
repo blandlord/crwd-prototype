@@ -7,7 +7,8 @@ let initialData = {
     description: '',
     durationInDays: 7,
   },
-  proposals: []
+  proposals: [],
+  pendingProposals: {},
 };
 
 export default function votingManagerReducer(state = new ImmutableMap(initialData), action) {
@@ -50,6 +51,22 @@ export default function votingManagerReducer(state = new ImmutableMap(initialDat
       .set('loadingProposals', false);
   };
 
+  const fetchLoadPendingProposalsRequest = (state) => {
+    return state
+      .set('loadingPendingProposals', true);
+  };
+
+  const fetchLoadPendingProposalsSuccess = (state) => {
+    return state
+      .set('loadingPendingProposals', false)
+      .set('pendingProposals', action.pendingProposals);
+  };
+
+  const fetchLoadPendingProposalsFailure = (state) => {
+    return state
+      .set('loadingPendingProposals', false);
+  };
+
   const postSaveVoteRequest = (state) => {
     return state
       .set('voting', true);
@@ -76,6 +93,9 @@ export default function votingManagerReducer(state = new ImmutableMap(initialDat
     'POST_SAVE_VOTE_REQUEST': () => postSaveVoteRequest(state),
     'POST_SAVE_VOTE_SUCCESS': () => postSaveVoteSuccess(state),
     'POST_SAVE_VOTE_FAILURE': () => postSaveVoteFailure(state),
+    'FETCH_LOAD_PENDING_PROPOSALS_REQUEST': () => fetchLoadPendingProposalsRequest(state),
+    'FETCH_LOAD_PENDING_PROPOSALS_SUCCESS': () => fetchLoadPendingProposalsSuccess(state),
+    'FETCH_LOAD_PENDING_PROPOSALS_FAILURE': () => fetchLoadPendingProposalsFailure(state),
     'DEFAULT': () => state
   };
 

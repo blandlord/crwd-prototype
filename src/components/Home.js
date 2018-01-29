@@ -13,15 +13,15 @@ import {connect} from 'react-redux'
 import NewAddressForm from './NewAddressForm';
 import UserData from './UserData';
 import CrowdOwnedObjects from './CrowdOwnedObjects';
+import PendingProposals from './PendingProposals';
 
 
 class Home extends Component {
   componentDidMount() {
   }
 
-
   render() {
-    let {registryStore, web3Store} = this.props;
+    let { registryStore, web3Store, votingManagerStore } = this.props;
     let web3 = web3Store.get("web3");
     let loadingWeb3 = web3Store.get("loadingWeb3");
     let currentUserData = registryStore.get('currentUserData');
@@ -67,21 +67,32 @@ class Home extends Component {
                   <div className="col-sm-6 col-md-5 col-lg-4">
                     {loadingWeb3 ? "Loading web3 ..." :
                       web3 && ownAddress ?
-                        <div className="well well-sm">
-                          {currentUserData.isUserData ?
-                            <div>
-                              <h3>Your application status</h3>
+                        <div>
+                          <div className="well well-sm">
+                            {currentUserData.isUserData ?
+                              <div>
+                                <h3>Your application status</h3>
 
-                              <UserData userData={currentUserData}/>
+                                <UserData userData={currentUserData}/>
+                              </div>
+                              :
+                              <div>
+                                <h3>Register your address</h3>
+                                <p>A notary service will verify your information.</p>
+                                <NewAddressForm/>
+                              </div>
+                            }
+                          </div>
 
-                            </div>
-                            :
-                            <div>
-                              <h3>Register your address</h3>
-                              <p>A notary service will verify your information.</p>
-                              <NewAddressForm/>
-                            </div>
-                          }
+                          <div>
+                            {currentUserData.isUserData ?
+                              votingManagerStore.get("loadingPendingProposals") ?
+                                "Loading Pending Proposals ..."
+                                :
+                                <PendingProposals pendingProposals={votingManagerStore.get("pendingProposals")}/>
+                              : null
+                            }
+                          </div>
                         </div>
                         :
                         <div className="well well-sm">
@@ -110,7 +121,8 @@ class Home extends Component {
 const mapStateToProps = (state) => {
   return {
     web3Store: state.web3Store,
-    registryStore: state.registryStore
+    registryStore: state.registryStore,
+    votingManagerStore: state.votingManagerStore,
   };
 };
 

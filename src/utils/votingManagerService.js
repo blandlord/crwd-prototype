@@ -93,6 +93,24 @@ async function loadProposals(web3, crowdOwnedAddress) {
   return proposals;
 }
 
+async function loadPendingProposals(web3) {
+  const crowdOwnedManagerInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedManager");
+
+  let pendingProposals = {};
+
+  let contractsAddresses = await crowdOwnedManagerInstance.getContractsAddresses();
+  for (let i = 0; i < contractsAddresses.length; i++) {
+    let crowdOwnedAddress = contractsAddresses[i];
+    let proposals = await loadProposals(web3, crowdOwnedAddress);
+
+    pendingProposals[crowdOwnedAddress] = _.filter(proposals, (proposal) => {
+      return !proposal.isClosed && !proposal.hasVoted;
+    });
+  }
+
+  return pendingProposals;
+}
+
 async function vote(web3, voteData) {
   const votingManagerInstance = await contractService.getDeployedInstance(web3, "VotingManager");
 
@@ -109,6 +127,7 @@ async function vote(web3, voteData) {
 
 let votingManagerService = {
   createProposal,
+  loadPendingProposals,
   loadProposals,
   vote,
 

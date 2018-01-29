@@ -3,6 +3,7 @@ import {delay} from 'redux-saga'
 
 import * as votingManagerActions from '../actions/votingManagerActions';
 import * as notificationActions from '../actions/notificationActions';
+import * as web3Actions from '../actions/web3Actions';
 
 import votingManagerService from '../utils/votingManagerService';
 
@@ -57,6 +58,17 @@ function* loadProposals(data) {
   }
 }
 
+function* loadPendingProposals(data) {
+  yield put(votingManagerActions.fetchLoadPendingProposals.request());
+  try {
+    const web3 = yield select(state => state.web3Store.get("web3"));
+    let pendingProposals = yield call(votingManagerService.loadPendingProposals, web3);
+
+    yield put(votingManagerActions.fetchLoadPendingProposals.success({ pendingProposals }));
+  } catch (error) {
+    yield put(votingManagerActions.fetchLoadPendingProposals.failure({ error }));
+  }
+}
 
 function* saveVote(data) {
   yield put(votingManagerActions.postSaveVote.request());
@@ -112,6 +124,10 @@ function* watchLoadProposals() {
   yield takeEvery(votingManagerActions.LOAD_PROPOSALS, loadProposals);
 }
 
+function* watchSetupWeb3Success() {
+  yield takeEvery(web3Actions.SETUP_WEB3.SUCCESS, loadPendingProposals);
+}
+
 export default function* votingManagerSaga() {
   yield all([
     watchSaveNewProposal(),
@@ -119,5 +135,6 @@ export default function* votingManagerSaga() {
     watchSaveVote(),
     watchPostSaveVoteSuccess(),
     watchLoadProposals(),
+    watchSetupWeb3Success()
   ]);
 }
