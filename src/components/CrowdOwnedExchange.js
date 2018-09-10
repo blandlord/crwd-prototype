@@ -24,6 +24,10 @@ class CrowdOwnedExchange extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.crowdOwnedExchangeActions.stopCrowdOwnedExchangeLogWatch({});
+  }
+
   loadInitialData() {
     this.loadCrowdOwnedContractSummary();
     this.loadOrders();
@@ -34,7 +38,7 @@ class CrowdOwnedExchange extends Component {
 
   startLogWatch() {
     let address = this.props.match.params.address;
-    this.props.web3Actions.startLogWatch({crowdOwnedAddress: address});
+    this.props.crowdOwnedExchangeActions.startCrowdOwnedExchangeLogWatch({crowdOwnedAddress: address});
   }
 
   loadCrowdOwnedContractSummary() {

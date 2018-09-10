@@ -8,7 +8,6 @@ import * as notificationActions from '../actions/notificationActions';
 
 import crowdOwnedService from '../utils/crowdOwnedService';
 
-
 function* saveNewCrowdOwnedContract(data) {
   yield put(crowdOwnedActions.postSaveNewCrowdOwnedContract.request());
   try {
@@ -19,7 +18,7 @@ function* saveNewCrowdOwnedContract(data) {
     // delay to allow changes to be committed to local node
     yield delay(1000);
 
-    yield put(crowdOwnedActions.postSaveNewCrowdOwnedContract.success({results}));
+    yield put(crowdOwnedActions.postSaveNewCrowdOwnedContract.success({ results }));
 
     console.log("saveNewCrowdOwnedContract TX", results.tx);
     yield put(notificationActions.success({
@@ -29,7 +28,7 @@ function* saveNewCrowdOwnedContract(data) {
       }
     }));
   } catch (error) {
-    yield put(crowdOwnedActions.postSaveNewCrowdOwnedContract.failure({error}));
+    yield put(crowdOwnedActions.postSaveNewCrowdOwnedContract.failure({ error }));
     yield put(notificationActions.error({
       notification: {
         title: 'failed to deploy new crowd owned contract',
@@ -48,9 +47,9 @@ function* loadCrowdOwnedContracts(data) {
     let crowdOwnedContracts = yield call(crowdOwnedService.loadCrowdOwnedContracts, web3);
     crowdOwnedContracts = yield call(crowdOwnedService.populateContractsData, web3, crowdOwnedContracts);
 
-    yield put(crowdOwnedActions.fetchLoadCrowdOwnedContracts.success({crowdOwnedContracts}));
+    yield put(crowdOwnedActions.fetchLoadCrowdOwnedContracts.success({ crowdOwnedContracts }));
   } catch (error) {
-    yield put(crowdOwnedActions.fetchLoadCrowdOwnedContracts.failure({error}));
+    yield put(crowdOwnedActions.fetchLoadCrowdOwnedContracts.failure({ error }));
   }
 }
 
@@ -64,9 +63,9 @@ function* loadCrowdOwnedContract(data) {
 
     crowdOwnedContract.ownersData = ownersData;
 
-    yield put(crowdOwnedActions.fetchLoadCrowdOwnedContract.success({crowdOwnedContract}));
+    yield put(crowdOwnedActions.fetchLoadCrowdOwnedContract.success({ crowdOwnedContract }));
   } catch (error) {
-    yield put(crowdOwnedActions.fetchLoadCrowdOwnedContract.failure({error}));
+    yield put(crowdOwnedActions.fetchLoadCrowdOwnedContract.failure({ error }));
   }
 }
 
@@ -94,7 +93,7 @@ function* saveNewTokensTransfer(data) {
       }
     }));
   } catch (error) {
-    yield put(crowdOwnedActions.postSaveNewTokensTransfer.failure({error}));
+    yield put(crowdOwnedActions.postSaveNewTokensTransfer.failure({ error }));
     yield put(notificationActions.error({
       notification: {
         title: 'failed to transfer tokens',
@@ -115,7 +114,7 @@ function* killCrowdOwnedContract(data) {
     // delay to allow changes to be committed to local node
     yield delay(1000);
 
-    yield put(crowdOwnedActions.postKillCrowdOwnedContract.success({results}));
+    yield put(crowdOwnedActions.postKillCrowdOwnedContract.success({ results }));
 
     console.log("killCrowdOwnedContract TX", results.tx);
     yield put(notificationActions.success({
@@ -125,7 +124,7 @@ function* killCrowdOwnedContract(data) {
       }
     }));
   } catch (error) {
-    yield put(crowdOwnedActions.postKillCrowdOwnedContract.failure({error}));
+    yield put(crowdOwnedActions.postKillCrowdOwnedContract.failure({ error }));
     yield put(notificationActions.error({
       notification: {
         title: 'failed to kill contract',
@@ -159,7 +158,7 @@ function* saveNewValuation(data) {
       }
     }));
   } catch (error) {
-    yield put(crowdOwnedActions.postSaveNewValuation.failure({error}));
+    yield put(crowdOwnedActions.postSaveNewValuation.failure({ error }));
     yield put(notificationActions.error({
       notification: {
         title: 'failed to save valuation',
@@ -169,7 +168,6 @@ function* saveNewValuation(data) {
     }));
   }
 }
-
 
 function* watchSaveNewCrowdOwnedContract() {
   yield takeEvery(crowdOwnedActions.SAVE_NEW_CROWD_OWNED_CONTRACT, saveNewCrowdOwnedContract);

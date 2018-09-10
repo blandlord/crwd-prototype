@@ -6,6 +6,7 @@ import * as web3Actions from '../actions/web3Actions';
 import * as notificationActions from '../actions/notificationActions';
 
 import registryService from '../utils/registryService';
+import logWatchService from "../utils/logWatchService";
 
 function* saveNewUserData(data) {
   yield put(registryActions.postSaveNewUserData.request());
@@ -130,6 +131,15 @@ function* loadNotariesData(data) {
   }
 }
 
+function* startNotaryLogWatch(data) {
+  const web3 = yield select(state => state.web3Store.get("web3"));
+  yield call(logWatchService.startNotaryLogWatch, web3);
+}
+
+function* stopNotaryLogWatch(data) {
+  const web3 = yield select(state => state.web3Store.get("web3"));
+  yield call(logWatchService.stopNotaryLogWatch, web3);
+}
 
 function* watchSaveNewUserData() {
   yield takeEvery(registryActions.SAVE_NEW_USER_DATA, saveNewUserData);
@@ -169,6 +179,14 @@ function* watchSetupWeb3Success() {
   yield takeEvery(web3Actions.SETUP_WEB3.SUCCESS, loadNotariesData);
 }
 
+function* watchStartNotaryLogWatch() {
+  yield takeEvery(registryActions.START_NOTARY_LOG_WATCH, startNotaryLogWatch);
+}
+
+function* watchStopNotaryLogWatch() {
+  yield takeEvery(registryActions.STOP_NOTARY_LOG_WATCH, stopNotaryLogWatch);
+}
+
 export default function* registrySaga() {
   yield all([
     watchSaveNewUserData(),
@@ -180,5 +198,7 @@ export default function* registrySaga() {
     watchPostSaveNewNotaryDataSuccess(),
     watchLoadNotariesData(),
     watchSetupWeb3Success(),
+    watchStartNotaryLogWatch(),
+    watchStopNotaryLogWatch(),
   ]);
 }

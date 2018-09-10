@@ -11,8 +11,27 @@ import NewCrowdOwnedContractForm from './NewCrowdOwnedContractForm';
 
 class Notary extends Component {
   componentDidMount() {
+    if (this.props.web3Store.get("web3")) {
+      this.loadInitialData();
+    }
+    else {
+      // wait a second for web3 to load
+      setTimeout(this.loadInitialData.bind(this), 1000);
+    }
   }
 
+  componentWillUnmount() {
+    this.props.registryActions.stopNotaryLogWatch({});
+  }
+
+  loadInitialData() {
+    this.startLogWatch();
+  }
+
+  startLogWatch() {
+    this.props.registryActions.startNotaryLogWatch({});
+  }
+  
   render() {
     let {registryStore, web3Store} = this.props;
 

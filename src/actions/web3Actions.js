@@ -10,5 +10,3 @@ export const setupWeb3 = {
   failure: (error) => action(SETUP_WEB3.FAILURE, error),
 };
 
-export const START_LOG_WATCH = 'START_LOG_WATCH';
-export const startLogWatch = data => action(START_LOG_WATCH, data);

@@ -120,3 +120,9 @@ export const postSaveNewCrwdWithdrawal = {
   success: (data) => action(POST_SAVE_NEW_CRWD_WITHDRAWAL.SUCCESS, data),
   failure: (error) => action(POST_SAVE_NEW_CRWD_WITHDRAWAL.FAILURE, error),
 };
+
+export const START_CROWD_OWNED_EXCHANGE_LOG_WATCH = 'START_CROWD_OWNED_EXCHANGE_LOG_WATCH';
+export const startCrowdOwnedExchangeLogWatch = data => action(START_CROWD_OWNED_EXCHANGE_LOG_WATCH, data);
+
+export const STOP_CROWD_OWNED_EXCHANGE_LOG_WATCH = 'STOP_CROWD_OWNED_EXCHANGE_LOG_WATCH';
+export const stopCrowdOwnedExchangeLogWatch = data => action(STOP_CROWD_OWNED_EXCHANGE_LOG_WATCH, data);

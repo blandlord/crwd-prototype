@@ -71,3 +71,9 @@ export const fetchLoadNotariesData = {
   success: (data) => action(FETCH_LOAD_NOTARIES_DATA.SUCCESS, data),
   failure: (error) => action(FETCH_LOAD_NOTARIES_DATA.FAILURE, error),
 };
+
+export const START_NOTARY_LOG_WATCH = 'START_NOTARY_LOG_WATCH';
+export const startNotaryLogWatch = data => action(START_NOTARY_LOG_WATCH, data);
+
+export const STOP_NOTARY_LOG_WATCH = 'STOP_NOTARY_LOG_WATCH';
+export const stopNotaryLogWatch = data => action(STOP_NOTARY_LOG_WATCH, data);

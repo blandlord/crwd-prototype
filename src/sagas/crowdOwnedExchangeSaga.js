@@ -1,12 +1,12 @@
 import {call, put, all, takeEvery, select} from 'redux-saga/effects';
 import {delay} from 'redux-saga'
 
-
 import * as crowdOwnedExchangeActions from '../actions/crowdOwnedExchangeActions';
 import * as notificationActions from '../actions/notificationActions';
 
 import crowdOwnedService from '../utils/crowdOwnedService';
 import crowdOwnedExchangeService from '../utils/crowdOwnedExchangeService';
+import logWatchService from "../utils/logWatchService";
 
 function* loadCrowdOwnedContractSummary(data) {
   yield put(crowdOwnedExchangeActions.fetchLoadCrowdOwnedContractSummary.request());
@@ -293,6 +293,17 @@ function* saveNewCrwdWithdrawal(data) {
   }
 }
 
+function* startCrowdOwnedExchangeLogWatch(data) {
+  const web3 = yield select(state => state.web3Store.get("web3"));
+  yield call(logWatchService.startCrowdOwnedExchangeLogWatch, web3, data.crowdOwnedAddress);
+}
+
+function* stopCrowdOwnedExchangeLogWatch(data) {
+  const web3 = yield select(state => state.web3Store.get("web3"));
+  yield call(logWatchService.stopCrowdOwnedExchangeLogWatch, web3);
+}
+
+
 function* watchLoadCrowdOwnedContract() {
   yield takeEvery(crowdOwnedExchangeActions.LOAD_CROWD_OWNED_CONTRACT_SUMMARY, loadCrowdOwnedContractSummary);
 }
@@ -364,6 +375,14 @@ function* watchPostSaveNewCrwdWithdrawalSuccess() {
   yield takeEvery(crowdOwnedExchangeActions.POST_SAVE_NEW_CRWD_WITHDRAWAL.SUCCESS, loadBalances);
 }
 
+function* watchStartCrowdOwnedExchangeLogWatch() {
+  yield takeEvery(crowdOwnedExchangeActions.START_CROWD_OWNED_EXCHANGE_LOG_WATCH, startCrowdOwnedExchangeLogWatch);
+}
+
+function* watchStopCrowdOwnedExchangeLogWatch() {
+  yield takeEvery(crowdOwnedExchangeActions.STOP_CROWD_OWNED_EXCHANGE_LOG_WATCH, stopCrowdOwnedExchangeLogWatch);
+}
+
 export default function* crowdOwnedExchangeSaga() {
   yield all([
     watchLoadCrowdOwnedContract(),
@@ -383,5 +402,7 @@ export default function* crowdOwnedExchangeSaga() {
     watchPostSaveNewCrwdDepositSuccess(),
     watchSaveNewCrwdWithdrawal(),
     watchPostSaveNewCrwdWithdrawalSuccess(),
+    watchStartCrowdOwnedExchangeLogWatch(),
+    watchStopCrowdOwnedExchangeLogWatch(),
   ]);
 }
