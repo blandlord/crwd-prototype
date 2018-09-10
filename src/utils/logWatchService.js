@@ -129,8 +129,6 @@ async function startNotaryLogWatch(web3) {
         return console.log("[logWatchService] loadUsersDataEvents error:", error);
       }
 
-      console.log("got event")
-
       store.dispatch(registryActions.loadUsersData({}));
     });
 
