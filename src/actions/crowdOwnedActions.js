@@ -75,3 +75,10 @@ export const postSaveNewValuation = {
   success: (data) => action(POST_SAVE_NEW_VALUATION.SUCCESS, data),
   failure: (error) => action(POST_SAVE_NEW_VALUATION.FAILURE, error),
 };
+
+
+export const START_HOME_LOG_WATCH = 'START_HOME_LOG_WATCH';
+export const startHomeLogWatch = data => action(START_HOME_LOG_WATCH, data);
+
+export const STOP_HOME_LOG_WATCH = 'STOP_HOME_LOG_WATCH';
+export const stopHomeLogWatch = data => action(STOP_HOME_LOG_WATCH, data);

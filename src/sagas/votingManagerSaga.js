@@ -124,6 +124,10 @@ function* watchLoadProposals() {
   yield takeEvery(votingManagerActions.LOAD_PROPOSALS, loadProposals);
 }
 
+function* watchLoadPendingProposals() {
+  yield takeEvery(votingManagerActions.LOAD_PENDING_PROPOSALS, loadPendingProposals);
+}
+
 function* watchSetupWeb3Success() {
   yield takeEvery(web3Actions.SETUP_WEB3.SUCCESS, loadPendingProposals);
 }
@@ -135,6 +139,7 @@ export default function* votingManagerSaga() {
     watchSaveVote(),
     watchPostSaveVoteSuccess(),
     watchLoadProposals(),
+    watchLoadPendingProposals(),
     watchSetupWeb3Success()
   ]);
 }

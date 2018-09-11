@@ -6,6 +6,7 @@ import userDataHelpers from '../utils/userDataHelpers';
 
 import * as registryActions from '../actions/registryActions';
 import * as notificationActions from '../actions/notificationActions';
+import * as crowdOwnedActions from '../actions/crowdOwnedActions';
 
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux'
@@ -18,6 +19,25 @@ import PendingProposals from './PendingProposals';
 
 class Home extends Component {
   componentDidMount() {
+    if (this.props.web3Store.get("web3")) {
+      this.loadInitialData();
+    }
+    else {
+      // wait a second for web3 to load
+      setTimeout(this.loadInitialData.bind(this), 1000);
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.crowdOwnedActions.stopHomeLogWatch({});
+  }
+
+  loadInitialData() {
+    this.startLogWatch();
+  }
+
+  startLogWatch() {
+    this.props.crowdOwnedActions.startHomeLogWatch({});
   }
 
   render() {
@@ -130,6 +150,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     registryActions: bindActionCreators(registryActions, dispatch),
     notificationActions: bindActionCreators(notificationActions, dispatch),
+    crowdOwnedActions: bindActionCreators(crowdOwnedActions, dispatch),
   };
 };
 

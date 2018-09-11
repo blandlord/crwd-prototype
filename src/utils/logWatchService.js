@@ -3,9 +3,12 @@ import configureStore from '../store/configureStore';
 
 import * as crowdOwnedExchangeActions from '../actions/crowdOwnedExchangeActions';
 import * as registryActions from '../actions/registryActions';
+import * as crowdOwnedActions from '../actions/crowdOwnedActions';
+import * as votingManagerActions from '../actions/votingManagerActions';
 
 let crowdOwnedExchangeEvents = [];
 let notaryEvents = [];
+let homeEvents = [];
 
 async function startCrowdOwnedExchangeLogWatch(web3, crowdOwnedAddress) {
   if (!crowdOwnedAddress) {
@@ -148,12 +151,71 @@ function stopNotaryLogWatch() {
   notaryEvents = [];
 }
 
+async function startHomeLogWatch(web3) {
+  console.log("Starting HomeLogWatch ...");
+
+  let store = configureStore();
+
+  const crowdOwnedManagerInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedManager");
+
+  let loadCrowdOwnedContractsEvents = [
+    crowdOwnedManagerInstance.CrowdOwnedDeployed({}),
+  ];
+
+  for (let i = 0; i < loadCrowdOwnedContractsEvents.length; i++) {
+    let event = loadCrowdOwnedContractsEvents[i];
+    event.watch(function (error, result) {
+      if (error) {
+        return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
+      }
+
+      store.dispatch(crowdOwnedActions.loadCrowdOwnedContracts({}));
+    });
+
+    homeEvents.push(event);
+  }
+
+  const votingManagerInstance = await contractService.getDeployedInstance(web3, "VotingManager");
+
+  let loadPendingProposalsEvents = [
+    votingManagerInstance.NewProposal({}),
+  ];
+
+  for (let i = 0; i < loadPendingProposalsEvents.length; i++) {
+    let event = loadPendingProposalsEvents[i];
+    event.watch(function (error, result) {
+      if (error) {
+        return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
+      }
+
+      console.log("EVENT TRIGGERED");
+      store.dispatch(votingManagerActions.loadPendingProposals({}));
+    });
+
+    homeEvents.push(event);
+  }
+}
+
+function stopHomeLogWatch() {
+  console.log("Stopping HomeLogWatch ...");
+
+  for (let i = 0; i < homeEvents.length; i++) {
+    let event = homeEvents[i];
+
+    event.stopWatching();
+  }
+
+  homeEvents = [];
+}
+
 
 let logWatchService = {
   startCrowdOwnedExchangeLogWatch: startCrowdOwnedExchangeLogWatch,
   stopCrowdOwnedExchangeLogWatch: stopCrowdOwnedExchangeLogWatch,
   startNotaryLogWatch: startNotaryLogWatch,
   stopNotaryLogWatch: stopNotaryLogWatch,
+  startHomeLogWatch: startHomeLogWatch,
+  stopHomeLogWatch: stopHomeLogWatch,
 };
 
 export default logWatchService;

@@ -229,7 +229,7 @@ contract CrowdOwned is StandardToken, Ownable {
 
   /**
   * @dev Kills contract
-  * @param _crwdToken valuation blockheight
+  * @param _crwdToken token address
   */
   function kill(CRWDToken _crwdToken) public onlyOwner {
     // Transfer CRWD Tokens balance to owner
