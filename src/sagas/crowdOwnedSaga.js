@@ -180,6 +180,16 @@ function* stopHomeLogWatch(data) {
   yield call(logWatchService.stopHomeLogWatch, web3);
 }
 
+function* startCrowdOwnedDetailsLogWatch(data) {
+  const web3 = yield select(state => state.web3Store.get("web3"));
+  yield call(logWatchService.startCrowdOwnedDetailsLogWatch, web3, data.contractAddress);
+}
+
+function* stopCrowdOwnedDetailsLogWatch(data) {
+  const web3 = yield select(state => state.web3Store.get("web3"));
+  yield call(logWatchService.stopCrowdOwnedDetailsLogWatch, web3);
+}
+
 function* watchSaveNewCrowdOwnedContract() {
   yield takeEvery(crowdOwnedActions.SAVE_NEW_CROWD_OWNED_CONTRACT, saveNewCrowdOwnedContract);
 }
@@ -232,6 +242,14 @@ function* watchStopHomeLogWatch() {
   yield takeEvery(crowdOwnedActions.STOP_HOME_LOG_WATCH, stopHomeLogWatch);
 }
 
+function* watchStartCrowdOwnedDetailsLogWatch() {
+  yield takeEvery(crowdOwnedActions.START_CROWD_OWNED_DETAILS_LOG_WATCH, startCrowdOwnedDetailsLogWatch);
+}
+
+function* watchStopCrowdOwnedDetailsLogWatch() {
+  yield takeEvery(crowdOwnedActions.STOP_CROWD_OWNED_DETAILS_LOG_WATCH, stopCrowdOwnedDetailsLogWatch);
+}
+
 export default function* crowdOwnedSaga() {
   yield all([
     watchSaveNewCrowdOwnedContract(),
@@ -247,5 +265,7 @@ export default function* crowdOwnedSaga() {
     watchSetupWeb3Success(),
     watchStartHomeLogWatch(),
     watchStopHomeLogWatch(),
+    watchStartCrowdOwnedDetailsLogWatch(),
+    watchStopCrowdOwnedDetailsLogWatch(),
   ]);
 }

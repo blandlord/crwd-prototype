@@ -20,7 +20,7 @@ contract('CrowdOwned', function (accounts) {
     registryInstance = await Registry.deployed();
     crwdTokenInstance = await CRWDToken.deployed();
     crowdOwnedExchangeInstance = await CrowdOwnedExchange.deployed();
-    tokenInstance = await CrowdOwned.new("My Token", "MYT", "http://example.com/image", accounts[0], registryInstance.address, crowdOwnedExchangeInstance.address, {gas: 3000000});
+    tokenInstance = await CrowdOwned.new("My Token", "MYT", "http://example.com/image", accounts[0], registryInstance.address, crowdOwnedExchangeInstance.address, {gas: 6000000});
   });
 
   describe('proper instantiation', function () {

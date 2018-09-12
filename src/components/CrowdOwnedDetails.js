@@ -22,12 +22,27 @@ import ProposalsList from './ProposalsList';
 class CrowdOwnedDetails extends Component {
   componentDidMount() {
     if (this.props.web3Store.get("web3")) {
-      this.loadCrowdOwnedContract();
+      this.loadInitialData();
     }
     else {
       // wait a second for web3 to load
-      setTimeout(this.loadCrowdOwnedContract.bind(this), 1000);
+      setTimeout(this.loadInitialData.bind(this), 1000);
     }
+  }
+
+  componentWillUnmount() {
+    this.props.crowdOwnedActions.stopCrowdOwnedDetailsLogWatch({});
+  }
+
+  loadInitialData() {
+    this.loadCrowdOwnedContract();
+
+    this.startLogWatch();
+  }
+
+  startLogWatch() {
+    let address = this.props.match.params.address;
+    this.props.crowdOwnedActions.startCrowdOwnedDetailsLogWatch({ contractAddress: address });
   }
 
   loadCrowdOwnedContract() {

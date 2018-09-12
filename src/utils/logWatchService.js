@@ -9,6 +9,7 @@ import * as votingManagerActions from '../actions/votingManagerActions';
 let crowdOwnedExchangeEvents = [];
 let notaryEvents = [];
 let homeEvents = [];
+let crowdOwnedDetailsEvents = [];
 
 async function startCrowdOwnedExchangeLogWatch(web3, crowdOwnedAddress) {
   if (!crowdOwnedAddress) {
@@ -188,7 +189,6 @@ async function startHomeLogWatch(web3) {
         return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
       }
 
-      console.log("EVENT TRIGGERED");
       store.dispatch(votingManagerActions.loadPendingProposals({}));
     });
 
@@ -208,6 +208,92 @@ function stopHomeLogWatch() {
   homeEvents = [];
 }
 
+async function startCrowdOwnedDetailsLogWatch(web3, crowdOwnedAddress) {
+  console.log("Starting CrowdOwnedDetailsLogWatch ...");
+
+  let store = configureStore();
+
+  const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", crowdOwnedAddress);
+
+  let loadCrowdOwnedContractEvents = [
+    crowdOwnedInstance.Transfer({ to: web3.eth.defaultAccount }),
+    crowdOwnedInstance.Transfer({ from: web3.eth.defaultAccount }),
+    crowdOwnedInstance.ValuationSaved({}),
+    crowdOwnedInstance.ValuationDeleted({}),
+    crowdOwnedInstance.EthPaymentReceived({}),
+  ];
+
+  for (let i = 0; i < loadCrowdOwnedContractEvents.length; i++) {
+    let event = loadCrowdOwnedContractEvents[i];
+    event.watch(function (error, result) {
+      if (error) {
+        return console.log("[logWatchService] loadCrowdOwnedContractEvents error:", error);
+      }
+
+      store.dispatch(crowdOwnedActions.loadCrowdOwnedContract({ contractAddress: crowdOwnedAddress }));
+    });
+
+    crowdOwnedDetailsEvents.push(event);
+  }
+
+  const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
+
+  let loadOrdersEvents = [
+    crowdOwnedExchangeInstance.OrderCreated({
+      _tokenAddress: crowdOwnedAddress
+    }),
+    crowdOwnedExchangeInstance.OrderCanceled({
+      _tokenAddress: crowdOwnedAddress
+    }),
+    crowdOwnedExchangeInstance.OrderTaken({
+      _tokenAddress: crowdOwnedAddress
+    }),
+  ];
+
+  for (let i = 0; i < loadOrdersEvents.length; i++) {
+    let event = loadOrdersEvents[i];
+    event.watch(function (error, result) {
+      if (error) {
+        return console.log("[logWatchService] loadOrdersEvents error:", error);
+      }
+
+      store.dispatch(crowdOwnedExchangeActions.loadOrders({ crowdOwnedAddress }));
+    });
+
+    crowdOwnedDetailsEvents.push(event);
+  }
+
+  const votingManagerInstance = await contractService.getDeployedInstance(web3, "VotingManager");
+
+  let loadPendingProposalsEvents = [
+    votingManagerInstance.NewProposal({}),
+  ];
+
+  for (let i = 0; i < loadPendingProposalsEvents.length; i++) {
+    let event = loadPendingProposalsEvents[i];
+    event.watch(function (error, result) {
+      if (error) {
+        return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
+      }
+
+      store.dispatch(votingManagerActions.loadProposals({ crowdOwnedAddress }));
+    });
+
+    crowdOwnedDetailsEvents.push(event);
+  }
+}
+
+function stopCrowdOwnedDetailsLogWatch() {
+  console.log("Stopping CrowdOwnedDetailsLogWatch ...");
+
+  for (let i = 0; i < crowdOwnedDetailsEvents.length; i++) {
+    let event = crowdOwnedDetailsEvents[i];
+
+    event.stopWatching();
+  }
+
+  crowdOwnedDetailsEvents = [];
+}
 
 let logWatchService = {
   startCrowdOwnedExchangeLogWatch: startCrowdOwnedExchangeLogWatch,
@@ -216,6 +302,8 @@ let logWatchService = {
   stopNotaryLogWatch: stopNotaryLogWatch,
   startHomeLogWatch: startHomeLogWatch,
   stopHomeLogWatch: stopHomeLogWatch,
+  startCrowdOwnedDetailsLogWatch: startCrowdOwnedDetailsLogWatch,
+  stopCrowdOwnedDetailsLogWatch: stopCrowdOwnedDetailsLogWatch,
 };
 
 export default logWatchService;

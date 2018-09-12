@@ -82,3 +82,10 @@ export const startHomeLogWatch = data => action(START_HOME_LOG_WATCH, data);
 
 export const STOP_HOME_LOG_WATCH = 'STOP_HOME_LOG_WATCH';
 export const stopHomeLogWatch = data => action(STOP_HOME_LOG_WATCH, data);
+
+
+export const START_CROWD_OWNED_DETAILS_LOG_WATCH = 'START_CROWD_OWNED_DETAILS_LOG_WATCH';
+export const startCrowdOwnedDetailsLogWatch = data => action(START_CROWD_OWNED_DETAILS_LOG_WATCH, data);
+
+export const STOP_CROWD_OWNED_DETAILS_LOG_WATCH = 'STOP_CROWD_OWNED_DETAILS_LOG_WATCH';
+export const stopCrowdOwnedDetailsLogWatch = data => action(STOP_CROWD_OWNED_DETAILS_LOG_WATCH, data);
