@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.24;
 
 
 import "./Ownable.sol";
@@ -56,7 +56,7 @@ contract Registry is Ownable {
    * Public functions
    */
   /// @dev Contract constructor
-  function Registry() public {
+  constructor() public {
   }
 
   /// @dev Allows to add an address to the registry
@@ -74,7 +74,7 @@ contract Registry is Ownable {
     userAddresses.push(msg.sender);
 
     // Log event
-    AddressAdded(msg.sender);
+    emit AddressAdded(msg.sender);
   }
 
   /// @dev Checks if a user address exists
@@ -95,7 +95,7 @@ contract Registry is Ownable {
     usersData[_userAddress].state = State(_state);
 
     // Log event
-    StateUpdated(_userAddress, State(_state));
+    emit StateUpdated(_userAddress, State(_state));
   }
 
   /// @dev Checks if a state transition is valid
@@ -148,7 +148,7 @@ contract Registry is Ownable {
     notaryAddresses.push(_address);
 
     // Log event
-    NotaryAdded(_address, _name, _websiteUrl);
+    emit NotaryAdded(_address, _name, _websiteUrl);
   }
 
   /// @dev Checks if a notary address exists

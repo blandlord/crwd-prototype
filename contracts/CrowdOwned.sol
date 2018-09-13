@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.24;
 
 
 import './StandardToken.sol';
@@ -62,7 +62,7 @@ contract CrowdOwned is StandardToken, Ownable {
   * @param _symbol Contract Symbol
   * @param _imageUrl CrowdOwned Object Image Url
   */
-  function CrowdOwned(string _name, string _symbol, string _imageUrl, address _owner, Registry _registry, CrowdOwnedExchange _crowdOwnedExchange) public {
+  constructor(string _name, string _symbol, string _imageUrl, address _owner, Registry _registry, CrowdOwnedExchange _crowdOwnedExchange) public {
     // prevent setting to null
     require(_registry != address(0));
     require(_crowdOwnedExchange != address(0));
@@ -81,7 +81,7 @@ contract CrowdOwned is StandardToken, Ownable {
     // set exchange
     crowdOwnedExchange = _crowdOwnedExchange;
 
-    totalSupply = INITIAL_SUPPLY;
+    totalSupply_ = INITIAL_SUPPLY;
     balances[_owner] = INITIAL_SUPPLY;
 
     // add owner to list
@@ -139,7 +139,7 @@ contract CrowdOwned is StandardToken, Ownable {
   * @dev get tokens circulating supply
   */
   function circulatingSupply() public constant returns (uint) {
-    return totalSupply - balanceOf(address(this));
+    return totalSupply() - balanceOf(address(this));
   }
 
   /**
@@ -184,7 +184,7 @@ contract CrowdOwned is StandardToken, Ownable {
     valuationBlockheights.push(_blockheight);
 
     // Log event
-    ValuationSaved(_blockheight, _currency, _value);
+    emit ValuationSaved(_blockheight, _currency, _value);
   }
 
   /**
@@ -214,7 +214,7 @@ contract CrowdOwned is StandardToken, Ownable {
     delete valuationsData[_blockheight];
 
     // Log event
-    ValuationDeleted(_blockheight);
+    emit ValuationDeleted(_blockheight);
   }
 
   /**
@@ -244,7 +244,7 @@ contract CrowdOwned is StandardToken, Ownable {
   */
   function() public payable {
     // Log event
-    EthPaymentReceived(msg.sender, block.number, msg.value);
+    emit EthPaymentReceived(msg.sender, block.number, msg.value);
   }
 
 }

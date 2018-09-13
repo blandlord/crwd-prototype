@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.24;
 
 
 import './StandardToken.sol';
@@ -22,8 +22,8 @@ contract CRWDToken is StandardToken {
   /**
   * @dev Contract constructor
   */
-  function CRWDToken() public {
-    totalSupply = INITIAL_SUPPLY;
+  constructor() public {
+    totalSupply_ = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
   }
 

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 import "./SafeMath.sol";
 import "./Ownable.sol";
@@ -45,7 +45,7 @@ contract VotingManager is Ownable {
   /**
   * @dev Contract constructor
   */
-  function VotingManager() public {
+  constructor() public {
 
   }
 
@@ -68,21 +68,33 @@ contract VotingManager is Ownable {
     // create proposal
     uint proposalId = getProposalsLength(crowdOwnedAddress) + 1;
 
-    Proposal storage proposal;
+  /*  Proposal storage proposal;
 
     proposal.creator = msg.sender;
     proposal.title = _title;
     proposal.description = _description;
     proposal.start = block.timestamp.mul(1000); // convert to milliseconds
     proposal.deadline = (block.timestamp.add(_duration)).mul(1000);
-    proposal.isProposal = true;
+    proposal.isProposal = true;*/
 
-    proposals[crowdOwnedAddress].push(proposal);
+
+    proposals[crowdOwnedAddress].push(Proposal({
+      creator : msg.sender,
+      title : _title,
+      description : _description,
+      start : block.timestamp.mul(1000), // convert to milliseconds
+      deadline : (block.timestamp.add(_duration)).mul(1000),
+      isProposal : true,
+      tokensCirculatingSupply : 0,
+      noWeightedTotal : 0,
+      yesWeightedTotal : 0,
+      abstainWeightedTotal : 0
+      }));
 
     // take token circulation/ownership snapshot
     saveTokensOwned(crowdOwnedAddress, proposalId);
 
-    NewProposal(msg.sender, proposalId);
+    emit NewProposal(msg.sender, proposalId);
   }
 
   /**
@@ -125,7 +137,7 @@ contract VotingManager is Ownable {
     require(getProposalTokensOwned(_tokenAddress, _proposalId, msg.sender) > 0);
     // check hasn't voted already
     require(!hasVoted(_tokenAddress, _proposalId, msg.sender));
-    // check vote valid 
+    // check vote valid
     require(VoteChoice(_choice) == VoteChoice.YES || VoteChoice(_choice) == VoteChoice.NO || VoteChoice(_choice) == VoteChoice.ABSTAIN);
 
     uint weightedVote = getProposalTokensOwned(_tokenAddress, _proposalId, msg.sender);

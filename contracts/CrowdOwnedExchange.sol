@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.24;
 
 
 import './Ownable.sol';
@@ -77,7 +77,7 @@ contract CrowdOwnedExchange is Ownable {
   * @param _registry Registry address
   * @param _crwdToken CRWD Token address
   */
-  function CrowdOwnedExchange(Registry _registry, CRWDToken _crwdToken) public {
+  constructor(Registry _registry, CRWDToken _crwdToken) public {
     // prevent setting to null
     require(_registry != address(0));
     require(_crwdToken != address(0));
@@ -104,7 +104,7 @@ contract CrowdOwnedExchange is Ownable {
     tokenBalances[address(_token)][msg.sender] = tokenBalances[address(_token)][msg.sender].add(_amount);
 
     // Log event
-    TokenDeposit(msg.sender, address(_token), _amount, tokenBalances[address(_token)][msg.sender]);
+    emit TokenDeposit(msg.sender, address(_token), _amount, tokenBalances[address(_token)][msg.sender]);
   }
 
   /**
@@ -122,7 +122,7 @@ contract CrowdOwnedExchange is Ownable {
     require(_token.transfer(msg.sender, _amount));
 
     // Log event
-    TokenWithdrawal(msg.sender, address(_token), _amount, tokenBalances[address(_token)][msg.sender]);
+    emit TokenWithdrawal(msg.sender, address(_token), _amount, tokenBalances[address(_token)][msg.sender]);
   }
 
   /**
@@ -156,7 +156,7 @@ contract CrowdOwnedExchange is Ownable {
     crwdBalances[msg.sender] = crwdBalances[msg.sender].add(_amount);
 
     // Log event
-    CRWDDeposit(msg.sender, _amount, crwdBalances[msg.sender]);
+    emit CRWDDeposit(msg.sender, _amount, crwdBalances[msg.sender]);
   }
 
   /**
@@ -173,7 +173,7 @@ contract CrowdOwnedExchange is Ownable {
     require(crwdToken.transfer(msg.sender, _amount));
 
     // Log event
-    CRWDWithdrawal(msg.sender, _amount, crwdBalances[msg.sender]);
+    emit CRWDWithdrawal(msg.sender, _amount, crwdBalances[msg.sender]);
   }
 
   /**
@@ -229,7 +229,7 @@ contract CrowdOwnedExchange is Ownable {
     orderIds[_tokenAddress].push(orderId);
 
     // Log event
-    OrderCreated(_tokenAddress, _orderType, _price, _amount, msg.sender, orderId);
+    emit OrderCreated(_tokenAddress, _orderType, _price, _amount, msg.sender, orderId);
   }
 
   /**
@@ -247,7 +247,7 @@ contract CrowdOwnedExchange is Ownable {
     // add the tokens to the user's locked balance
     lockedTokenBalances[_tokenAddress][_userAddress] = lockedTokenBalances[_tokenAddress][_userAddress].add(_amount);
 
-    LockedTokenBalance(_userAddress, _tokenAddress, _amount);
+    emit LockedTokenBalance(_userAddress, _tokenAddress, _amount);
   }
 
   /**
@@ -265,7 +265,7 @@ contract CrowdOwnedExchange is Ownable {
     // add the tokens to the user's balance
     tokenBalances[_tokenAddress][_userAddress] = tokenBalances[_tokenAddress][_userAddress].add(_amount);
 
-    UnlockedTokenBalance(_userAddress, _tokenAddress, _amount);
+    emit UnlockedTokenBalance(_userAddress, _tokenAddress, _amount);
   }
 
   /**
@@ -282,7 +282,7 @@ contract CrowdOwnedExchange is Ownable {
     // add the tokens to the user's locked balance
     lockedCrwdBalances[_userAddress] = lockedCrwdBalances[_userAddress].add(_amount);
 
-    LockedCrwdBalance(_userAddress, _amount);
+    emit LockedCrwdBalance(_userAddress, _amount);
   }
 
   /**
@@ -299,7 +299,7 @@ contract CrowdOwnedExchange is Ownable {
     // add the tokens to the user's balance
     crwdBalances[_userAddress] = crwdBalances[_userAddress].add(_amount);
 
-    UnlockedCrwdBalance(_userAddress, _amount);
+    emit UnlockedCrwdBalance(_userAddress, _amount);
   }
 
   /**
@@ -381,7 +381,7 @@ contract CrowdOwnedExchange is Ownable {
     orders[_tokenAddress][_id].canceled = true;
 
     // Log event
-    OrderCanceled(_tokenAddress, _id);
+    emit OrderCanceled(_tokenAddress, _id);
   }
 
   /**
@@ -444,7 +444,7 @@ contract CrowdOwnedExchange is Ownable {
     orders[_tokenAddress][_id].executed = true;
 
     // Log event
-    OrderTaken(_tokenAddress, _id, msg.sender);
+    emit OrderTaken(_tokenAddress, _id, msg.sender);
   }
 
 }
