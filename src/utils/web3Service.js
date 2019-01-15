@@ -41,49 +41,49 @@ let getWeb3 = () => new Promise(function (resolve, reject) {
 
 
       let networkName;
-      web3.version.getNetwork((err, networkId) => {
-        if (err) {
-          return reject(err);
-        }
+      web3.eth.net.getId()
+        .then((networkId) => {
+          switch (networkId) {
+            case "1":
+              networkName = "Main";
+              break;
+            case "2":
+              networkName = "Morden";
+              break;
+            case "3":
+              networkName = "Ropsten";
+              break;
+            case "4":
+              networkName = "Rinkeby";
+              break;
+            case "42":
+              networkName = "Kovan";
+              break;
+            default:
+              networkName = "Unknown";
+          }
 
-        switch (networkId) {
-          case "1":
-            networkName = "Main";
-            break;
-          case "2":
-            networkName = "Morden";
-            break;
-          case "3":
-            networkName = "Ropsten";
-            break;
-          case "4":
-            networkName = "Rinkeby";
-            break;
-          case "42":
-            networkName = "Kovan";
-            break;
-          default:
-            networkName = "Unknown";
-        }
+          if (networkName === "Unknown" && parseInt(networkId, 10) > 0) {
+            networkName = "Private"
+          }
 
-        if (networkName === "Unknown" && parseInt(networkId, 10) > 0) {
-          networkName = "Private"
-        }
+          if (process.env.NODE_ENV === "development") {
+            // assign to window vars for debugging
+            window.debugVars.web3 = web3;
+          }
 
-        if (process.env.NODE_ENV === "development") {
-          // assign to window vars for debugging
-          window.debugVars.web3 = web3;
+          resolve({ web3, networkName });
+        }).catch((err) => {
+          reject(err);
         }
-
-        resolve({web3, networkName});
-      });
+      );
     });
   });
 });
 
 function getEventLogs(contractInstance, eventName, filter = {}) {
   return new Promise((resolve, reject) => {
-    let event = contractInstance[eventName](filter, {fromBlock: 0, toBlock: 'latest'});
+    let event = contractInstance[eventName](filter, { fromBlock: 0, toBlock: 'latest' });
     event.get((err, logs) => {
       if (err) {
         return reject(err);

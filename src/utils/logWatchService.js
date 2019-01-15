@@ -170,6 +170,7 @@ async function startHomeLogWatch(web3) {
         return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
       }
 
+      console.log("loadCrowdOwnedContractsEvents event triggered");
       store.dispatch(crowdOwnedActions.loadCrowdOwnedContracts({}));
     });
 

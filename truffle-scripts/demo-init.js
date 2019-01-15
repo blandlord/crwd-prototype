@@ -8,8 +8,9 @@ const VotingManager = artifacts.require("./VotingManager.sol");
 let STATE = require('../test/utils/state');
 
 async function run() {
+  console.log("Starting demo-init ...");
   const web3 = Registry.web3;
-  const accounts = web3.eth.accounts;
+  const accounts = await web3.eth.getAccounts();
 
   let ownerAddress = accounts[0];
   let notaryAddress = accounts[1];
@@ -30,9 +31,13 @@ async function run() {
     imageUrl: "http://www.mevrouwdeaankoopmakelaar.nl/Rotterdam/wp-content/uploads/2014/05/foto-succesvol-aangekocht.jpg",
   }];
 
+  console.log("Initializing contracts ...");
+
   const registryInstance = await Registry.deployed();
   const crowdOwnedManagerInstance = await CrowdOwnedManager.deployed();
   const votingManagerInstance = await VotingManager.deployed();
+
+  console.log("Adding notary ...");
 
   // Add notary
   await registryInstance.addNotary(notaryData.address, notaryData.name, notaryData.websiteUrl, {
@@ -80,11 +85,11 @@ async function run() {
 
   // save valuations
   console.log("saving valuations ...");
-  await crowdOwnedInstance_0.saveValuation(1, "EUR", 100000, {
+  await crowdOwnedInstance_0.saveValuation(1, web3.utils.asciiToHex("EUR"), 100000, {
     from: notaryAddress,
     gas: 200000
   });
-  await crowdOwnedInstance_1.saveValuation(1, "EUR", 100000, {
+  await crowdOwnedInstance_1.saveValuation(1, web3.utils.asciiToHex("EUR"), 100000, {
     from: notaryAddress,
     gas: 200000
   });
@@ -104,12 +109,9 @@ async function run() {
 }
 
 module.exports = function (callback) {
-  try {
     run().then(() => {
       callback();
+    }).catch((err) =>{
+      callback(err);
     })
-  }
-  catch (err) {
-    callback(err);
-  }
 };
