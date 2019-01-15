@@ -5,14 +5,14 @@ Setting up the development environment for a prototype using Ethereum contracts 
 ## Local development environment
 You first need to install node 8.x, follow the instructions at https://nodejs.org/en/download/package-manager/ depending on your OS
 
-To be able to run a test ethereum environment locally, you need to install testrpc :
+To be able to run a test ethereum environment locally, you need to install ganache-cli :
 ````
-npm install -g ethereumjs-testrpc
+npm install -g ganache-cli
 ````
 
-Then run testrpc and leave it running:
+Then run ganache-cli and leave it running:
 ````
-testrpc
+ganache-cli
 ````
 
 Install the truffle cli 

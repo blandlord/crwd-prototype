@@ -20,16 +20,16 @@ contract('Registry', function (accounts) {
   describe('addNotary/getNotaryAddresses', function () {
 
     it("adding as not an owner throws an error", async function () {
-      const instance = await  Registry.deployed();
+      const instance = await Registry.deployed();
 
-      await expectRequireFailure(() => instance.addNotary(notary_1.address, notary_1.name, notary_1.websiteUrl, {from: accounts[1]}));
+      await expectRequireFailure(() => instance.addNotary(notary_1.address, notary_1.name, notary_1.websiteUrl, { from: accounts[1] }));
     });
 
     it("the owner can add notaries which can be retrieved", async function () {
-      const instance = await  Registry.deployed();
+      const instance = await Registry.deployed();
 
-      await instance.addNotary(notary_1.address, notary_1.name, notary_1.websiteUrl, {from: accounts[0]});
-      await instance.addNotary(notary_2.address, notary_2.name, notary_2.websiteUrl, {from: accounts[0]});
+      await instance.addNotary(notary_1.address, notary_1.name, notary_1.websiteUrl, { from: accounts[0] });
+      await instance.addNotary(notary_2.address, notary_2.name, notary_2.websiteUrl, { from: accounts[0] });
 
       let notaryAddresses = await instance.getNotaryAddresses();
       assert.equal(notaryAddresses[0], notary_1.address);
@@ -47,27 +47,35 @@ contract('Registry', function (accounts) {
     });
 
     it("adding an already existing user address throws an error", async function () {
-      const instance = await  Registry.deployed();
+      const instance = await Registry.deployed();
 
-      await expectRequireFailure(() => instance.addNotary(notary_1.address, notary_1.name, notary_1.websiteUrl, {from: accounts[0]}));
+      await expectRequireFailure(() => instance.addNotary(notary_1.address, notary_1.name, notary_1.websiteUrl, { from: accounts[0] }));
     });
 
     it("adding a empty address throws an error", async function () {
-      const instance = await  Registry.deployed();
+      const instance = await Registry.deployed();
 
-      await expectRequireFailure(() => instance.addNotary("", "name", "example.com", {from: accounts[0]}));
+      try {
+        await instance.addNotary("", "name", "example.com", { from: accounts[0] });
+
+        // we shouldn't get to this point
+        assert(false, "Transaction should have failed");
+      }
+      catch (err) {
+        assert(err.message.includes("invalid address"), err.toString());
+      }
     });
 
     it("adding a empty name throws an error", async function () {
-      const instance = await  Registry.deployed();
+      const instance = await Registry.deployed();
 
-      await expectRequireFailure(() => instance.addNotary("0x0001", "", "example.com", {from: accounts[0]}));
+      await expectRequireFailure(() => instance.addNotary(accounts[0], "", "example.com", { from: accounts[0] }));
     });
 
     it("adding a empty website url throws an error", async function () {
-      const instance = await  Registry.deployed();
+      const instance = await Registry.deployed();
 
-      await expectRequireFailure(() => instance.addNotary("0x0001", "name", "", {from: accounts[0]}));
+      await expectRequireFailure(() => instance.addNotary(accounts[0], "name", "", { from: accounts[0] }));
     });
 
   });
@@ -78,10 +86,10 @@ contract('Registry', function (accounts) {
     let ssn_2 = "NL-2";
 
     it("anyone can add user addresses which can be retrieved", async function () {
-      const instance = await  Registry.deployed();
+      const instance = await Registry.deployed();
 
-      await instance.addUserAddress(ssn_1, {from: accounts[1]});
-      await instance.addUserAddress(ssn_2, {from: accounts[2]});
+      await instance.addUserAddress(ssn_1, { from: accounts[1] });
+      await instance.addUserAddress(ssn_2, { from: accounts[2] });
 
       let savedAddress_1 = await instance.userAddresses(0);
       assert.equal(savedAddress_1, accounts[1]);
@@ -105,15 +113,15 @@ contract('Registry', function (accounts) {
     });
 
     it("adding an already existing user address throws an error", async function () {
-      const instance = await  Registry.deployed();
+      const instance = await Registry.deployed();
 
-      await expectRequireFailure(() => instance.addUserAddress("XYZ", {from: accounts[1]}));
+      await expectRequireFailure(() => instance.addUserAddress("XYZ", { from: accounts[1] }));
     });
 
     it("adding a empty ssn throws an error", async function () {
-      const instance = await  Registry.deployed();
+      const instance = await Registry.deployed();
 
-      await expectRequireFailure(() => instance.addUserAddress("", {from: accounts[0]}));
+      await expectRequireFailure(() => instance.addUserAddress("", { from: accounts[0] }));
     });
 
   });
@@ -129,9 +137,9 @@ contract('Registry', function (accounts) {
       });
 
       it("not notary cannot set state", async function () {
-        const instance = await  Registry.deployed();
+        const instance = await Registry.deployed();
 
-        await expectRequireFailure(() => instance.setState(accounts[1], STATE.VERIFIED, {from: userAddress}));
+        await expectRequireFailure(() => instance.setState(accounts[1], STATE.VERIFIED, { from: userAddress }));
       });
 
     });
@@ -144,31 +152,31 @@ contract('Registry', function (accounts) {
 
       context('inexisting target address', function () {
         it("cannot set state on inexisting user address", async function () {
-          const instance = await  Registry.deployed();
+          const instance = await Registry.deployed();
 
-          await expectRequireFailure(() => instance.setState("0x" + require('crypto').randomBytes(20).toString('hex'), STATE.VERIFIED, {from: userAddress}));
+          await expectRequireFailure(() => instance.setState("0x" + require('crypto').randomBytes(20).toString('hex'), STATE.VERIFIED, { from: userAddress }));
         });
       });
 
       context('existing target address', function () {
 
         it("cannot set invalid state", async function () {
-          const instance = await  Registry.deployed();
+          const instance = await Registry.deployed();
 
-          await expectRequireFailure(() => instance.setState(accounts[1], 55/*random inexisting value*/, {from: userAddress}));
+          await expectRequireFailure(() => instance.setState(accounts[1], 55/*random inexisting value*/, { from: userAddress }));
         });
 
         it("cannot set invalid transition NEW -> EXPIRED", async function () {
-          const instance = await  Registry.deployed();
+          const instance = await Registry.deployed();
 
-          await expectRequireFailure(() => instance.setState(accounts[1], STATE.EXPIRED, {from: userAddress}));
+          await expectRequireFailure(() => instance.setState(accounts[1], STATE.EXPIRED, { from: userAddress }));
         });
 
         it("can set valid transition NEW -> VERIFIED", async function () {
-          const instance = await  Registry.deployed();
+          const instance = await Registry.deployed();
 
           // Initial state is NEW
-          await instance.setState(accounts[1], STATE.VERIFIED, {from: userAddress});
+          await instance.setState(accounts[1], STATE.VERIFIED, { from: userAddress });
 
           let userData_1 = await instance.usersData(accounts[1]);
           assert.equal(userData_1[0].toNumber(), STATE.VERIFIED, "State should be VERIFIED");
@@ -180,9 +188,9 @@ contract('Registry', function (accounts) {
         });
 
         it("can set valid transition VERIFIED -> EXPIRED", async function () {
-          const instance = await  Registry.deployed();
+          const instance = await Registry.deployed();
 
-          await instance.setState(accounts[1], STATE.EXPIRED, {from: userAddress});
+          await instance.setState(accounts[1], STATE.EXPIRED, { from: userAddress });
 
           let userData_1 = await instance.usersData(accounts[1]);
           assert.equal(userData_1[0].toNumber(), STATE.EXPIRED, "State should be EXPIRED");
@@ -194,9 +202,9 @@ contract('Registry', function (accounts) {
         });
 
         it("can set valid transition EXPIRED -> VERIFIED", async function () {
-          const instance = await  Registry.deployed();
+          const instance = await Registry.deployed();
 
-          await instance.setState(accounts[1], STATE.VERIFIED, {from: userAddress});
+          await instance.setState(accounts[1], STATE.VERIFIED, { from: userAddress });
 
           let userData_1 = await instance.usersData(accounts[1]);
           assert.equal(userData_1[0].toNumber(), STATE.VERIFIED, "State should be VERIFIED");
@@ -205,9 +213,9 @@ contract('Registry', function (accounts) {
         });
 
         it("can set valid transition VERIFIED -> DENIED", async function () {
-          const instance = await  Registry.deployed();
+          const instance = await Registry.deployed();
 
-          await instance.setState(accounts[1], STATE.DENIED, {from: userAddress});
+          await instance.setState(accounts[1], STATE.DENIED, { from: userAddress });
 
           let userData_1 = await instance.usersData(accounts[1]);
           assert.equal(userData_1[0].toNumber(), STATE.DENIED, "State should be DENIED");
@@ -216,10 +224,10 @@ contract('Registry', function (accounts) {
         });
 
         it("can set valid transition NEW -> DENIED", async function () {
-          const instance = await  Registry.deployed();
+          const instance = await Registry.deployed();
 
           // Initial state is NEW
-          await instance.setState(accounts[2], STATE.DENIED, {from: userAddress});
+          await instance.setState(accounts[2], STATE.DENIED, { from: userAddress });
 
           let userData_2 = await instance.usersData(accounts[2]);
           assert.equal(userData_2[0].toNumber(), STATE.DENIED, "State should be DENIED");

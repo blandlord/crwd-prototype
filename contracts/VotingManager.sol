@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import "./SafeMath.sol";
 import "./Ownable.sol";
@@ -56,7 +56,7 @@ contract VotingManager is Ownable {
   * @param _description Description
   * @param _duration Duration in seconds
   */
-  function createProposal(CrowdOwned _crowdOwned, string _title, string _description, uint _duration) public {
+  function createProposal(CrowdOwned _crowdOwned, string memory _title, string memory _description, uint _duration) public {
     // check creator is owner
     require(_crowdOwned.balanceOf(msg.sender) > 0);
 
@@ -92,7 +92,7 @@ contract VotingManager is Ownable {
       }));
 
     // take token circulation/ownership snapshot
-    saveTokensOwned(crowdOwnedAddress, proposalId);
+    saveTokensOwned(_crowdOwned, proposalId);
 
     emit NewProposal(msg.sender, proposalId);
   }
@@ -101,23 +101,23 @@ contract VotingManager is Ownable {
   * @dev Take Tokens Ownership Snapshot
   * @param _proposalId Proposal Id
   */
-  function saveTokensOwned(address _crowdOwnedAddress, uint _proposalId) internal {
+  function saveTokensOwned(CrowdOwned _crowdOwned, uint _proposalId) internal {
     require(_proposalId >= 1);
 
-    Proposal storage proposal = proposals[_crowdOwnedAddress][_proposalId - 1];
+    Proposal storage proposal = proposals[address(_crowdOwned)][_proposalId - 1];
 
     // save circulating supply at the proposal creation
-    proposal.tokensCirculatingSupply = CrowdOwned(_crowdOwnedAddress).circulatingSupply();
+    proposal.tokensCirculatingSupply = _crowdOwned.circulatingSupply();
 
-    uint ownerAddressesLength = CrowdOwned(_crowdOwnedAddress).getOwnerAddressesLength();
+    uint ownerAddressesLength = _crowdOwned.getOwnerAddressesLength();
 
     // save tokens owned snapshot
     for (uint i = 0; i < ownerAddressesLength; i++) {
-      address ownerAddress = CrowdOwned(_crowdOwnedAddress).ownerAddresses(i);
+      address ownerAddress = _crowdOwned.ownerAddresses(i);
 
       // do not take tokens owned by the contract into account
-      if (ownerAddress != _crowdOwnedAddress) {
-        proposal.tokensOwned[ownerAddress] = CrowdOwned(_crowdOwnedAddress).balanceOf(ownerAddress);
+      if (ownerAddress != address(_crowdOwned)) {
+        proposal.tokensOwned[ownerAddress] = _crowdOwned.balanceOf(ownerAddress);
       }
     }
   }
@@ -164,7 +164,7 @@ contract VotingManager is Ownable {
   * @dev Get number of proposals
   * @param _tokenAddress Token Address
   */
-  function getProposalsLength(address _tokenAddress) constant public returns (uint length){
+  function getProposalsLength(address _tokenAddress) view public returns (uint length){
     return proposals[_tokenAddress].length;
   }
 
@@ -173,11 +173,11 @@ contract VotingManager is Ownable {
   * @param _tokenAddress Token Address
   * @param _proposalId Proposal id
   */
-  function getProposal(address _tokenAddress, uint _proposalId) constant public
+  function getProposal(address _tokenAddress, uint _proposalId) view public
   returns (
     address creator,
-    string title,
-    string description,
+    string memory title,
+    string memory description,
     uint start,
     uint deadline,
     uint tokensCirculatingSupply,
@@ -208,7 +208,7 @@ contract VotingManager is Ownable {
   * @param _proposalId Proposal id
   * @param _ownerAddress Owner Address
   */
-  function getProposalTokensOwned(address _tokenAddress, uint _proposalId, address _ownerAddress) constant public returns (uint tokensOwned){
+  function getProposalTokensOwned(address _tokenAddress, uint _proposalId, address _ownerAddress) view public returns (uint tokensOwned){
 
     return proposals[_tokenAddress][_proposalId - 1].tokensOwned[_ownerAddress];
   }
@@ -219,7 +219,7 @@ contract VotingManager is Ownable {
   * @param _proposalId Proposal id
   * @param _ownerAddress Owner Address
   */
-  function hasVoted(address _tokenAddress, uint _proposalId, address _ownerAddress) constant public returns (bool voted){
+  function hasVoted(address _tokenAddress, uint _proposalId, address _ownerAddress) view public returns (bool voted){
 
     return proposals[_tokenAddress][_proposalId - 1].voted[_ownerAddress];
   }
@@ -229,7 +229,7 @@ contract VotingManager is Ownable {
   * @param _tokenAddress Token Address
   * @param _proposalId Proposal id
   */
-  function getMyVote(address _tokenAddress, uint _proposalId) constant public returns (uint voteChoice){
+  function getMyVote(address _tokenAddress, uint _proposalId) view public returns (uint voteChoice){
 
     return uint(proposals[_tokenAddress][_proposalId - 1].votes[msg.sender]);
   }
@@ -239,7 +239,7 @@ contract VotingManager is Ownable {
   * @param _tokenAddress Token Address
   * @param _proposalId Proposal id
   */
-  function getYesResults(address _tokenAddress, uint _proposalId) constant public returns (uint){
+  function getYesResults(address _tokenAddress, uint _proposalId) view public returns (uint){
 
     return (proposals[_tokenAddress][_proposalId - 1].yesWeightedTotal * 100) / (proposals[_tokenAddress][_proposalId - 1].yesWeightedTotal + proposals[_tokenAddress][_proposalId - 1].noWeightedTotal);
   }
@@ -249,7 +249,7 @@ contract VotingManager is Ownable {
    * @param _tokenAddress Token Address
    * @param _proposalId Proposal id
    */
-  function isClosed(address _tokenAddress, uint _proposalId) constant public returns (bool closed){
+  function isClosed(address _tokenAddress, uint _proposalId) view public returns (bool closed){
 
     return proposals[_tokenAddress][_proposalId - 1].deadline <= block.timestamp;
   }

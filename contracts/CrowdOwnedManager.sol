@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 
 import "./Ownable.sol";
@@ -58,7 +58,7 @@ contract CrowdOwnedManager is Ownable {
   /**
   * @dev deploy CrowdOwned contract
   */
-  function deployCrowdOwned(string _name, string _symbol, string _imageUrl) public onlyRegistryNotary {
+  function deployCrowdOwned(string memory _name, string memory _symbol, string memory _imageUrl) public onlyRegistryNotary {
     // deploy contract
     CrowdOwned crowdOwned = new CrowdOwned(_name, _symbol, _imageUrl, msg.sender, registry, crowdOwnedExchange);
 
@@ -76,7 +76,7 @@ contract CrowdOwnedManager is Ownable {
   /**
   * @dev get all contract addresses
   */
-  function getContractsAddresses() public constant returns (address[])  {
+  function getContractsAddresses() public view returns (address[] memory)  {
     return contractsAddresses;
   }
 

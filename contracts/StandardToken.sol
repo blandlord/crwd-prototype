@@ -1,5 +1,5 @@
 // https://github.com/OpenZeppelin/zeppelin-solidity/blob/master/contracts
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import "./BasicToken.sol";
 import "./ERC20.sol";

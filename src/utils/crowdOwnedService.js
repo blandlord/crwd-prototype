@@ -69,7 +69,7 @@ async function getIncomingEthPayments(web3, crowdOwnedInstance) {
     let paymentLog = paymentLogs[i];
     let incomingEthPayment = {};
     incomingEthPayment.tx = paymentLog.transactionHash;
-    incomingEthPayment.value = web3.fromWei(paymentLog.args._value.toNumber(), 'ether');
+    incomingEthPayment.value = web3.utils.fromWei(paymentLog.args._value, 'ether');
     incomingEthPayment.blockheight = paymentLog.args._blockheight.toNumber();
 
     let block = await promisify(web3.eth.getBlock)(incomingEthPayment.blockheight);
@@ -92,7 +92,7 @@ async function loadCrowdOwnedContract(web3, address) {
   let balance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
   let contractBalance = await crowdOwnedInstance.balanceOf(crowdOwnedInstance.address);
   let contractWeiBalance = await promisify(web3.eth.getBalance)(crowdOwnedInstance.address);
-  let contractEthBalance = web3.fromWei(contractWeiBalance.toNumber(), "ether");
+  let contractEthBalance =  parseInt(web3.utils.fromWei(contractWeiBalance, "ether"),10);
 
   let totalSupply = (await crowdOwnedInstance.totalSupply()).toNumber();
   let circulatingSupply = (await crowdOwnedInstance.circulatingSupply()).toNumber();
@@ -114,7 +114,7 @@ async function loadCrowdOwnedContract(web3, address) {
   let lastValuation = {
     date: lastValuationDate,
     blockheight: lastValuationResults[0].toNumber(),
-    currency: web3.toAscii(lastValuationResults[1]).replace(/\u0000/g, ""),
+    currency: web3.utils.hexToAscii(lastValuationResults[1]).replace(/\u0000/g, ""),
     value: lastValuationResults[2].toNumber(),
     isValuation: lastValuationResults[3]
   };

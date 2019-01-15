@@ -11,16 +11,17 @@ let STATE = require('./utils/state');
 
 contract('CrowdOwned', function (accounts) {
 
-  let web3, proxiedWeb3, registryInstance, crwdTokenInstance, tokenInstance, crowdOwnedExchangeInstance;
+  let web3, BN, proxiedWeb3, registryInstance, crwdTokenInstance, tokenInstance, crowdOwnedExchangeInstance;
 
   before(async function beforeTest() {
     web3 = CrowdOwned.web3;
+    BN = web3.utils.BN;
     proxiedWeb3 = new Proxy(web3, proxiedWeb3Handler);
 
     registryInstance = await Registry.deployed();
     crwdTokenInstance = await CRWDToken.deployed();
     crowdOwnedExchangeInstance = await CrowdOwnedExchange.deployed();
-    tokenInstance = await CrowdOwned.new("My Token", "MYT", "http://example.com/image", accounts[0], registryInstance.address, crowdOwnedExchangeInstance.address, {gas: 6000000});
+    tokenInstance = await CrowdOwned.new("My Token", "MYT", "http://example.com/image", accounts[0], registryInstance.address, crowdOwnedExchangeInstance.address, { gas: 6000000 });
   });
 
   describe('proper instantiation', function () {
@@ -40,14 +41,14 @@ contract('CrowdOwned', function (accounts) {
   describe('setRegistry', function () {
 
     it("owner can set registry address", async function () {
-      await tokenInstance.setRegistry(registryInstance.address, {from: accounts[0]});
+      await tokenInstance.setRegistry(registryInstance.address, { from: accounts[0] });
 
       let registryAddress = await tokenInstance.registry();
       assert.equal(registryAddress, registryInstance.address);
     });
 
     it("non owner cannot set registry address", async function () {
-      await expectRequireFailure(() => tokenInstance.setRegistry(registryInstance.address, {from: accounts[1]}));
+      await expectRequireFailure(() => tokenInstance.setRegistry(registryInstance.address, { from: accounts[1] }));
     });
 
   });
@@ -56,18 +57,18 @@ contract('CrowdOwned', function (accounts) {
 
     before(async function beforeTest() {
       // add addresses to registry
-      await registryInstance.addUserAddress("SSN-1", {from: accounts[1]});
-      await registryInstance.addUserAddress("SSN-2", {from: accounts[2]});
+      await registryInstance.addUserAddress("SSN-1", { from: accounts[1] });
+      await registryInstance.addUserAddress("SSN-2", { from: accounts[2] });
 
       // add account 5 as notary
-      await registryInstance.addNotary(accounts[5], "my notary", "notary.example.com", {from: accounts[0]});
+      await registryInstance.addNotary(accounts[5], "my notary", "notary.example.com", { from: accounts[0] });
 
       // verify address 1
-      await registryInstance.setState(accounts[1], STATE.VERIFIED, {from: accounts[5]});
+      await registryInstance.setState(accounts[1], STATE.VERIFIED, { from: accounts[5] });
     });
 
     it("transferable if destination is in registry list & verified", async function () {
-      await tokenInstance.transfer(accounts[1], 50, {from: accounts[0]});
+      await tokenInstance.transfer(accounts[1], 50, { from: accounts[0] });
 
       let account_0_balance = await tokenInstance.balanceOf(accounts[0]);
       assert.equal(account_0_balance.toNumber(), 99950);
@@ -76,18 +77,18 @@ contract('CrowdOwned', function (accounts) {
       assert.equal(account_1_balance.toNumber(), 50);
 
       // second transfer to make sure owner only added to list once
-      await tokenInstance.transfer(accounts[1], 100, {from: accounts[0]});
+      await tokenInstance.transfer(accounts[1], 100, { from: accounts[0] });
 
       let ownerAddresses = await tokenInstance.getOwnerAddresses();
       assert.deepEqual(ownerAddresses, [accounts[0], accounts[1]]);
     });
 
     it("not transferable if destination is in registry list but not verified", async function () {
-      await expectRequireFailure(() => tokenInstance.transfer(accounts[2], 50, {from: accounts[0]}));
+      await expectRequireFailure(() => tokenInstance.transfer(accounts[2], 50, { from: accounts[0] }));
     });
 
     it("not transferable if destination is not in registry list", async function () {
-      await expectRequireFailure(() => tokenInstance.transfer(accounts[3], 50, {from: accounts[0]}));
+      await expectRequireFailure(() => tokenInstance.transfer(accounts[3], 50, { from: accounts[0] }));
     });
 
   });
@@ -95,7 +96,7 @@ contract('CrowdOwned', function (accounts) {
   describe('totalSupply/circulatingSupply', function () {
 
     before(async function beforeTest() {
-      await tokenInstance.transfer(tokenInstance.address, 10000, {from: accounts[0]});
+      await tokenInstance.transfer(tokenInstance.address, 10000, { from: accounts[0] });
     });
 
     it("ok", async function () {
@@ -114,7 +115,7 @@ contract('CrowdOwned', function (accounts) {
       let lastValuationBlockheight = await tokenInstance.getLastValuationBlockheight();
       assert.equal(lastValuationBlockheight.toNumber(), 0);
 
-      await tokenInstance.saveValuation(1111, "EUR", 5000);
+      await tokenInstance.saveValuation(1111, web3.utils.asciiToHex("EUR"), 5000);
 
       lastValuationBlockheight = await tokenInstance.getLastValuationBlockheight();
       assert.equal(lastValuationBlockheight.toNumber(), 1111);
@@ -123,13 +124,13 @@ contract('CrowdOwned', function (accounts) {
       assert.equal(blockheight.toNumber(), 1111);
 
       let valuationData = await tokenInstance.valuationsData(blockheight);
-      assert.equal(web3.toAscii(valuationData[0]).replace(/\u0000/g, ""), "EUR");
+      assert.equal(web3.utils.hexToAscii(valuationData[0]).replace(/\u0000/g, ""), "EUR");
       assert.equal(valuationData[1].toNumber(), 5000);
       assert.equal(valuationData[2], true);
 
-      await tokenInstance.saveValuation(2222, "EUR", 10000);
-      await tokenInstance.saveValuation(3333, "EUR", 15000);
-      await tokenInstance.saveValuation(4444, "EUR", 20000);
+      await tokenInstance.saveValuation(2222, web3.utils.asciiToHex("EUR"), 10000);
+      await tokenInstance.saveValuation(3333, web3.utils.asciiToHex("EUR"), 15000);
+      await tokenInstance.saveValuation(4444, web3.utils.asciiToHex("EUR"), 20000);
 
       lastValuationBlockheight = await tokenInstance.getLastValuationBlockheight();
       assert.equal(lastValuationBlockheight.toNumber(), 4444);
@@ -147,13 +148,13 @@ contract('CrowdOwned', function (accounts) {
     it("ok", async function () {
       let valuation = await tokenInstance.getValuation(0);
       assert.equal(valuation[0], 3333);
-      assert.equal(web3.toAscii(valuation[1]).replace(/\u0000/g, ""), "EUR");
+      assert.equal(web3.utils.hexToAscii(valuation[1]).replace(/\u0000/g, ""), "EUR");
       assert.equal(valuation[2].toNumber(), 15000);
       assert.equal(valuation[3], true);
 
       valuation = await tokenInstance.getValuation(2222);
       assert.equal(valuation[0], 2222);
-      assert.equal(web3.toAscii(valuation[1]).replace(/\u0000/g, ""), "EUR");
+      assert.equal(web3.utils.hexToAscii(valuation[1]).replace(/\u0000/g, ""), "EUR");
       assert.equal(valuation[2].toNumber(), 10000);
       assert.equal(valuation[3], true);
     });
@@ -165,13 +166,13 @@ contract('CrowdOwned', function (accounts) {
       let results = await tokenInstance.sendTransaction({
         from: accounts[0],
         to: tokenInstance.address,
-        value: web3.toWei(0.5, "ether")
+        value: web3.utils.toWei("0.5", "ether")
       });
 
       let log = results.logs[0];
       assert.equal(log.args._sender, accounts[0]);
       assert.equal(log.args._blockheight, log.blockNumber);
-      assert.equal(log.args._value, web3.toWei(0.5, "ether"));
+      assert.equal(log.args._value, web3.utils.toWei("0.5", "ether"));
     });
   });
 
@@ -179,43 +180,43 @@ contract('CrowdOwned', function (accounts) {
     let crwdTotalSupply;
 
     before(async function beforeTest() {
-      crwdTotalSupply = (await crwdTokenInstance.totalSupply()).toNumber();
+      crwdTotalSupply = await crwdTokenInstance.totalSupply();
 
-      await crwdTokenInstance.transfer(tokenInstance.address, Math.pow(10, 18), {from: accounts[0]});
+      await crwdTokenInstance.transfer(tokenInstance.address, web3.utils.toWei("1", "ether"), { from: accounts[0] });
     });
 
     it("not owner cannot kill", async function () {
-      await expectRequireFailure(() => tokenInstance.kill(crwdTokenInstance.address, {from: accounts[1]}));
+      await expectRequireFailure(() => tokenInstance.kill(crwdTokenInstance.address, { from: accounts[1] }));
     });
 
     it("if owner kills and sends funds to owner", async function () {
       let contractEthBalance = await proxiedWeb3.eth.getBalance(tokenInstance.address);
-      assert.equal(contractEthBalance.toNumber(), web3.toWei(0.5, "ether"));
+      assert.equal(contractEthBalance, web3.utils.toWei("0.5", "ether"));
 
       let contractCrwdBalance = await crwdTokenInstance.balanceOf(tokenInstance.address);
-      assert.equal(contractCrwdBalance.toNumber(), Math.pow(10, 18));
+      assert.equal(contractCrwdBalance,web3.utils.toWei("1", "ether"));
 
       let ownerCrwdBalance = await crwdTokenInstance.balanceOf(accounts[0]);
-      assert.equal(ownerCrwdBalance.toNumber(), crwdTotalSupply - Math.pow(10, 18));
+      assert.equal(ownerCrwdBalance.toString(), new BN(crwdTotalSupply).sub(web3.utils.toWei(new BN(1), "ether")).toString());
 
-      let ownerEthBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
+      let ownerEthBalance = new BN(await proxiedWeb3.eth.getBalance(accounts[0]));
 
-      await tokenInstance.kill(crwdTokenInstance.address, {from: accounts[0]});
+      await tokenInstance.kill(crwdTokenInstance.address, { from: accounts[0] });
 
-      let newContractEthBalance = await proxiedWeb3.eth.getBalance(tokenInstance.address);
-      assert.equal(newContractEthBalance.toNumber(), 0);
+      let newContractEthBalance = new BN(await proxiedWeb3.eth.getBalance(tokenInstance.address));
+      assert.equal(newContractEthBalance, 0);
 
-      let newOwnerEthBalance = await proxiedWeb3.eth.getBalance(accounts[0]);
-      assert.equal(newOwnerEthBalance.toNumber() > ownerEthBalance.toNumber() + parseInt(web3.toWei(0.49, "ether")), true); // account for gas
+      let newOwnerEthBalance = new BN(await proxiedWeb3.eth.getBalance(accounts[0]));
+      assert.equal(newOwnerEthBalance.gt(ownerEthBalance.add(web3.utils.toWei(new BN(0.49), "ether"))), true); // account for gas
 
       let newContractCrwdBalance = await crwdTokenInstance.balanceOf(tokenInstance.address);
-      assert.equal(newContractCrwdBalance.toNumber(), 0);
+      assert.equal(newContractCrwdBalance, 0);
 
       let newOwnerCrwdBalance = await crwdTokenInstance.balanceOf(accounts[0]);
-      assert.equal(newOwnerCrwdBalance.toNumber(), crwdTotalSupply);
+      assert.equal(newOwnerCrwdBalance.toString(), crwdTotalSupply.toString());
 
       let code = await proxiedWeb3.eth.getCode(tokenInstance.address);
-      assert.equal(code, "0x0");
+      assert.equal(code, "0x");
     });
   });
 

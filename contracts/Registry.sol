@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 
 import "./Ownable.sol";
@@ -18,26 +18,26 @@ contract Registry is Ownable {
    *  Storage
    */
 
-  mapping (address => UserData) public usersData;
+  mapping(address => UserData) public usersData;
 
   address[] public userAddresses;
 
   enum State {NEW, VERIFIED, EXPIRED, DENIED}
 
   struct UserData {
-  State state;
-  string ssn;
-  bool isUserData;
+    State state;
+    string ssn;
+    bool isUserData;
   }
 
-  mapping (address => NotaryData) public notariesData;
+  mapping(address => NotaryData) public notariesData;
 
   address[] public notaryAddresses;
 
   struct NotaryData {
-  string name;
-  string websiteUrl;
-  bool isNotaryData;
+    string name;
+    string websiteUrl;
+    bool isNotaryData;
   }
 
   /*
@@ -61,7 +61,7 @@ contract Registry is Ownable {
 
   /// @dev Allows to add an address to the registry
   /// @param _ssn user social security number
-  function addUserAddress(string _ssn) public {
+  function addUserAddress(string memory _ssn) public {
     // check ssn not null
     require(bytes(_ssn).length != 0);
     // avoid overwrite
@@ -79,7 +79,7 @@ contract Registry is Ownable {
 
   /// @dev Checks if a user address exists
   /// @param _userAddress user address to be checked
-  function isUserData(address _userAddress) public constant returns (bool) {
+  function isUserData(address _userAddress) public view returns (bool) {
     return usersData[_userAddress].isUserData;
   }
 
@@ -118,20 +118,20 @@ contract Registry is Ownable {
   }
 
   /// @dev fetch user addresses
-  function getUserAddresses() public constant returns (address[])  {
+  function getUserAddresses() public view returns (address[] memory)  {
     return userAddresses;
   }
 
   /// @dev Checks if a user address is verified and valid
   /// @param _userAddress user address to be checked
-  function isVerifiedAndValid(address _userAddress) public constant returns (bool) {
+  function isVerifiedAndValid(address _userAddress) public view returns (bool) {
     return usersData[_userAddress].state == State.VERIFIED;
   }
 
   /// @dev Allows to add a notary to the registry
   /// @param _name Notary name
   /// @param _websiteUrl Notary website url
-  function addNotary(address _address, string _name, string _websiteUrl) public onlyOwner {
+  function addNotary(address _address, string memory _name, string memory _websiteUrl) public onlyOwner {
     // check _address not null
     require(_address != address(0));
     // check _name not null
@@ -153,12 +153,12 @@ contract Registry is Ownable {
 
   /// @dev Checks if a notary address exists
   /// @param _address notary address to be checked
-  function isNotaryAddress(address _address) public constant returns (bool) {
+  function isNotaryAddress(address _address) public view returns (bool) {
     return notariesData[_address].isNotaryData;
   }
 
   /// @dev fetch notary addresses
-  function getNotaryAddresses() public constant returns (address[])  {
+  function getNotaryAddresses() public view returns (address[] memory)  {
     return notaryAddresses;
   }
 

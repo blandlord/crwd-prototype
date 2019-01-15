@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 
 import './StandardToken.sol';
@@ -62,11 +62,11 @@ contract CrowdOwned is StandardToken, Ownable {
   * @param _symbol Contract Symbol
   * @param _imageUrl CrowdOwned Object Image Url
   */
-  constructor(string _name, string _symbol, string _imageUrl, address _owner, Registry _registry, CrowdOwnedExchange _crowdOwnedExchange) public {
+  constructor(string memory _name, string memory _symbol, string memory _imageUrl, address _owner, Registry _registry, CrowdOwnedExchange _crowdOwnedExchange) public {
     // prevent setting to null
-    require(_registry != address(0));
-    require(_crowdOwnedExchange != address(0));
-    require(_owner != address(0));
+    require(address(_registry) != address(0));
+    require(address(_crowdOwnedExchange) != address(0));
+    require(address(_owner) != address(0));
 
     name = _name;
     symbol = _symbol;
@@ -94,7 +94,7 @@ contract CrowdOwned is StandardToken, Ownable {
   */
   function setRegistry(Registry _registry) public onlyOwner {
     // prevent setting to null
-    require(_registry != address(0));
+    require(address(_registry) != address(0));
 
     registry = _registry;
   }
@@ -131,14 +131,14 @@ contract CrowdOwned is StandardToken, Ownable {
   * @dev check if transfer is valid
   * @param _to The address to transfer to.
   */
-  function isValidTransfer(address _to) public constant returns (bool){
+  function isValidTransfer(address _to) public view returns (bool){
     return (_to == address(this) || _to == address(crowdOwnedExchange) || registry.isVerifiedAndValid(_to));
   }
 
   /**
   * @dev get tokens circulating supply
   */
-  function circulatingSupply() public constant returns (uint) {
+  function circulatingSupply() public view returns (uint) {
     return totalSupply() - balanceOf(address(this));
   }
 
@@ -156,14 +156,14 @@ contract CrowdOwned is StandardToken, Ownable {
   /**
   * @dev get owner addresses
   */
-  function getOwnerAddresses() public constant returns (address[]) {
+  function getOwnerAddresses() public view returns (address[] memory) {
     return ownerAddresses;
   }
 
   /**
   * @dev get owner addresses length
   */
-  function getOwnerAddressesLength() public constant returns (uint) {
+  function getOwnerAddressesLength() public view returns (uint) {
     return ownerAddresses.length;
   }
 
@@ -190,7 +190,7 @@ contract CrowdOwned is StandardToken, Ownable {
   /**
   * @dev Get last valuation blockheight
   */
-  function getLastValuationBlockheight() public constant returns (uint){
+  function getLastValuationBlockheight() public view returns (uint){
     if (valuationBlockheights.length == 0) {
       // no data
       return 0;
@@ -221,7 +221,7 @@ contract CrowdOwned is StandardToken, Ownable {
   * @dev Get Valuation
   * @param _blockheight valuation blockheight
   */
-  function getValuation(uint _blockheight) public constant returns (uint, bytes32, uint, bool){
+  function getValuation(uint _blockheight) public view returns (uint, bytes32, uint, bool){
     // calling with 0 returns the last valuation data
     uint blockheight = (_blockheight > 0 ? _blockheight : getLastValuationBlockheight());
     return (blockheight, valuationsData[blockheight].currency, valuationsData[blockheight].value, valuationsData[blockheight].isValuation);
@@ -236,13 +236,14 @@ contract CrowdOwned is StandardToken, Ownable {
     _crwdToken.transfer(owner, _crwdToken.balanceOf(address(this)));
 
     // kill contract and send ETH balance to owner
-    selfdestruct(owner);
+    address payable ownerPayable = address(uint160(owner));
+    selfdestruct(ownerPayable);
   }
 
   /**
   * @dev Fallback function to receive funds
   */
-  function() public payable {
+  function() external payable {
     // Log event
     emit EthPaymentReceived(msg.sender, block.number, msg.value);
   }

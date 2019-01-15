@@ -4,10 +4,12 @@ const expectRequireFailure = require('./support/expectRequireFailure');
 
 
 contract('CRWDToken', function (accounts) {
-
+  let web3, BN;
   let tokenInstance;
 
   before(async function beforeTest() {
+    web3 = CRWDToken.web3;
+    BN = web3.utils.BN;
     tokenInstance = await CRWDToken.deployed();
   });
 
@@ -20,44 +22,45 @@ contract('CRWDToken', function (accounts) {
       let decimals = await tokenInstance.decimals();
       assert.equal(decimals.toNumber(), 18);
       let totalSupply = await tokenInstance.totalSupply();
-      assert.equal(totalSupply.toNumber(), Math.pow(10, 26));
+      let totalSupplyExpected = (new BN(Math.pow(10, 8))).mul(web3.utils.toWei(new BN(1),"ether"));
+      assert.equal(totalSupply.eq(totalSupplyExpected), true);
       let creatorBalance = await tokenInstance.balanceOf(accounts[0]);
-      assert.equal(creatorBalance.toNumber(), Math.pow(10, 26));
+      assert.equal(creatorBalance.eq(totalSupplyExpected), true);
 
     });
   });
 
   describe('transfer', function () {
     it("transferable to other user", async function () {
-      await tokenInstance.transfer(accounts[1], 1000000 * Math.pow(10, 18), {from: accounts[0]});
+      await tokenInstance.transfer(accounts[1], new BN(1000000).mul(web3.utils.toWei(new BN(1),"ether")), { from: accounts[0] });
 
       let account_0_balance = await tokenInstance.balanceOf(accounts[0]);
-      assert.equal(account_0_balance.toNumber(), 99000000 * Math.pow(10, 18));
+      assert.equal(account_0_balance.toString(), new BN(99000000).mul(web3.utils.toWei(new BN(1),"ether")).toString());
 
       let account_1_balance = await tokenInstance.balanceOf(accounts[1]);
-      assert.equal(account_1_balance.toNumber(), 1000000 * Math.pow(10, 18));
+      assert.equal(account_1_balance.toString(), new BN(1000000).mul(web3.utils.toWei(new BN(1),"ether")).toString());
     });
 
     it("cannot transfer more than balance", async function () {
-      await expectRequireFailure(() => tokenInstance.transfer(accounts[1], 99500000 * Math.pow(10, 18), {from: accounts[0]}));
+      await expectRequireFailure(() => tokenInstance.transfer(accounts[1], new BN(99500000).mul(web3.utils.toWei(new BN(1),"ether")), { from: accounts[0] }));
     });
   });
 
   describe('approve /transferFrom', function () {
     it("transferable to other preapproved user", async function () {
-      await tokenInstance.approve(accounts[1], 1000000 * Math.pow(10, 18), {from: accounts[0]});
+      await tokenInstance.approve(accounts[1], new BN(1000000).mul(web3.utils.toWei(new BN(1),"ether")), { from: accounts[0] });
 
-      await tokenInstance.transferFrom(accounts[0], accounts[1], 1000000 * Math.pow(10, 18), {from: accounts[1]});
+      await tokenInstance.transferFrom(accounts[0], accounts[1], new BN(1000000).mul(web3.utils.toWei(new BN(1),"ether")), { from: accounts[1] });
 
       let account_0_balance = await tokenInstance.balanceOf(accounts[0]);
-      assert.equal(account_0_balance.toNumber(), 98000000 * Math.pow(10, 18));
+      assert.equal(account_0_balance.toString(), new BN(98000000).mul(web3.utils.toWei(new BN(1),"ether")).toString());
 
       let account_1_balance = await tokenInstance.balanceOf(accounts[1]);
-      assert.equal(account_1_balance.toNumber(), 2000000 * Math.pow(10, 18));
+      assert.equal(account_1_balance.toString(), new BN(2000000).mul(web3.utils.toWei(new BN(1),"ether")).toString());
     });
 
     it("cannot transfer more than preapproved", async function () {
-      await expectRequireFailure(() => tokenInstance.transferFrom(accounts[0], accounts[1], 500 * Math.pow(10, 18), {from: accounts[1]}));
+      await expectRequireFailure(() => tokenInstance.transferFrom(accounts[0], accounts[1],  web3.utils.toWei(new BN(500),"ether"), { from: accounts[1] }));
     });
   });
 

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 
 import './Ownable.sol';
@@ -79,8 +79,8 @@ contract CrowdOwnedExchange is Ownable {
   */
   constructor(Registry _registry, CRWDToken _crwdToken) public {
     // prevent setting to null
-    require(_registry != address(0));
-    require(_crwdToken != address(0));
+    require(address(_registry) != address(0));
+    require(address(_crwdToken) != address(0));
 
     // set registry
     registry = _registry;
@@ -98,7 +98,7 @@ contract CrowdOwnedExchange is Ownable {
 
     // token.approve needs to be called beforehand
     // transfer tokens from the user to the contract
-    require(_token.transferFrom(msg.sender, this, _amount));
+    require(_token.transferFrom(msg.sender, address(this), _amount));
 
     // add the tokens to the user's balance
     tokenBalances[address(_token)][msg.sender] = tokenBalances[address(_token)][msg.sender].add(_amount);
@@ -129,7 +129,7 @@ contract CrowdOwnedExchange is Ownable {
   * @dev Get user token balance
   * @param _userAddress User Address
   */
-  function tokenBalanceOf(address _token, address _userAddress) constant public returns (uint) {
+  function tokenBalanceOf(address _token, address _userAddress) view public returns (uint) {
     return tokenBalances[_token][_userAddress];
   }
 
@@ -137,7 +137,7 @@ contract CrowdOwnedExchange is Ownable {
   * @dev Get user locked token balance
   * @param _userAddress User Address
   */
-  function lockedTokenBalanceOf(address _token, address _userAddress) constant public returns (uint) {
+  function lockedTokenBalanceOf(address _token, address _userAddress) view public returns (uint) {
     return lockedTokenBalances[_token][_userAddress];
   }
 
@@ -150,7 +150,7 @@ contract CrowdOwnedExchange is Ownable {
 
     // token.approve needs to be called beforehand
     // transfer tokens from the user to the contract
-    require(crwdToken.transferFrom(msg.sender, this, _amount));
+    require(crwdToken.transferFrom(msg.sender, address(this), _amount));
 
     // add the tokens to the user's balance
     crwdBalances[msg.sender] = crwdBalances[msg.sender].add(_amount);
@@ -180,7 +180,7 @@ contract CrowdOwnedExchange is Ownable {
   * @dev Get user CRWD token balance
   * @param _userAddress User Address
   */
-  function crwdBalanceOf(address _userAddress) constant public returns (uint) {
+  function crwdBalanceOf(address _userAddress) view public returns (uint) {
     return crwdBalances[_userAddress];
   }
 
@@ -188,7 +188,7 @@ contract CrowdOwnedExchange is Ownable {
   * @dev Get user locked CRWD token balance
   * @param _userAddress User Address
   */
-  function lockedCrwdBalanceOf(address _userAddress) constant public returns (uint) {
+  function lockedCrwdBalanceOf(address _userAddress) view public returns (uint) {
     return lockedCrwdBalances[_userAddress];
   }
 
@@ -310,7 +310,7 @@ contract CrowdOwnedExchange is Ownable {
   * @param _price Price
   * @param _amount Amount
   */
-  function isBalanceSufficient(bool _isMaker, address _tokenAddress, OrderType _orderType, uint _price, uint _amount) constant public returns (bool){
+  function isBalanceSufficient(bool _isMaker, address _tokenAddress, OrderType _orderType, uint _price, uint _amount) view public returns (bool){
     if (_isMaker) {
       if (_orderType == OrderType.BUY) {
         return _price.mul(_amount) <= crwdBalanceOf(msg.sender);
@@ -333,7 +333,7 @@ contract CrowdOwnedExchange is Ownable {
   * @dev Get number of orders per token
   * @param _tokenAddress Token Address
   */
-  function getOrdersLength(address _tokenAddress) constant public returns (uint length){
+  function getOrdersLength(address _tokenAddress) view public returns (uint length){
     return orderIds[_tokenAddress].length;
   }
 
@@ -341,7 +341,7 @@ contract CrowdOwnedExchange is Ownable {
   * @dev Get order ids
   * @param _tokenAddress Token Address
   */
-  function getOrderIds(address _tokenAddress) public constant returns (uint[])  {
+  function getOrderIds(address _tokenAddress) public view returns (uint[] memory)  {
     return orderIds[_tokenAddress];
   }
 
@@ -350,7 +350,7 @@ contract CrowdOwnedExchange is Ownable {
   * @param _tokenAddress Token Address
   * @param _id Order id
   */
-  function getOrder(address _tokenAddress, uint _id) constant public
+  function getOrder(address _tokenAddress, uint _id) view public
   returns (OrderType orderType, uint price, uint amount, address userAddress, bool executed, bool canceled, bool isOrder){
     Order memory order = orders[_tokenAddress][_id];
     return (order.orderType, order.price, order.amount, order.userAddress, order.executed, order.canceled, order.isOrder);

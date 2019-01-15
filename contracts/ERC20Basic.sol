@@ -1,5 +1,5 @@
 // https://github.com/OpenZeppelin/openzeppelin-solidity/blob/v1.12.0/contracts/token/ERC20/ERC20Basic.sol
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 
 /**
