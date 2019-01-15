@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {NavLink} from "react-router-dom";
 
-const _ = require('lodash');
+import _ from 'lodash';
 import moment from 'moment';
 
 import * as crowdOwnedActions from '../actions/crowdOwnedActions';
@@ -119,7 +119,7 @@ class CrowdOwnedDetails extends Component {
                   <div className="col-xs-8 col-sm-4 col-lg-3">
                     {crowdOwnedContract.imageUrl ?
                       <div>
-                        <img className="img-responsive" src={crowdOwnedContract.imageUrl} role="presentation"/>
+                        <img className="img-responsive" src={crowdOwnedContract.imageUrl} alt={""}/>
                       </div>
                       :
                       null

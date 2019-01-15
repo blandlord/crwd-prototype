@@ -4,7 +4,7 @@ import contractService from '../utils/contractService';
 async function addUserAddress(web3, newUserData) {
   const instance = await contractService.getDeployedInstance(web3, "Registry");
 
-  let results = await instance.addUserAddress(newUserData.userAddress, newUserData.ssn, {
+  let results = await instance.addUserAddress(newUserData.ssn, {
     from: web3.eth.defaultAccount,
     gas: 400000
   });

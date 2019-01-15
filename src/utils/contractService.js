@@ -1,11 +1,11 @@
 const truffleContract = require('truffle-contract');
 
-const CrowdOwned = require('../../build/contracts/CrowdOwned.json');
-const CrowdOwnedExchange = require('../../build/contracts/CrowdOwnedExchange.json');
-const CrowdOwnedManager = require('../../build/contracts/CrowdOwnedManager.json');
-const CRWDToken = require('../../build/contracts/CRWDToken.json');
-const Registry = require('../../build/contracts/Registry.json');
-const VotingManager = require('../../build/contracts/VotingManager.json');
+const CrowdOwned = require('../contracts/CrowdOwned.json');
+const CrowdOwnedExchange = require('../contracts/CrowdOwnedExchange.json');
+const CrowdOwnedManager = require('../contracts/CrowdOwnedManager.json');
+const CRWDToken = require('../contracts/CRWDToken.json');
+const Registry = require('../contracts/Registry.json');
+const VotingManager = require('../contracts/VotingManager.json');
 
 const contracts = {
   CrowdOwned,

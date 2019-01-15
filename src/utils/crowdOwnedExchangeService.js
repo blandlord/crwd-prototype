@@ -1,6 +1,5 @@
 import contractService from '../utils/contractService';
 
-const _ = require("lodash");
 
 async function loadOrders(web3, crowdOwnedAddress) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");

@@ -46,7 +46,7 @@ To load demo data
 truffle exec truffle-scripts/demo-init.js
 ````
 
-To start webpack development server (PORT 3000)
+To start webpack development server (PORT 3000). The development server must be restarted whenever the contracts are recompiled
 ````
 npm run start
 ````

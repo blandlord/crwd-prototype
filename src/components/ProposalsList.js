@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-const _ = require('lodash');
+import _ from 'lodash';
 
 import * as votingManagerActions from '../actions/votingManagerActions';
 import * as web3Actions from '../actions/web3Actions';

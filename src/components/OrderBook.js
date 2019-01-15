@@ -1,7 +1,5 @@
 import React, {Component} from 'react'
 
-const _ = require('lodash');
-
 import * as crowdOwnedExchangeActions from '../actions/crowdOwnedExchangeActions';
 import * as web3Actions from '../actions/web3Actions';
 import * as notificationActions from '../actions/notificationActions';

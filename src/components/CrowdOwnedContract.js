@@ -12,7 +12,7 @@ class CrowdOwnedContract extends Component {
 
     return (
       <div className="media">
-        <img className="img-responsive" src={crowdOwnedContract.imageUrl} role="presentation"/>
+        <img className="img-responsive" src={crowdOwnedContract.imageUrl}  alt={""}/>
         <div className="media-body">
           <div className="price">
             <NavLink exact to={"/crowd-owned/" + crowdOwnedContract.address}>{crowdOwnedContract.name}</NavLink>

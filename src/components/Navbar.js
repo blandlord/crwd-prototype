@@ -42,7 +42,7 @@ class Navbar extends Component {
               <span className="icon-bar"/>
               <span className="icon-bar"/>
             </button>
-            <a className="navbar-brand" href="#">Registry</a>
+            <a className="navbar-brand" href="##">Registry</a>
           </div>
           <div id="navbar" className="navbar-collapse collapse">
             <ul className="nav navbar-nav">
@@ -58,13 +58,13 @@ class Navbar extends Component {
             </ul>
             <ul className="nav navbar-nav navbar-right">
               <li className="dropdown">
-                <a href="#" className="dropdown-toggle" data-toggle="dropdown">
+                <a href="##" className="dropdown-toggle" data-toggle="dropdown">
                   <b>Network:</b> {networkName}
                 </a>
               </li>
 
               <li className="dropdown">
-                <a href="#" className="dropdown-toggle" data-toggle="dropdown">
+                <a href="##" className="dropdown-toggle" data-toggle="dropdown">
                   <b>Account:</b> {web3 ? web3.eth.defaultAccount : null}
                 </a>
               </li>

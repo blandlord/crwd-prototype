@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-const _ = require('lodash');
+import _ from 'lodash';
 
 import userDataHelpers from '../utils/userDataHelpers';
 

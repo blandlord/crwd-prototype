@@ -9,6 +9,7 @@ let getWeb3 = () => new Promise(function (resolve, reject) {
     if (typeof web3 !== 'undefined') {
       // Use Mist/MetaMask's provider.
       web3 = new Web3(web3.currentProvider);
+      web3.currentProvider.setMaxListeners(300);
       console.log('Injected web3 detected.');
     } else if (process.env.NODE_ENV === "development") {
       // Fallback to localhost if no web3 injection.
@@ -82,15 +83,14 @@ let getWeb3 = () => new Promise(function (resolve, reject) {
 });
 
 function getEventLogs(contractInstance, eventName, filter = {}) {
-  return new Promise((resolve, reject) => {
-    let event = contractInstance[eventName](filter, { fromBlock: 0, toBlock: 'latest' });
-    event.get((err, logs) => {
-      if (err) {
-        return reject(err);
-      }
-
+  return new Promise(async (resolve, reject) => {
+    try {
+      let logs = await contractInstance.getPastEvents(eventName, { filter, fromBlock: 0, toBlock: 'latest' });
       resolve(logs);
-    });
+    }
+    catch (err) {
+      return reject(err);
+    }
   })
 }
 

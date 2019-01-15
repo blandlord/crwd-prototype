@@ -296,15 +296,20 @@ function stopCrowdOwnedDetailsLogWatch() {
   crowdOwnedDetailsEvents = [];
 }
 
+function noop(){
+
+}
+
 let logWatchService = {
-  startCrowdOwnedExchangeLogWatch: startCrowdOwnedExchangeLogWatch,
-  stopCrowdOwnedExchangeLogWatch: stopCrowdOwnedExchangeLogWatch,
-  startNotaryLogWatch: startNotaryLogWatch,
-  stopNotaryLogWatch: stopNotaryLogWatch,
-  startHomeLogWatch: startHomeLogWatch,
-  stopHomeLogWatch: stopHomeLogWatch,
-  startCrowdOwnedDetailsLogWatch: startCrowdOwnedDetailsLogWatch,
-  stopCrowdOwnedDetailsLogWatch: stopCrowdOwnedDetailsLogWatch,
+
+  startCrowdOwnedExchangeLogWatch: noop,
+  stopCrowdOwnedExchangeLogWatch: noop,
+  startNotaryLogWatch: noop,
+  stopNotaryLogWatch: noop,
+  startHomeLogWatch: noop,
+  stopHomeLogWatch: noop,
+  startCrowdOwnedDetailsLogWatch: noop,
+  stopCrowdOwnedDetailsLogWatch: noop,
 };
 
 export default logWatchService;

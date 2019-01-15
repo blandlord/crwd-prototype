@@ -1,7 +1,5 @@
 import React, {Component} from 'react'
 
-const _ = require('lodash');
-
 import * as crowdOwnedExchangeActions from '../actions/crowdOwnedExchangeActions';
 import * as web3Actions from '../actions/web3Actions';
 import * as notificationActions from '../actions/notificationActions';
@@ -85,7 +83,7 @@ class CrowdOwnedExchange extends Component {
                   <div className="col-xs-8 col-sm-4 col-lg-3">
                     {crowdOwnedContractSummary.imageUrl ?
                       <div>
-                        <img className="img-responsive" src={crowdOwnedContractSummary.imageUrl} role="presentation"/>
+                        <img className="img-responsive" src={crowdOwnedContractSummary.imageUrl}  alt={""}/>
                       </div>
                       :
                       null
