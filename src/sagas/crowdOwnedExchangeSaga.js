@@ -63,9 +63,11 @@ function* saveNewOrder(data) {
   yield put(crowdOwnedExchangeActions.postSaveNewOrder.request());
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
+    let BN = web3.utils.BN;
     const newOrder = yield select(state => state.crowdOwnedExchangeStore.get("newOrder"));
 
-    newOrder.fullDecimalsPrice = parseFloat(newOrder.price) * Math.pow(10, 18); // 18 decimals for CRWD
+    newOrder.fullDecimalsPrice = new BN(newOrder.price).mul(new BN(10).pow(new BN(18)));  // 18 decimals for CRWD
+
     newOrder.amount = parseInt(newOrder.amount, 10);
 
     const results = yield call(crowdOwnedExchangeService.createOrder, web3, newOrder);
@@ -161,9 +163,10 @@ function* saveNewTokenDeposit(data) {
   yield put(crowdOwnedExchangeActions.postSaveNewTokenDeposit.request());
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
+    let BN = web3.utils.BN;
 
     const newTokenDepositValue = yield select(state => state.crowdOwnedExchangeStore.get("newTokenDepositValue"));
-    let parseNewTokenDepositValue = parseInt(newTokenDepositValue, 10);   // no decimals for CrowdOwned
+    let parseNewTokenDepositValue = new BN(newTokenDepositValue);   // no decimals for CrowdOwned
 
     const results = yield call(crowdOwnedExchangeService.depositCrowdOwnedTokens, web3, data.crowdOwnedAddress, parseNewTokenDepositValue);
 
@@ -195,9 +198,10 @@ function* saveNewCrwdDeposit(data) {
   yield put(crowdOwnedExchangeActions.postSaveNewCrwdDeposit.request());
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
+    let BN = web3.utils.BN;
 
     const newCrwdDepositValue = yield select(state => state.crowdOwnedExchangeStore.get("newCrwdDepositValue"));
-    let parseNewCrwdDepositValue = parseFloat(newCrwdDepositValue) * Math.pow(10, 18);   // 18 decimals for CRWD
+    let parseNewCrwdDepositValue = new BN(newCrwdDepositValue).mul(new BN(10).pow(new BN(18)));   // 18 decimals for CRWD
 
     const results = yield call(crowdOwnedExchangeService.depositCRWDTokens, web3, parseNewCrwdDepositValue);
 
@@ -229,9 +233,10 @@ function* saveNewTokenWithdrawal(data) {
   yield put(crowdOwnedExchangeActions.postSaveNewTokenWithdrawal.request());
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
+    let BN = web3.utils.BN;
 
     const newTokenWithdrawalValue = yield select(state => state.crowdOwnedExchangeStore.get("newTokenWithdrawalValue"));
-    let parseNewTokenWithdrawalValue = parseInt(newTokenWithdrawalValue, 10);   // no decimals for CrowdOwned
+    let parseNewTokenWithdrawalValue = new BN(newTokenWithdrawalValue);   // no decimals for CrowdOwned
 
     const results = yield call(crowdOwnedExchangeService.withdrawCrowdOwnedTokens, web3, data.crowdOwnedAddress, parseNewTokenWithdrawalValue);
 
@@ -263,9 +268,10 @@ function* saveNewCrwdWithdrawal(data) {
   yield put(crowdOwnedExchangeActions.postSaveNewCrwdWithdrawal.request());
   try {
     const web3 = yield select(state => state.web3Store.get("web3"));
+    let BN = web3.utils.BN;
 
     const newCrwdWithdrawalValue = yield select(state => state.crowdOwnedExchangeStore.get("newCrwdWithdrawalValue"));
-    let parseNewCrwdWithdrawalValue = parseFloat(newCrwdWithdrawalValue) * Math.pow(10, 18);   // 18 decimals for CRWD
+    let parseNewCrwdWithdrawalValue = new BN(newCrwdWithdrawalValue).mul(new BN(10).pow(new BN(18)));   // 18 decimals for CRWD
 
     const results = yield call(crowdOwnedExchangeService.withdrawCRWDTokens, web3, parseNewCrwdWithdrawalValue);
 

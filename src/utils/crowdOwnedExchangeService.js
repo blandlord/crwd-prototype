@@ -18,8 +18,8 @@ async function loadOrders(web3, crowdOwnedAddress) {
     if (isOrderData && !executed && !canceled) {
       orders.push({
         orderType: orderData[0].toNumber(),
-        price: orderData[1].toNumber(),
-        amount: orderData[2].toNumber(),
+        price: orderData[1],
+        amount: orderData[2],
         userAddress: orderData[3],
         id: orderId,
         tokenAddress: crowdOwnedAddress
@@ -84,12 +84,12 @@ async function loadBalances(web3, crowdOwnedAddress) {
   const walletCrwdBalance = await crwdTokenInstance.balanceOf(web3.eth.defaultAccount);
 
   return {
-    tokenBalance: tokenBalance.toNumber(),
-    lockedTokenBalance: lockedTokenBalance.toNumber(),
-    walletTokenBalance: walletTokenBalance.toNumber(),
-    crwdBalance: crwdBalance.toNumber(),
-    lockedCrwdBalance: lockedCrwdBalance.toNumber(),
-    walletCrwdBalance: walletCrwdBalance.toNumber(),
+    tokenBalance: tokenBalance,
+    lockedTokenBalance: lockedTokenBalance,
+    walletTokenBalance: walletTokenBalance,
+    crwdBalance: crwdBalance,
+    lockedCrwdBalance: lockedCrwdBalance,
+    walletCrwdBalance: walletCrwdBalance,
   };
 }
 
@@ -98,8 +98,8 @@ async function depositCrowdOwnedTokens(web3, crowdOwnedAddress, amount) {
   const crowdOwnedInstance = await contractService.getInstanceAt(web3, "CrowdOwned", crowdOwnedAddress);
 
   const walletTokenBalance = await crowdOwnedInstance.balanceOf(web3.eth.defaultAccount);
-  if (walletTokenBalance.toNumber() < amount) {
-    throw new Error(`Cannot deposit more than wallet balance (${walletTokenBalance.toNumber()})`);
+  if (walletTokenBalance.lt(amount)) {
+    throw new Error(`Cannot deposit more than wallet balance (${walletTokenBalance.toString()})`);
   }
 
   await crowdOwnedInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {
@@ -117,7 +117,7 @@ async function withdrawCrowdOwnedTokens(web3, crowdOwnedAddress, amount) {
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
 
   const tokenBalance = await crowdOwnedExchangeInstance.tokenBalanceOf(crowdOwnedAddress, web3.eth.defaultAccount);
-  if (tokenBalance.toNumber() < amount) {
+  if (tokenBalance.lt(amount)) {
     throw new Error(`Cannot withdraw more than available balance (${tokenBalance.toNumber()})`);
   }
 
@@ -129,12 +129,13 @@ async function withdrawCrowdOwnedTokens(web3, crowdOwnedAddress, amount) {
 }
 
 async function depositCRWDTokens(web3, amount) {
+  let BN = web3.utils.BN;
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
   const crwdTokenInstance = await contractService.getDeployedInstance(web3, "CRWDToken");
 
   const walletCrwdBalance = await crwdTokenInstance.balanceOf(web3.eth.defaultAccount);
-  if (walletCrwdBalance.toNumber() < amount) {
-    throw new Error(`Cannot deposit more than wallet balance (${walletCrwdBalance.toNumber() / Math.pow(10, 18)})`);
+  if (walletCrwdBalance.lt(amount)) {
+    throw new Error(`Cannot deposit more than wallet balance (${walletCrwdBalance.div(new BN(10).pow(new BN(18)))})`);
   }
 
   await crwdTokenInstance.increaseApproval(crowdOwnedExchangeInstance.address, amount, {
@@ -149,11 +150,12 @@ async function depositCRWDTokens(web3, amount) {
 }
 
 async function withdrawCRWDTokens(web3, amount) {
+  let BN = web3.utils.BN;
   const crowdOwnedExchangeInstance = await contractService.getDeployedInstance(web3, "CrowdOwnedExchange");
 
   const crwdBalance = await crowdOwnedExchangeInstance.crwdBalanceOf(web3.eth.defaultAccount);
-  if (crwdBalance.toNumber() < amount) {
-    throw new Error(`Cannot withdraw more than available balance (${crwdBalance.toNumber() / Math.pow(10, 18)})`);
+  if (crwdBalance.lt(amount)) {
+    throw new Error(`Cannot withdraw more than available balance (${crwdBalance.div(new BN(10).pow(new BN(18)))})`);
   }
 
   let results = await crowdOwnedExchangeInstance.withdrawCRWDTokens(amount, {

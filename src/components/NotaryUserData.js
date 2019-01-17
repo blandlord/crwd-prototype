@@ -36,12 +36,12 @@ class NotaryUserData extends Component {
 
         {userDataStateText === "NEW" ?
           <div>
-            <a href className="btn btn-success btn-xs notary-verify-button"
+            <a href={"##"} className="btn btn-success btn-xs notary-verify-button"
                onClick={(e) => this.onVerifyClick(e, userData.userAddress, "VERIFIED")}
                disabled={registryStore.get('settingState')}>
               Verify
             </a>
-            <a href className="btn btn-danger btn-xs notary-verify-button"
+            <a href={"##"} className="btn btn-danger btn-xs notary-verify-button"
                onClick={(e) => this.onVerifyClick(e, userData.userAddress, "DENIED")}
                disabled={registryStore.get('settingState')}>
               Deny
@@ -53,12 +53,12 @@ class NotaryUserData extends Component {
 
         {userDataStateText === "VERIFIED" ?
           <div>
-            <a href className="btn btn-warning btn-xs notary-verify-button"
+            <a href={"##"} className="btn btn-warning btn-xs notary-verify-button"
                onClick={(e) => this.onVerifyClick(e, userData.userAddress, "EXPIRED")}
                disabled={registryStore.get('settingState')}>
               Expire
             </a>
-            <a href className="btn btn-danger btn-xs notary-verify-button"
+            <a href={"##"} className="btn btn-danger btn-xs notary-verify-button"
                onClick={(e) => this.onVerifyClick(e, userData.userAddress, "DENIED")}
                disabled={registryStore.get('settingState')}>
               Deny
@@ -70,7 +70,7 @@ class NotaryUserData extends Component {
 
         {userDataStateText === "EXPIRED" ?
           <div>
-            <a href className="btn btn-primary btn-xs notary-verify-button"
+            <a href={"##"} className="btn btn-primary btn-xs notary-verify-button"
                onClick={(e) => this.onVerifyClick(e, userData.userAddress, "VERIFIED")}
                disabled={registryStore.get('settingState')}>
               Verify

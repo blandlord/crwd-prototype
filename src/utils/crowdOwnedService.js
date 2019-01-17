@@ -217,7 +217,7 @@ async function saveValuation(web3, newValuation) {
     throw new Error(`Blockheight needs to be higher than last valuation blockheight (${lastValuationBlockheight})`);
   }
 
-  let results = await crowdOwnedInstance.saveValuation(newValuation.blockheight, newValuation.currency, newValuation.value, {
+  let results = await crowdOwnedInstance.saveValuation(newValuation.blockheight,web3.utils.asciiToHex(newValuation.currency), newValuation.value, {
     from: web3.eth.defaultAccount,
     gas: 200000
   });

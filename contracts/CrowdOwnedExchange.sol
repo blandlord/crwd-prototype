@@ -209,7 +209,7 @@ contract CrowdOwnedExchange is Ownable {
     // check verified registry user
     require(registry.isVerifiedAndValid(msg.sender));
     // check balance is sufficient
-    require(isBalanceSufficient(true, _tokenAddress, OrderType(_orderType), _price, _amount));
+    require(isBalanceSufficient(true, _tokenAddress, _orderType, _price, _amount));
 
     // lock user balance
     if (OrderType(_orderType) == OrderType.BUY) {
@@ -310,9 +310,9 @@ contract CrowdOwnedExchange is Ownable {
   * @param _price Price
   * @param _amount Amount
   */
-  function isBalanceSufficient(bool _isMaker, address _tokenAddress, OrderType _orderType, uint _price, uint _amount) view public returns (bool){
+  function isBalanceSufficient(bool _isMaker, address _tokenAddress, uint _orderType, uint _price, uint _amount) view public returns (bool){
     if (_isMaker) {
-      if (_orderType == OrderType.BUY) {
+      if (OrderType(_orderType) == OrderType.BUY) {
         return _price.mul(_amount) <= crwdBalanceOf(msg.sender);
       }
       else {
@@ -320,7 +320,7 @@ contract CrowdOwnedExchange is Ownable {
       }
     }
     else {
-      if (_orderType == OrderType.SELL) {
+      if (OrderType(_orderType) == OrderType.SELL) {
         return _price.mul(_amount) <= crwdBalanceOf(msg.sender);
       }
       else {
@@ -399,7 +399,7 @@ contract CrowdOwnedExchange is Ownable {
     // check verified registry user
     require(registry.isVerifiedAndValid(msg.sender));
     // check balance is sufficient
-    require(isBalanceSufficient(false, _tokenAddress, order.orderType, order.price, order.amount));
+    require(isBalanceSufficient(false, _tokenAddress, uint(order.orderType), order.price, order.amount));
 
     address makerAddress = order.userAddress;
     address takerAddress = msg.sender;

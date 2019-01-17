@@ -1,4 +1,4 @@
-import _ from 'lodash';
+const _ = require("lodash");
 const promisify = require("promisify-es6");
 
 const VotingManager = artifacts.require("./VotingManager.sol");

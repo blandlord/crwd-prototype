@@ -21,13 +21,12 @@ import ProposalsList from './ProposalsList';
 
 class CrowdOwnedDetails extends Component {
   componentDidMount() {
-    if (this.props.web3Store.get("web3")) {
-      this.loadInitialData();
-    }
-    else {
-      // wait a second for web3 to load
-      setTimeout(this.loadInitialData.bind(this), 1000);
-    }
+    let interval = setInterval(() => {
+      if (this.props.web3Store.get("web3")) {
+        clearInterval(interval);
+        this.loadInitialData();
+      }
+    }, 500);
   }
 
   componentWillUnmount() {

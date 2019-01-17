@@ -65,12 +65,10 @@ async function startCrowdOwnedExchangeLogWatch(web3, crowdOwnedAddress) {
 
   for (let i = 0; i < loadBalancesEvents.length; i++) {
     let event = loadBalancesEvents[i];
-    event.watch(function (error, result) {
-      if (error) {
-        return console.log("[logWatchService] loadBalancesEvents error:", error);
-      }
-
+    event.on('data', (event) => {
       store.dispatch(crowdOwnedExchangeActions.loadBalances({ crowdOwnedAddress }));
+    }).on('error', (error) => {
+      return console.log("[logWatchService] loadBalancesEvents error:", error);
     });
 
     crowdOwnedExchangeEvents.push(event);
@@ -90,12 +88,10 @@ async function startCrowdOwnedExchangeLogWatch(web3, crowdOwnedAddress) {
 
   for (let i = 0; i < loadOrdersEvents.length; i++) {
     let event = loadOrdersEvents[i];
-    event.watch(function (error, result) {
-      if (error) {
-        return console.log("[logWatchService] loadOrdersEvents error:", error);
-      }
-
+    event.on('data', (event) => {
       store.dispatch(crowdOwnedExchangeActions.loadOrders({ crowdOwnedAddress }));
+    }).on('error', (error) => {
+      return console.log("[logWatchService] loadOrdersEvents error:", error);
     });
 
     crowdOwnedExchangeEvents.push(event);
@@ -108,7 +104,7 @@ function stopCrowdOwnedExchangeLogWatch() {
   for (let i = 0; i < crowdOwnedExchangeEvents.length; i++) {
     let event = crowdOwnedExchangeEvents[i];
 
-    event.stopWatching();
+    event.removeAllListeners();
   }
 
   crowdOwnedExchangeEvents = [];
@@ -128,12 +124,10 @@ async function startNotaryLogWatch(web3) {
 
   for (let i = 0; i < loadUsersDataEvents.length; i++) {
     let event = loadUsersDataEvents[i];
-    event.watch(function (error, result) {
-      if (error) {
-        return console.log("[logWatchService] loadUsersDataEvents error:", error);
-      }
-
+    event.on('data', (event) => {
       store.dispatch(registryActions.loadUsersData({}));
+    }).on('error', (error) => {
+      return console.log("[logWatchService] loadUsersDataEvents error:", error);
     });
 
     notaryEvents.push(event);
@@ -146,7 +140,7 @@ function stopNotaryLogWatch() {
   for (let i = 0; i < notaryEvents.length; i++) {
     let event = notaryEvents[i];
 
-    event.stopWatching();
+    event.removeAllListeners();
   }
 
   notaryEvents = [];
@@ -165,13 +159,11 @@ async function startHomeLogWatch(web3) {
 
   for (let i = 0; i < loadCrowdOwnedContractsEvents.length; i++) {
     let event = loadCrowdOwnedContractsEvents[i];
-    event.watch(function (error, result) {
-      if (error) {
-        return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
-      }
-
+    event.on('data', (event) => {
       console.log("loadCrowdOwnedContractsEvents event triggered");
       store.dispatch(crowdOwnedActions.loadCrowdOwnedContracts({}));
+    }).on('error', (error) => {
+      return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
     });
 
     homeEvents.push(event);
@@ -185,12 +177,10 @@ async function startHomeLogWatch(web3) {
 
   for (let i = 0; i < loadPendingProposalsEvents.length; i++) {
     let event = loadPendingProposalsEvents[i];
-    event.watch(function (error, result) {
-      if (error) {
-        return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
-      }
-
+    event.on('data', (event) => {
       store.dispatch(votingManagerActions.loadPendingProposals({}));
+    }).on('error', (error) => {
+      return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
     });
 
     homeEvents.push(event);
@@ -203,7 +193,7 @@ function stopHomeLogWatch() {
   for (let i = 0; i < homeEvents.length; i++) {
     let event = homeEvents[i];
 
-    event.stopWatching();
+    event.removeAllListeners();
   }
 
   homeEvents = [];
@@ -226,12 +216,11 @@ async function startCrowdOwnedDetailsLogWatch(web3, crowdOwnedAddress) {
 
   for (let i = 0; i < loadCrowdOwnedContractEvents.length; i++) {
     let event = loadCrowdOwnedContractEvents[i];
-    event.watch(function (error, result) {
-      if (error) {
-        return console.log("[logWatchService] loadCrowdOwnedContractEvents error:", error);
-      }
-
+    event.on('data', (event) => {
+      console.log("loadCrowdOwnedContract event triggered");
       store.dispatch(crowdOwnedActions.loadCrowdOwnedContract({ contractAddress: crowdOwnedAddress }));
+    }).on('error', (error) => {
+      return console.log("[logWatchService] loadCrowdOwnedContractEvents error:", error);
     });
 
     crowdOwnedDetailsEvents.push(event);
@@ -253,12 +242,10 @@ async function startCrowdOwnedDetailsLogWatch(web3, crowdOwnedAddress) {
 
   for (let i = 0; i < loadOrdersEvents.length; i++) {
     let event = loadOrdersEvents[i];
-    event.watch(function (error, result) {
-      if (error) {
-        return console.log("[logWatchService] loadOrdersEvents error:", error);
-      }
-
+    event.on('data', (event) => {
       store.dispatch(crowdOwnedExchangeActions.loadOrders({ crowdOwnedAddress }));
+    }).on('error', (error) => {
+      return console.log("[logWatchService] loadOrdersEvents error:", error);
     });
 
     crowdOwnedDetailsEvents.push(event);
@@ -272,12 +259,10 @@ async function startCrowdOwnedDetailsLogWatch(web3, crowdOwnedAddress) {
 
   for (let i = 0; i < loadPendingProposalsEvents.length; i++) {
     let event = loadPendingProposalsEvents[i];
-    event.watch(function (error, result) {
-      if (error) {
-        return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
-      }
-
+    event.on('data', (event) => {
       store.dispatch(votingManagerActions.loadProposals({ crowdOwnedAddress }));
+    }).on('error', (error) => {
+      return console.log("[logWatchService] loadPendingProposalsEvents error:", error);
     });
 
     crowdOwnedDetailsEvents.push(event);
@@ -290,26 +275,21 @@ function stopCrowdOwnedDetailsLogWatch() {
   for (let i = 0; i < crowdOwnedDetailsEvents.length; i++) {
     let event = crowdOwnedDetailsEvents[i];
 
-    event.stopWatching();
+    event.removeAllListeners();
   }
 
   crowdOwnedDetailsEvents = [];
 }
 
-function noop(){
-
-}
-
 let logWatchService = {
-
-  startCrowdOwnedExchangeLogWatch: noop,
-  stopCrowdOwnedExchangeLogWatch: noop,
-  startNotaryLogWatch: noop,
-  stopNotaryLogWatch: noop,
-  startHomeLogWatch: noop,
-  stopHomeLogWatch: noop,
-  startCrowdOwnedDetailsLogWatch: noop,
-  stopCrowdOwnedDetailsLogWatch: noop,
+  startCrowdOwnedExchangeLogWatch,
+  stopCrowdOwnedExchangeLogWatch,
+  startNotaryLogWatch,
+  stopNotaryLogWatch,
+  startHomeLogWatch,
+  stopHomeLogWatch,
+  startCrowdOwnedDetailsLogWatch,
+  stopCrowdOwnedDetailsLogWatch,
 };
 
 export default logWatchService;

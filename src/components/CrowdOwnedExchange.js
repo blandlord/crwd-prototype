@@ -13,13 +13,12 @@ import OrderBook from './OrderBook';
 
 class CrowdOwnedExchange extends Component {
   componentDidMount() {
-    if (this.props.web3Store.get("web3")) {
-      this.loadInitialData();
-    }
-    else {
-      // wait a second for web3 to load
-      setTimeout(this.loadInitialData.bind(this), 1000);
-    }
+    let interval = setInterval(() => {
+      if (this.props.web3) {
+        clearInterval(interval);
+        this.loadInitialData();
+      }
+    }, 500);
   }
 
   componentWillUnmount() {
@@ -55,10 +54,12 @@ class CrowdOwnedExchange extends Component {
   }
 
   render() {
-    if (!this.props.web3Store.get("web3")) {
+    let {web3} = this.props;
+    if (!web3) {
       return null;
     }
-
+    let BN = web3.utils.BN;
+    
     let {crowdOwnedExchangeStore} = this.props;
 
     let crowdOwnedContractSummary = crowdOwnedExchangeStore.get('crowdOwnedContractSummary');
@@ -113,28 +114,28 @@ class CrowdOwnedExchange extends Component {
                         <tbody>
                         <tr>
                           <th>CRWD</th>
-                          <td>{balances.walletCrwdBalance / Math.pow(10, 18)}</td>
+                          <td>{balances.walletCrwdBalance.div(new BN(10).pow(new BN(18))).toString()}</td>
                           <td>
-                            {(balances.crwdBalance + balances.lockedCrwdBalance) / Math.pow(10, 18)}
+                            {(balances.crwdBalance.add(balances.lockedCrwdBalance)).div(new BN(10).pow(new BN(18))).toString()}
                           </td>
                           <td>
-                            {balances.crwdBalance / Math.pow(10, 18)}
+                            {balances.crwdBalance.div(new BN(10).pow(new BN(18))).toString()}
                           </td>
                           <td>
-                            {balances.lockedCrwdBalance / Math.pow(10, 18)}
+                            {balances.lockedCrwdBalance.div(new BN(10).pow(new BN(18))).toString()}
                           </td>
                         </tr>
                         <tr>
                           <th>{crowdOwnedContractSummary.symbol}</th>
-                          <td>{balances.walletTokenBalance}</td>
+                          <td>{balances.walletTokenBalance.toString()}</td>
                           <td>
-                            {balances.tokenBalance + balances.lockedTokenBalance}
+                            {balances.tokenBalance.add(balances.lockedTokenBalance).toString()}
                           </td>
                           <td>
-                            {balances.tokenBalance}
+                            {balances.tokenBalance.toString()}
                           </td>
                           <td>
-                            {balances.lockedTokenBalance}
+                            {balances.lockedTokenBalance.toString()}
                           </td>
                         </tr>
                         </tbody>
@@ -185,7 +186,7 @@ class CrowdOwnedExchange extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    web3Store: state.web3Store,
+    web3: state.web3Store.get("web3"),
     registryStore: state.registryStore,
     crowdOwnedExchangeStore: state.crowdOwnedExchangeStore,
   };

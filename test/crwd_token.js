@@ -22,7 +22,7 @@ contract('CRWDToken', function (accounts) {
       let decimals = await tokenInstance.decimals();
       assert.equal(decimals.toNumber(), 18);
       let totalSupply = await tokenInstance.totalSupply();
-      let totalSupplyExpected = (new BN(Math.pow(10, 8))).mul(web3.utils.toWei(new BN(1),"ether"));
+      let totalSupplyExpected = (new BN(100000000)).mul(new BN(10).pow(new BN(18)));
       assert.equal(totalSupply.eq(totalSupplyExpected), true);
       let creatorBalance = await tokenInstance.balanceOf(accounts[0]);
       assert.equal(creatorBalance.eq(totalSupplyExpected), true);

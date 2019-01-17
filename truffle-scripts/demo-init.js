@@ -106,12 +106,14 @@ async function run() {
     "Proposal to renew kitchen for 8000 euro ...",
     604800, // a week  in seconds
     { from: notaryAddress, gas: 4000000 });
+
+  console.log("Completed demo-init ...");
 }
 
 module.exports = function (callback) {
-    run().then(() => {
-      callback();
-    }).catch((err) =>{
-      callback(err);
-    })
+  run().then(() => {
+    callback();
+  }).catch((err) => {
+    callback(err);
+  })
 };

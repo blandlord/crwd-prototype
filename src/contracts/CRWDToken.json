@@ -331,7 +331,7 @@
         "id": 98,
         "nodeType": "ImportDirective",
         "scope": 136,
-        "sourceUnit": 3069,
+        "sourceUnit": 3073,
         "src": "26:29:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -345,10 +345,10 @@
               "id": 99,
               "name": "StandardToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 3068,
+              "referencedDeclaration": 3072,
               "src": "79:13:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StandardToken_$3068",
+                "typeIdentifier": "t_contract$_StandardToken_$3072",
                 "typeString": "contract StandardToken"
               }
             },
@@ -359,9 +359,9 @@
         ],
         "contractDependencies": [
           95,
-          2174,
-          2206,
-          3068
+          2178,
+          2210,
+          3072
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -369,10 +369,10 @@
         "id": 135,
         "linearizedBaseContracts": [
           135,
-          3068,
+          3072,
           95,
-          2174,
-          2206
+          2178,
+          2210
         ],
         "name": "CRWDToken",
         "nodeType": "ContractDefinition",
@@ -757,7 +757,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3682,
+                          "referencedDeclaration": 3686,
                           "src": "480:3:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -875,7 +875,7 @@
         "id": 98,
         "nodeType": "ImportDirective",
         "scope": 136,
-        "sourceUnit": 3069,
+        "sourceUnit": 3073,
         "src": "26:29:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -889,10 +889,10 @@
               "id": 99,
               "name": "StandardToken",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 3068,
+              "referencedDeclaration": 3072,
               "src": "79:13:1",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_StandardToken_$3068",
+                "typeIdentifier": "t_contract$_StandardToken_$3072",
                 "typeString": "contract StandardToken"
               }
             },
@@ -903,9 +903,9 @@
         ],
         "contractDependencies": [
           95,
-          2174,
-          2206,
-          3068
+          2178,
+          2210,
+          3072
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -913,10 +913,10 @@
         "id": 135,
         "linearizedBaseContracts": [
           135,
-          3068,
+          3072,
           95,
-          2174,
-          2206
+          2178,
+          2210
         ],
         "name": "CRWDToken",
         "nodeType": "ContractDefinition",
@@ -1301,7 +1301,7 @@
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 3682,
+                          "referencedDeclaration": 3686,
                           "src": "480:3:1",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
@@ -1397,27 +1397,15 @@
     "version": "0.5.0+commit.1d4f565a.Emscripten.clang"
   },
   "networks": {
-    "1547521505209": {
+    "1547690477964": {
       "events": {},
       "links": {},
-      "address": "0x546FC40B302c9C41A441a7d8B2A41A4a7160533f",
-      "transactionHash": "0x432b233a19ff53d457c598f344cf61777f294bf8be5e7e14741fa586934624f5"
-    },
-    "1547539041604": {
-      "events": {},
-      "links": {},
-      "address": "0xc45f8B3c1deE7Ac5fa2785841D553BeEDF34e1C6",
-      "transactionHash": "0x8fd80cdc67b5b85223c59481387bafac0031faecb689e6dc9a217443d37a8e6a"
-    },
-    "1547546303629": {
-      "events": {},
-      "links": {},
-      "address": "0xc45f8B3c1deE7Ac5fa2785841D553BeEDF34e1C6",
-      "transactionHash": "0x8fd80cdc67b5b85223c59481387bafac0031faecb689e6dc9a217443d37a8e6a"
+      "address": "0x67Bde3887B995c3e1b7048E6b5BC4E1437a0b922",
+      "transactionHash": "0x9a4d6ca9947e2d8477c0532c6241a06a9798bdf0cb34ef1caac3621458021120"
     }
   },
   "schemaVersion": "3.0.1",
-  "updatedAt": "2019-01-15T09:58:49.513Z",
+  "updatedAt": "2019-01-17T04:21:05.396Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

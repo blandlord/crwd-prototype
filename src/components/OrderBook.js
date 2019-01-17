@@ -16,11 +16,11 @@ class OrderBook extends Component {
   }
 
   getBuyOrders(orders) {
-    return orders.filter((order) => orderDataHelpers.getOrderTypeText(order.orderType) === "BUY").sort((a, b) => b.price - a.price);
+    return orders.filter((order) => orderDataHelpers.getOrderTypeText(order.orderType) === "BUY").sort((a, b) => b.price.cmp(a.price));
   }
 
   getSellOrders(orders) {
-    return orders.filter((order) => orderDataHelpers.getOrderTypeText(order.orderType) === "SELL").sort((a, b) => a.price - b.price);
+    return orders.filter((order) => orderDataHelpers.getOrderTypeText(order.orderType) === "SELL").sort((a, b) => a.price.cmp(b.price));
   }
 
   render() {

@@ -19,13 +19,14 @@ class Order extends Component {
   }
 
   render() {
-    let { order, isSummary, web3Store, crowdOwnedExchangeStore } = this.props;
-    let ownAddress = web3Store.get("web3").eth.defaultAccount;
+    let { order, isSummary, web3, crowdOwnedExchangeStore } = this.props;
+    let ownAddress = web3.eth.defaultAccount;
+    let BN = web3.utils.BN;
 
     return (
       <tr>
-        <td>{order.price / Math.pow(10, 18)}</td>
-        <td>{order.amount}</td>
+        <td>{order.price.div(new BN(10).pow(new BN(18))).toString()}</td>
+        <td>{order.amount.toString()}</td>
         {isSummary ?
           null
           :
@@ -55,7 +56,7 @@ class Order extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    web3Store: state.web3Store,
+    web3: state.web3Store.get("web3"),
     crowdOwnedExchangeStore: state.crowdOwnedExchangeStore
   };
 };
