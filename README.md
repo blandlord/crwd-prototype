@@ -7,7 +7,8 @@ Smart contracts for crowd ownership. This prototype leverages Ethereum contracts
 * legal: ownership can be restricted to a closed group, supervised by a notary
 
 ## Acknowledgements
-This project is the result of R&D activities financed by the Blandlord company.
+This project is the result of R&D activities financed by the [Blandlord company](https://www.blandlord.com).
+
 The project received a grant from [the SIDN Foundation](https://www.sidnfonds.nl/projecten/be-a-social-landlord) under the Blockchain for Good track.
 
 ## Developer instructions
