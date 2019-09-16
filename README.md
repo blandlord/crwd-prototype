@@ -7,7 +7,8 @@ Smart contracts for crowd ownership. This prototype leverages Ethereum contracts
 * legal: ownership can be restricted to a closed group, supervised by a notary
 
 ## Acknowledgements
-This project is the result of R&D activities financed by the Blandlord company. The project received a grant from SIDN Foundation under [the Blockchain for Good track](https://www.sidnfonds.nl/projecten/be-a-social-landlord).
+This project is the result of R&D activities financed by the Blandlord company.
+The project received a grant from [the SIDN Foundation](https://www.sidnfonds.nl/projecten/be-a-social-landlord) under the Blockchain for Good track.
 
 ## Developer instructions
 Setting up the development environment for a prototype using Ethereum contracts with Truffle
