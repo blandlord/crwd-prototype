@@ -13,7 +13,7 @@ This project is the result of R&D activities financed by the Blandlord company. 
 Setting up the development environment for a prototype using Ethereum contracts with Truffle
 
 ### Local development environment
-You first need to install node 8.x, follow the instructions at https://nodejs.org/en/download/package-manager/ depending on your OS
+You first need to install node 8.x, follow the [package manager instructions](https://nodejs.org/en/download/package-manager/) for your OS
 
 To be able to run a test ethereum environment locally, you need to install ganache-cli :
 ````
