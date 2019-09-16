@@ -1,8 +1,18 @@
 # crwd-prototype
+Smart contracts for crowd ownership. This prototype leverages Ethereum contracts for ownership of real estate by a group of individuals. It provides a solution for:
+
+* ownership: tokens and exchange
+* finance: rental income
+* management: voting right based on tokens in your wallet
+* legal: ownership can be restricted to a closed group, supervised by a notary
+
+## Acknowledgements
+This project is the result of R&D activities financed by the Blandlord company. The project received a grant from SIDN Foundation under [the Blockchain for Good track](https://www.sidnfonds.nl/projecten/be-a-social-landlord).
+
+## Developer instructions
 Setting up the development environment for a prototype using Ethereum contracts with Truffle
 
-
-## Local development environment
+### Local development environment
 You first need to install node 8.x, follow the instructions at https://nodejs.org/en/download/package-manager/ depending on your OS
 
 To be able to run a test ethereum environment locally, you need to install ganache-cli :
